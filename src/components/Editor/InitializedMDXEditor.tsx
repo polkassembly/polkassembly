@@ -8,17 +8,14 @@ import {
 	thematicBreakPlugin,
 	markdownShortcutPlugin,
 	linkPlugin,
-	linkDialogPlugin,
 	imagePlugin,
 	tablePlugin,
 	codeBlockPlugin,
 	codeMirrorPlugin,
 	diffSourcePlugin,
 	toolbarPlugin,
-	UndoRedo,
 	BoldItalicUnderlineToggles,
 	BlockTypeSelect,
-	CreateLink,
 	InsertTable,
 	InsertThematicBreak,
 	ListsToggle,
@@ -37,13 +34,14 @@ import { MutableRefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { FileGifOutlined, EllipsisOutlined, FileImageOutlined } from '@ant-design/icons';
+import { FileGifOutlined, EllipsisOutlined, FileImageOutlined, LinkOutlined } from '@ant-design/icons';
 import Popover from '~src/basic-components/Popover';
 import { useQuoteCommentContext } from '~src/context';
 import algoliasearch from 'algoliasearch/lite';
 import { useTheme } from 'next-themes';
 import ImageUploadModal from './ImageUploadModal';
 import GifUploadModal from './GifUploadModal';
+import CreateLinkModal from './CreateLinkModal';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -69,6 +67,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 	const { quotedText } = useQuoteCommentContext();
 	const [isGifModalVisible, setIsGifModalVisible] = useState(false);
 	const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+	const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
 
 	useEffect(() => {
 		if (quotedText) {
@@ -212,6 +211,7 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 
 								// Update the editor content
 								editor.setMarkdown(newContent);
+								editor.focus();
 								onChange(newContent);
 
 								// Remove the popover
@@ -271,19 +271,17 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 	};
 
 	const ExtraTools = () => (
-		<div className='flex items-center gap-1'>
-			<ListsToggle options={['bullet', 'number']} />
-			<Separator />
-
-			<InsertTable />
-			<StrikeThroughSupSubToggles options={['Strikethrough']} />
-			<CodeToggle />
-			<InsertThematicBreak />
-			<Separator />
-			<DiffSourceToggleWrapper>
-				<UndoRedo />
-			</DiffSourceToggleWrapper>
-		</div>
+		<DiffSourceToggleWrapper>
+			<div className='flex items-center gap-1'>
+				<ListsToggle options={['bullet', 'number']} />
+				<Separator />
+				<InsertTable />
+				<StrikeThroughSupSubToggles options={['Strikethrough']} />
+				<CodeToggle />
+				<InsertThematicBreak />
+				<Separator />
+			</div>
+		</DiffSourceToggleWrapper>
 	);
 
 	const toolbarContents = () => (
@@ -292,8 +290,13 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 			<Separator />
 			<BlockTypeSelect />
 			<Separator />
+			<ButtonWithTooltip
+				onClick={() => setIsLinkModalVisible(true)}
+				title='Select Link'
+			>
+				<LinkOutlined className='mt-0.5 text-lg text-lightBlue dark:text-icon-dark-inactive' />
+			</ButtonWithTooltip>
 
-			<CreateLink />
 			<ButtonWithTooltip
 				onClick={() => setIsImageModalVisible(true)}
 				title='Select Image'
@@ -330,12 +333,11 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 		listsPlugin(),
 		thematicBreakPlugin(),
 		markdownShortcutPlugin(),
-		linkPlugin(),
-		linkDialogPlugin(),
+		linkPlugin({ disableAutoLink: true }),
 		quotePlugin(),
 		imagePlugin({
 			disableImageResize: true,
-			imageUploadHandler: imageUploadHandler
+			disableImageSettingsButton: true
 		}),
 		tablePlugin(),
 		codeBlockPlugin(),
@@ -366,6 +368,12 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 				setOpen={setIsImageModalVisible}
 				isImageModalVisible={isImageModalVisible}
 				imageUploadHandler={imageUploadHandler}
+			/>
+			<CreateLinkModal
+				className={className}
+				editorRef={ref}
+				setOpen={setIsLinkModalVisible}
+				isLinkModalVisible={isLinkModalVisible}
 			/>
 			<MDXEditor
 				markdown={markdown || ''}
@@ -525,6 +533,21 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 			font-size: 1.5rem;
 			font-weight: 600;
 		}
+		code {
+			font-size: 12px;
+			margin: 0;
+			border-radius: 3px;
+			white-space: pre-wrap;
+			&::before,
+			&::after {
+				letter-spacing: -0.2em;
+			}
+
+			padding-left: 4px;
+			padding-right: 4px;
+			background-color: ${(props: any) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
+			color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		}
 
 		blockquote {
 			border-left: 3px solid var(--pink_primary) !important;
@@ -653,6 +676,7 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 	}
 	[class*='_linkDialogPopoverContent_uazmk_600'],
 	[class*='_dialogContent_uazmk_602'] {
+		// display: none;
 		background-color: ${({ theme }) => (theme === 'dark' ? '#1C1D1F' : '#F5F6F8')};
 		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
 
@@ -709,6 +733,14 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 		border-color: ${({ theme }) => (theme === 'dark' ? 'var(--separatorDark)' : '#D2D8E0')};
 		padding: 4px 8px;
 		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
+	}
+	.ant-popover-inner-content {
+		color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
+		font-size: 12px;
+		font-weight: 500;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.ant-popover-arrow-content {

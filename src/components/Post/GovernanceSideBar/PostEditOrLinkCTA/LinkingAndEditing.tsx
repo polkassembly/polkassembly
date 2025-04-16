@@ -4,7 +4,7 @@
 
 import { Form, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { NotificationStatus } from '~src/types';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
@@ -19,7 +19,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
-
+import { MDXEditorMethods } from '@mdxeditor/editor';
 interface ILinkingAndEditingProps {
 	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	linkingAndEditingOpen: boolean;
@@ -39,6 +39,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 		content: '',
 		title: ''
 	});
+	const editorRef = useRef<MDXEditorMethods | null>(null);
 
 	const {
 		postData: { content, postIndex, postType, title, post_link, timeline, tags: oldTags },
@@ -294,6 +295,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					<div className='mt-[30px]'>
 						<label className='mb-2 flex items-center text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Description</label>
 						<MarkdownEditor
+							editorRef={editorRef}
 							onChange={(content) => {
 								setEditPostValue((prev) => ({
 									...prev,

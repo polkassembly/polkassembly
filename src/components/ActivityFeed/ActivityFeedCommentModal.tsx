@@ -81,12 +81,14 @@ export const ActivityFeedCommentModal: React.FC<{ post: any; onclose: () => void
 			setLoading(false);
 			onCloseHandler();
 			setContent('');
+			editorRef.current?.setMarkdown('');
 		}
 	};
 
 	const onCloseHandler = () => {
 		form.resetFields();
 		setContent('');
+		editorRef.current?.setMarkdown('');
 		global.window.localStorage.removeItem(commentKey());
 		onclose();
 	};

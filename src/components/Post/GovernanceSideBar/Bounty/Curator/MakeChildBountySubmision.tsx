@@ -88,6 +88,7 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 	const handleModalClose = () => {
 		setTitle('');
 		setContent('');
+		editorRef.current?.setMarkdown('');
 		setLink('');
 		setTags([]);
 		setReqAmount('0');

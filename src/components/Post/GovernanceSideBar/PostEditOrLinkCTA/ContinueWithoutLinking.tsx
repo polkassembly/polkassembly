@@ -84,6 +84,8 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 			}));
 			setFormDisabled(false);
 			setEditModalOpen(false);
+			setContent('');
+			editorRef.current?.setMarkdown('');
 		}
 		setLoading(false);
 	};

@@ -164,6 +164,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		toggleReply();
 		global.window.localStorage.removeItem(replyKey(commentId));
 		setReplyContent('');
+		markdownEditorReplyRef.current?.setMarkdown('');
 	};
 
 	const handleSave = async () => {
@@ -350,6 +351,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				return comments;
 			});
 		setReplyContent('');
+		markdownEditorReplyRef.current?.setMarkdown('');
 		queueNotification({
 			header: 'Success!',
 			message: 'Your reply was added.',

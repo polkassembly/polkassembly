@@ -102,6 +102,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 						onChange={(e) => {
 							setIsDiscussionLinked(e.target.value);
 							handleOnchange({ content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
+							editorRef.current?.setMarkdown('');
 							form.setFieldValue('content', '');
 							form.setFieldValue('title', '');
 							form.setFieldValue('tags', []);
@@ -129,7 +130,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					form={form}
 					onFinish={handleSubmit}
 					disabled={loading}
-					initialValues={{ content, discussion_link: discussionLink, tags, title }}
+					initialValues={{ discussion_link: discussionLink, tags, title }}
 					validateMessages={{ required: "Please add the '${name}'" }}
 				>
 					{isDiscussionLinked && (

@@ -148,6 +148,7 @@ const EditableReplyContent = ({
 		toggleEdit();
 		global.window.localStorage.removeItem(editReplyKey(replyId));
 		setEditableReplyContent('');
+		markdownEditorReplyRef.current?.setMarkdown('');
 	};
 	const handleReplyCancel = () => {
 		global.window.localStorage.removeItem(newReplyKey(commentId));

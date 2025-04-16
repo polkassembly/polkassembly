@@ -101,6 +101,8 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 				setSuccessSubmission(true);
 				setContribution('');
 				setReason('');
+				reasonEditorRef.current?.setMarkdown('');
+				contributionEditorRef.current?.setMarkdown('');
 			}
 			if (error) {
 				queueNotification({

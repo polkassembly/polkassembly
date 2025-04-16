@@ -211,6 +211,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 		dispatch(resetForm() as any);
 		form.resetFields();
 		setContent('');
+		editorRef.current?.setMarkdown('');
 	};
 
 	const handleFormSubmit = async (values: any) => {

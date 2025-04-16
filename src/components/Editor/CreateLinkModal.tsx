@@ -47,7 +47,7 @@ const CreateLinkModal = ({ className, isLinkModalVisible, setOpen, editorRef }: 
 				editorRef.current.insertMarkdown(`[${title?.trim()}](${url?.trim()})`);
 			} else {
 				// Insert just the URL if no title is provided
-				editorRef.current.insertMarkdown(url?.trim());
+				editorRef.current.insertMarkdown(`[${url?.trim()}](${url?.trim()})`);
 			}
 		}
 

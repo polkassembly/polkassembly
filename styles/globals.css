@@ -1018,7 +1018,6 @@ body.dark-theme .ant-menu .ant-menu-submenu-arrow {
     z-index: 1000 !important;
     --basePageBg: #1c1d1f;
 }
-  /* Style dialog elements with theme colors */
 .mdxeditor-popup-container [role='dialog'] {
     background-color: var(--baseBase); 
     border-color: var(--baseBorder);

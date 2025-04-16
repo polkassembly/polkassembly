@@ -376,7 +376,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 									key={'create-comment-editor'}
 									editorRef={markdownEditorRef}
 									onChange={(value: any) => onContentChange(value)}
-									height={250}
+									height={200}
 									value={content}
 									autofocus
 								/>

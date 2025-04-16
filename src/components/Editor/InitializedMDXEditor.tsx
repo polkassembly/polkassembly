@@ -61,7 +61,7 @@ interface EditorProps {
 }
 const MAX_MENTION_SUGGESTIONS = 6;
 
-const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, className, autofocus = false, isUsedInCreatePost = false, editorRef: ref }: EditorProps) => {
+const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, className, autofocus = false, isUsedInCreatePost = false, editorRef: ref, height }: EditorProps) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { username } = useUserDetailsSelector();
 	const { quotedText } = useQuoteCommentContext();
@@ -389,7 +389,14 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 				)}
 				// key={id}
 				autoFocus={autofocus}
-				contentEditableClassName={classNames('max-w-full p-0', dmSans.className, dmSans.variable, theme === 'dark' ? 'prose-invert' : '', 'focus:outline-none')}
+				contentEditableClassName={classNames(
+					'max-w-full p-0',
+					`min-h-[${height || 300}px]`,
+					dmSans.className,
+					dmSans.variable,
+					theme === 'dark' ? 'prose-invert' : '',
+					'focus:outline-none'
+				)}
 				plugins={plugins}
 			/>
 		</div>
@@ -398,7 +405,6 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 
 export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 	.mdxeditor {
-		min-height: ${({ height }) => `${height}px` || '300px'};
 		overflow-y: auto;
 		p {
 			margin-bottom: 8px;

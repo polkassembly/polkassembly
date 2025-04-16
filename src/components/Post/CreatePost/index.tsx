@@ -243,7 +243,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 					</Form.Item>
 					<MarkdownEditor
 						editorRef={markdownEditorRef}
-						height={300}
+						height={250}
 						onChange={(v) => {
 							setContent(v);
 							savePostFormCacheValue('content', v);

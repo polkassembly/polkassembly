@@ -27,11 +27,10 @@ const CreateLinkModal = ({ className, isLinkModalVisible, setOpen, editorRef }: 
 
 	// Get the current selection when the modal opens
 	useEffect(() => {
-		if (isLinkModalVisible) {
-			const selectionText = window.getSelection()?.toString() || '';
-			setTitle(selectionText);
-			setUrl('');
-		}
+		if (!isLinkModalVisible) return;
+		const selectionText = window.getSelection()?.toString() || '';
+		setTitle(selectionText);
+		setUrl('');
 	}, [isLinkModalVisible]);
 
 	const handleCancel = () => {

@@ -82,7 +82,7 @@ export default styled(Reply)`
 		border-radius: 3px;
 		box-shadow: box_shadow_card;
 		margin-bottom: 1rem;
-		width: calc(100% - 60px);
+		width: calc(100% - 10px);
 		word-break: break-word;
 
 		@media only screen and (max-width: 576px) {

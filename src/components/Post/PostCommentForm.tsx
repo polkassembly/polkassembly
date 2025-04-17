@@ -517,7 +517,7 @@ export default styled(PostCommentForm)`
 	margin: 2rem 0;
 
 	.comment-box {
-		width: calc(100% - 60px);
+		width: calc(100% - 10px);
 
 		@media only screen and (max-width: 768px) {
 			width: calc(100%);

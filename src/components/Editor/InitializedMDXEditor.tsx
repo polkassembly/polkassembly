@@ -521,11 +521,13 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 		.mdxeditor-diff-source-wrapper {
 			padding: 0px 1rem;
 			color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
+			height: ${({ height }) => (height ? `${height}px` : '300px')};
 		}
 
 		.cm-editor {
 			background-color: transparent;
 			color: ${({ theme }) => (theme === 'dark' ? '#ffffff' : 'var(--lightBlue)')};
+			height: ${({ height }) => (height ? `${height}px` : '300px')};
 		}
 		.cm-content {
 			background-color: transparent;
@@ -538,6 +540,7 @@ export default styled(InitializedMDXEditor)<{ theme?: 'dark' | 'light' }>`
 			font-size: 1.5rem;
 			font-weight: 600;
 		}
+
 		code {
 			font-size: 12px;
 			margin: 0;

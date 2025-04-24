@@ -26,11 +26,11 @@ export async function getKiltDidLinkedAccounts(api: ApiPromise, lookupAccountAdd
 		AccountId32: lookupAccountAddress
 	})) as any;
 
-	if (didDetails.isNone) {
+	if (didDetails?.isNone) {
 		return null;
 	}
 
-	return didDetails.toHuman().accounts || [];
+	return didDetails?.toHuman()?.accounts || [];
 }
 
 export async function getKiltDidSocialEndpoints(api: ApiPromise, lookupAccountAddress: string): Promise<any[] | null> {

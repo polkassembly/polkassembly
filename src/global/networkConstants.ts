@@ -1223,7 +1223,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: kiltLogo,
-		rpcEndpoint: 'wss://kilt-rpc.dwellir.com',
+		rpcEndpoint: 'wss://spiritnet.kilt.io/',
 		ss58Format: 38,
 		subsquidUrl: 'https://squid.subsquid.io/kilt-polkassembly/graphql',
 		tokenDecimals: 15,
@@ -1239,12 +1239,8 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://spiritnet.kilt.io/'
 			},
 			{
-				label: 'via Dwellir',
-				key: 'wss://kilt-rpc.dwellir.com'
-			},
-			{
-				label: 'via OnFinality',
-				key: 'wss://spiritnet.api.onfinality.io/public-ws'
+				label: 'via IBP2',
+				key: 'wss://kilt.ibp.network'
 			}
 		]
 	},

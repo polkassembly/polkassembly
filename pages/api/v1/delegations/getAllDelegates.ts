@@ -191,7 +191,7 @@ export const getDelegatesData = async (network: string, address?: string | null)
 				address: getEncodedAddress(item.address, network),
 				bio: item?.shortDescription || '',
 				dataSource: ['w3f'],
-				image: '',
+				image: item?.image || '',
 				username: item?.username || ''
 			})) || []),
 			...(parityDelegates?.map((item: any) => ({

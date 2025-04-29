@@ -29,12 +29,13 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 		const beneficiary =
 			convertAnyHexToASCII(payoutData?.beneficiary?.V4?.interior?.X1?.[0]?.AccountId32?.id || payoutData?.beneficiary?.V3?.interior?.X1?.AccountId32?.id, network) || '';
 		const startedAt = Number(payoutData?.validFrom?.split(',')?.join(''));
+		const expireAt = Number(payoutData?.expireAt?.split(',')?.join(''));
 
-		if (startedAt <= currentBlockNumber && payoutData.status == 'Pending') {
+		if (startedAt <= currentBlockNumber && expireAt >= currentBlockNumber && payoutData.status === 'Pending') {
 			const res: IPayout = {
 				amount: payoutData.amount.split(',').join(''),
 				beneficiary: getEncodedAddress(beneficiary, network) || '',
-				expireAt: blockToSeconds(network, Number(payoutData?.expireAt?.split(',')?.join('')), currentBlockNumber) || '',
+				expireAt: blockToSeconds(network, expireAt, currentBlockNumber) || '',
 				generalIndex:
 					(payoutData?.assetKind?.V4?.assetId?.interior?.X2?.[1]?.GeneralIndex || payoutData?.assetKind?.V3?.assetId?.Concrete.interior?.X2?.[1]?.GeneralIndex || '')
 						.split(',')

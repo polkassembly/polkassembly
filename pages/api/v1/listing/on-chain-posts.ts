@@ -45,9 +45,9 @@ export const fetchSubsquare = async (network: string, limit: number, page: numbe
 	try {
 		let res: Response;
 		if (track) {
-			res = await fetch(`https://${network}.subsquare.io/api/gov2/tracks/${track}/referendums?page=${page}&page_size=${limit}`);
+			res = await fetch(`https://${network}-api.subsquare.io/gov2/tracks/${track}/referendums?page=${page}&page_size=${limit}`);
 		} else {
-			res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums?page=${page}&page_size=${limit}`);
+			res = await fetch(`https://${network}-api.subsquare.io/gov2/referendums?page=${page}&page_size=${limit}`);
 		}
 		return await res.json();
 	} catch (error) {
@@ -57,7 +57,7 @@ export const fetchSubsquare = async (network: string, limit: number, page: numbe
 
 export const fetchLatestSubsquare = async (network: string) => {
 	try {
-		const res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums`);
+		const res = await fetch(`https://${network}-api.subsquare.io/gov2/referendums`);
 		return await res.json();
 	} catch (error) {
 		return [];

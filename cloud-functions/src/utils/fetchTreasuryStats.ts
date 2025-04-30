@@ -106,7 +106,7 @@ export async function fetchTreasuryStats(): Promise<ITreasuryStats | null> {
 				if (!id) return new BN(0);
 
 				try {
-					const response = await axios.get(`https://polkadot.subsquare.io/api/treasury/bounties/${id}`);
+					const response = await axios.get(`https://polkadot-api.subsquare.io/treasury/bounties/${id}`);
 					const result = response.data;
 					const address = result?.onchainData?.address;
 

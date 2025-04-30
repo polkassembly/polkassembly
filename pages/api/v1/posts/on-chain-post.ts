@@ -51,7 +51,7 @@ export const isDataExist = (data: any) => {
 
 export const fetchSubsquare = async (network: string, id: string | number) => {
 	try {
-		const res = await fetch(`https://${network}.subsquare.io/api/gov2/referendums/${id}`);
+		const res = await fetch(`https://${network}-api.subsquare.io/gov2/referendums/${id}`);
 		return await res.json();
 	} catch (error) {
 		return [];

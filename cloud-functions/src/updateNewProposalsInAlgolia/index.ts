@@ -21,13 +21,13 @@ interface ProposalPayload {
 	title?: string;
 	parsed_content?: string;
 	tags?: string[];
-    content?: string;
+	content?: string;
 }
 
 async function fetchSubsquareData(network: string, proposalIndex: string) {
 	try {
 		logger.info(`Fetching Subsquare data for network: ${network}, proposal: ${proposalIndex}`);
-		const response = await fetch(`https://${network}.subsquare.io/api/gov2/referendums/${proposalIndex}`);
+		const response = await fetch(`https://${network}-api.subsquare.io/gov2/referendums/${proposalIndex}`);
 		const data = await response.json();
 
 		if (!data?.title && !data?.content) {
@@ -51,7 +51,7 @@ async function fetchSubsquareData(network: string, proposalIndex: string) {
 	}
 }
 
-async function updateFirestoreProposal(network: string, proposalIndex: string, data: {title: string, content: string, proposer: string}) {
+async function updateFirestoreProposal(network: string, proposalIndex: string, data: { title: string, content: string, proposer: string }) {
 	try {
 		const docRef = firestoreDB
 			.collection('networks')
@@ -111,7 +111,7 @@ async function processProposal(network: string, proposal: any) {
 		const payload: ProposalPayload = {
 			objectID: `${network}_${post_type}_${proposal.index}`,
 			network,
-			created_at: dayjs(proposal?.createdAt?.toDate ? proposal?.createdAt?.toDate?.() : proposal?.createdAt || new Date() ).unix(),
+			created_at: dayjs(proposal?.createdAt?.toDate ? proposal?.createdAt?.toDate?.() : proposal?.createdAt || new Date()).unix(),
 			post_type: post_type,
 			id: proposal.index,
 			proposer_address: proposal.proposer,

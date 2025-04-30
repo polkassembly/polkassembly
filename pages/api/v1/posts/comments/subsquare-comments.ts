@@ -11,17 +11,19 @@ import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 
+const getSubsquareBaseUrl = (network: string) => `https://${network}-api.subsquare.io`;
+
 const urlMapper: any = {
-	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
-	[ProposalType.CHILD_BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/child-bounties/${id}/comments`,
-	[ProposalType.COUNCIL_MOTIONS]: (id: any, network: string) => `https://${network}.subsquare.io/api/motions/${id}/comments`,
-	[ProposalType.DEMOCRACY_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/democracy/proposals/${id}/comments`,
-	[ProposalType.FELLOWSHIP_REFERENDUMS]: (id: any, network: string) => `https://${network}.subsquare.io/api/fellowship/referenda/${id}/comments`,
-	[ProposalType.REFERENDUMS]: (id: any, network: string) => `https://${network}.subsquare.io/api/democracy/referendums/${id}/comments`,
-	[ProposalType.REFERENDUM_V2]: (id: any, network: string) => `https://${network}.subsquare.io/api/gov2/referendums/${id}/comments`,
-	[ProposalType.TECH_COMMITTEE_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/tech-comm/motions/${id}/comments`,
-	[ProposalType.TIPS]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/tips/${id}/comments`,
-	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}/comments`
+	[ProposalType.BOUNTIES]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/treasury/bounties/${id}/comments`,
+	[ProposalType.CHILD_BOUNTIES]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/treasury/child-bounties/${id}/comments`,
+	[ProposalType.COUNCIL_MOTIONS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/motions/${id}/comments`,
+	[ProposalType.DEMOCRACY_PROPOSALS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/democracy/proposals/${id}/comments`,
+	[ProposalType.FELLOWSHIP_REFERENDUMS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/fellowship/referenda/${id}/comments`,
+	[ProposalType.REFERENDUMS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/democracy/referendums/${id}/comments`,
+	[ProposalType.REFERENDUM_V2]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/gov2/referendums/${id}/comments`,
+	[ProposalType.TECH_COMMITTEE_PROPOSALS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/tech-comm/motions/${id}/comments`,
+	[ProposalType.TIPS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/treasury/tips/${id}/comments`,
+	[ProposalType.TREASURY_PROPOSALS]: (id: any, network: string) => `${getSubsquareBaseUrl(network)}/treasury/proposals/${id}/comments`
 };
 
 const getTrimmedUsername = (username?: string) => {

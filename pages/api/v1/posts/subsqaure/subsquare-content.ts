@@ -8,17 +8,20 @@ import { isValidNetwork } from '~src/api-utils';
 import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 import { ProposalType } from '~src/global/proposalType';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+
+const getSubsquareBaseUrl = (network: string) => `https://${network}-api.subsquare.io`;
+
 const urlMapper = {
-	[ProposalType.BOUNTIES]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}`,
-	[ProposalType.CHILD_BOUNTIES]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/treasury/child-bounties/${id}`,
-	[ProposalType.COUNCIL_MOTIONS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/motions/${id}`,
-	[ProposalType.DEMOCRACY_PROPOSALS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/democracy/proposals/${id}`,
-	[ProposalType.FELLOWSHIP_REFERENDUMS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/fellowship/referenda/${id}`,
-	[ProposalType.REFERENDUMS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/democracy/referendums/${id}`,
-	[ProposalType.REFERENDUM_V2]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/gov2/referendums/${id}`,
-	[ProposalType.TECH_COMMITTEE_PROPOSALS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/tech-comm/motions/${id}`,
-	[ProposalType.TIPS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/treasury/tips/${id}`,
-	[ProposalType.TREASURY_PROPOSALS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}`
+	[ProposalType.BOUNTIES]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/treasury/bounties/${id}`,
+	[ProposalType.CHILD_BOUNTIES]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/treasury/child-bounties/${id}`,
+	[ProposalType.COUNCIL_MOTIONS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/motions/${id}`,
+	[ProposalType.DEMOCRACY_PROPOSALS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/democracy/proposals/${id}`,
+	[ProposalType.FELLOWSHIP_REFERENDUMS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/fellowship/referenda/${id}`,
+	[ProposalType.REFERENDUMS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/democracy/referendums/${id}`,
+	[ProposalType.REFERENDUM_V2]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/gov2/referendums/${id}`,
+	[ProposalType.TECH_COMMITTEE_PROPOSALS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/tech-comm/motions/${id}`,
+	[ProposalType.TIPS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/treasury/tips/${id}`,
+	[ProposalType.TREASURY_PROPOSALS]: (id: number | string, network: string) => `${getSubsquareBaseUrl(network)}/treasury/proposals/${id}`
 };
 
 export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string, id: number | string) => {

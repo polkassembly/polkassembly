@@ -242,6 +242,13 @@ const TreasuryDetailsModal = ({ visible, onClose, unit, currentTokenPrice }: Tre
 												>
 													Address #2 <RedirectingIcon />
 												</Link>
+												<Link
+													href={'https://hydration.subscan.io/account/7KATdGaecnKi4zDAMWQxpB2s59N2RE1JgLuugCjTsRZHgP24'}
+													className='flex flex-shrink-0  items-center gap-1 font-medium'
+													target='_blank'
+												>
+													Address #3 <RedirectingIcon />
+												</Link>
 											</div>
 										</div>
 									</div>

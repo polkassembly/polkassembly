@@ -86,7 +86,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 		const votesByDelegation = allVotes?.data.reduce(
 			(acc: { [key: string]: { delegated: BN; solo: BN } }, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const voteBalance = new BN(vote.balance);
+				const voteBalance = new BN(vote.balance || '0');
 				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
 				if (!acc[conviction]) {
 					acc[conviction] = {
@@ -104,7 +104,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 			(acc, vote) => {
 				const proposalCreatedAt = new Date(createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
-				const voteBalance = new BN(vote.balance);
+				const voteBalance = new BN(vote.balance) || '0';
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
 				for (let i = 0; i <= 28; i++) {

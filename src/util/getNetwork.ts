@@ -41,6 +41,8 @@ export default function getNetwork(): Network {
 		network = 'moonriver';
 	} else if (network == 'moonbase-test') {
 		network = 'moonbase';
+	} else if (network == 'polkadot-old') {
+		network = 'polkadot';
 	}
 
 	if (!possibleNetworks.includes(network)) {

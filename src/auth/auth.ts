@@ -108,8 +108,8 @@ class AuthService {
 		}
 	}
 
-	async createUser(email: string, newPassword: string, username: string, web3signup: boolean, network: string, custom_username: boolean = false): Promise<User> {
-		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
+	async createUser(email: string, newPassword: string, username: string, web3signup: boolean, network: string, custom_username: boolean = false, salt?: string): Promise<User> {
+		const { password, salt: hashedSalt } = await this.getSaltAndHashedPassword(newPassword);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;
 
@@ -123,7 +123,7 @@ class AuthService {
 			password: password,
 			profile: PROFILE_DETAILS_DEFAULTS,
 			profile_score: 0,
-			salt: salt,
+			salt: salt || hashedSalt,
 			username: username,
 			web3_signup: web3signup
 		};

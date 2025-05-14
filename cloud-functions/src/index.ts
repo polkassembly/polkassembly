@@ -143,7 +143,7 @@ exports.onUserWritten = functions
 			});
 
 		// update user in v2firebase
-		const url = 'https://api.polkassembly.io/api/v2/webhook/user_created';
+		const url = 'https://polkadot.polkassembly.io/api/v2/webhook/user_created';
 
 		const user: IUser = {
 			id: Number(userId),

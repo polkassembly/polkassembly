@@ -108,7 +108,7 @@ class AuthService {
 		}
 	}
 
-	private async createUser(email: string, newPassword: string, username: string, web3signup: boolean, network: string, custom_username: boolean = false): Promise<User> {
+	async createUser(email: string, newPassword: string, username: string, web3signup: boolean, network: string, custom_username: boolean = false): Promise<User> {
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);
 
 		const newUserId = (await this.getLatestUserCount()) + 1;

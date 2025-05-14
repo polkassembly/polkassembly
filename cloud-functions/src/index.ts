@@ -23,6 +23,18 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
     trackNumber
   }
 }`;
+
+interface IUser {
+	id: number;
+	username: string;
+	createdAt: Date;
+	email: string;
+	address: string | undefined;
+	salt: string;
+	isWeb3Signup: boolean;
+	password: string;
+}
+
 exports.onPostWritten = functions
 	.region('europe-west1')
 	.firestore.document('networks/{network}/post_types/{postType}/posts/{postId}')
@@ -129,6 +141,29 @@ exports.onUserWritten = functions
 			.catch((error) => {
 				logger.error('Error indexing user:', { userId, error });
 			});
+
+		// update user in v2firebase
+		const url = 'https://api.polkassembly.io/api/v2/webhook/user_created';
+
+		const user: IUser = {
+			id: Number(userId),
+			username: userRecord.username,
+			createdAt: (userData?.created_at?.toDate?.() || new Date()),
+			email: userData?.email || '',
+			address: userData?.address || '',
+			salt: userData?.salt || '',
+			isWeb3Signup: userData?.web3_signup || false,
+			password: userData?.password || ''
+		};
+
+		await fetch(url, {
+			method: 'POST',
+			body: JSON.stringify(user),
+			headers: {
+				'Content-Type': 'application/json',
+				'x-tools-passphrase': process.env.TOOLS_PASSPHRASE || ''
+			}
+		});
 	});
 
 exports.onAddressWritten = functions

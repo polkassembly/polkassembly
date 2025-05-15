@@ -120,7 +120,7 @@ class AuthService {
 			email,
 			email_verified: false,
 			id: newUserId,
-			password: password,
+			password: salt ? newPassword : password,
 			profile: PROFILE_DETAILS_DEFAULTS,
 			profile_score: 0,
 			salt: salt || hashedSalt,

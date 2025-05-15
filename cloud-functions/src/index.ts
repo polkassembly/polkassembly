@@ -11,6 +11,7 @@ import cors = require('cors');
 import fetchTokenUSDPrice from './utils/fetchTokenUSDPrice';
 import { fetchTreasuryStats } from './utils/fetchTreasuryStats';
 import updateNewProposalsInAlgolia from './updateNewProposalsInAlgolia';
+import axios from 'axios';
 const corsHandler = cors({ origin: true });
 
 admin.initializeApp();
@@ -29,7 +30,7 @@ interface IUser {
 	username: string;
 	createdAt: Date;
 	email: string;
-	address: string | undefined;
+	address?: string;
 	salt: string;
 	isWeb3Signup: boolean;
 	password: string;
@@ -142,6 +143,12 @@ exports.onUserWritten = functions
 				logger.error('Error indexing user:', { userId, error });
 			});
 
+		if (change.before.exists) {
+			return;
+		}
+
+		if (!userData) return;
+
 		// update user in v2firebase
 		const url = 'https://polkadot.polkassembly.io/api/v2/webhook/user_created';
 
@@ -149,16 +156,14 @@ exports.onUserWritten = functions
 			id: Number(userId),
 			username: userRecord.username,
 			createdAt: (userData?.created_at?.toDate?.() || new Date()),
-			email: userData?.email || '',
-			address: userData?.address || '',
-			salt: userData?.salt || '',
-			isWeb3Signup: userData?.web3_signup || false,
-			password: userData?.password || ''
+			email: userData.email || '',
+			address: userData.address,
+			salt: userData.salt,
+			isWeb3Signup: Boolean(userData.web3_signup),
+			password: userData.password
 		};
 
-		await fetch(url, {
-			method: 'POST',
-			body: JSON.stringify(user),
+		await axios.post(url, user, {
 			headers: {
 				'Content-Type': 'application/json',
 				'x-tools-passphrase': process.env.TOOLS_PASSPHRASE || ''

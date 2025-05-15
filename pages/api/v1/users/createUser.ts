@@ -26,9 +26,9 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	if (toolsPassphrase !== process.env.TOOLS_PASSPHRASE) return res.status(401).json({ message: 'Unauthorized' });
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { email, password, username, web3signup, custom_username, salt } = req.body as Props;
+	const { email = '', password, username, web3signup = false, custom_username = false, salt } = req.body as Props;
 
-	if (!email || !password || !username || !salt) return res.status(400).json({ message: 'Invalid params' });
+	if (!password || !username || !salt) return res.status(400).json({ message: 'Invalid params' });
 
 	await authServiceInstance.createUser(email, password, username, web3signup, network, custom_username, salt);
 

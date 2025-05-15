@@ -11,6 +11,7 @@ import cors = require('cors');
 import fetchTokenUSDPrice from './utils/fetchTokenUSDPrice';
 import { fetchTreasuryStats } from './utils/fetchTreasuryStats';
 import updateNewProposalsInAlgolia from './updateNewProposalsInAlgolia';
+import axios from 'axios';
 const corsHandler = cors({ origin: true });
 
 admin.initializeApp();
@@ -23,6 +24,18 @@ const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) 
     trackNumber
   }
 }`;
+
+interface IUser {
+	id: number;
+	username: string;
+	createdAt: Date;
+	email: string;
+	address?: string;
+	salt: string;
+	isWeb3Signup: boolean;
+	password: string;
+}
+
 exports.onPostWritten = functions
 	.region('europe-west1')
 	.firestore.document('networks/{network}/post_types/{postType}/posts/{postId}')
@@ -129,6 +142,33 @@ exports.onUserWritten = functions
 			.catch((error) => {
 				logger.error('Error indexing user:', { userId, error });
 			});
+
+		if (change.before.exists) {
+			return;
+		}
+
+		if (!userData) return;
+
+		// update user in v2firebase
+		const url = 'https://polkadot.polkassembly.io/api/v2/webhook/user_created';
+
+		const user: IUser = {
+			id: Number(userId),
+			username: userRecord.username,
+			createdAt: (userData?.created_at?.toDate?.() || new Date()),
+			email: userData.email || '',
+			address: userData.address,
+			salt: userData.salt,
+			isWeb3Signup: Boolean(userData.web3_signup),
+			password: userData.password
+		};
+
+		await axios.post(url, user, {
+			headers: {
+				'Content-Type': 'application/json',
+				'x-tools-passphrase': process.env.TOOLS_PASSPHRASE || ''
+			}
+		});
 	});
 
 exports.onAddressWritten = functions

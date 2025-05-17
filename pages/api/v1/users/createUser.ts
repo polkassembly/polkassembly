@@ -9,13 +9,14 @@ import { MessageType } from '~src/auth/types';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import authServiceInstance from '~src/auth/auth';
 
-interface Props {
+interface IV1User {
+	id: number;
+	custom_username: boolean;
 	email: string;
 	password: string;
-	username: string;
-	web3signup: boolean;
-	custom_username: boolean;
 	salt: string;
+	username: string;
+	web3_signup: boolean;
 }
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
@@ -26,11 +27,11 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	if (toolsPassphrase !== process.env.TOOLS_PASSPHRASE) return res.status(401).json({ message: 'Unauthorized' });
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { email = '', password, username, web3signup = false, custom_username = false, salt } = req.body as Props;
+	const { id, custom_username = false, email = '', password = '', salt = '', username = '', web3_signup = false } = req.body as IV1User;
 
-	if (!password || !username || !salt) return res.status(400).json({ message: 'Invalid params' });
+	if (!id || !password || !username || !salt) return res.status(400).json({ message: 'Invalid params' });
 
-	await authServiceInstance.createUser(email, password, username, web3signup, network, custom_username, salt);
+	await authServiceInstance.createUser(email, password, username, web3_signup, network, custom_username, salt, id);
 
 	return res.status(200).json({ message: 'User created successfully' });
 };

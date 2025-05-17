@@ -108,12 +108,20 @@ class AuthService {
 		}
 	}
 
-	async createUser(email: string, newPassword: string, username: string, web3signup: boolean, network: string, custom_username: boolean = false, salt?: string): Promise<User> {
+	async createUser(
+		email: string,
+		newPassword: string,
+		username: string,
+		web3signup: boolean,
+		network: string,
+		custom_username: boolean = false,
+		salt?: string,
+		id?: number
+	): Promise<User> {
 		const { password, salt: hashedSalt } = await this.getSaltAndHashedPassword(newPassword);
 
-		const newUserId = (await this.getLatestUserCount()) + 1;
+		const newUserId = id ?? (await this.getLatestUserCount()) + 1;
 
-		const userId = String(newUserId);
 		const newUser: User = {
 			created_at: new Date(),
 			custom_username: custom_username,
@@ -127,7 +135,8 @@ class AuthService {
 			username: username,
 			web3_signup: web3signup
 		};
-		const newUserRef = firebaseAdmin.firestore().collection('users').doc(userId);
+
+		const newUserRef = firebaseAdmin.firestore().collection('users').doc(String(newUserId));
 		await newUserRef.set(newUser).catch((err) => {
 			console.log('error in createUser', err);
 			throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER, 500);
@@ -138,7 +147,7 @@ class AuthService {
 			post_subscriptions: {},
 			user_id: newUserId
 		};
-		const newUserPreferenceRef = networkDocRef(network).collection('user_preferences').doc(userId);
+		const newUserPreferenceRef = networkDocRef(network).collection('user_preferences').doc(String(newUserId));
 		await newUserPreferenceRef.set(newUserPreference).catch((err) => {
 			console.log('error in creating user preference', err);
 			throw apiErrorWithStatusCode(messages.ERROR_CREATING_USER_PREFERENCE, 500);

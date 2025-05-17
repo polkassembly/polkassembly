@@ -156,7 +156,7 @@ class AuthService {
 		return newUser;
 	}
 
-	private async createAddress(
+	async createAddress(
 		network: Network,
 		address: string,
 		defaultAddress: boolean,

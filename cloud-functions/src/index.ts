@@ -36,6 +36,14 @@ interface IUser {
 	password: string;
 }
 
+interface IAddress {
+	address: string;
+	default: boolean;
+	network: string;
+	userId: number;
+	wallet: string;
+}
+
 exports.onPostWritten = functions
 	.region('europe-west1')
 	.firestore.document('networks/{network}/post_types/{postType}/posts/{postId}')
@@ -212,6 +220,30 @@ exports.onAddressWritten = functions
 			.catch((error) => {
 				logger.error('Error indexing address:', { address, error });
 			});
+
+		if (change.before.exists) {
+			return;
+		}
+
+		if (!addressData) return;
+
+		// update user in v2firebase
+		const url = 'https://polkadot.polkassembly.io/api/v2/webhook/address_created';
+
+		const userAddress: IAddress = {
+			address: addressData.address,
+			default: addressData.default,
+			network: addressData.network,
+			userId: addressData.user_id,
+			wallet: addressData.wallet
+		};
+
+		await axios.post(url, userAddress, {
+			headers: {
+				'Content-Type': 'application/json',
+				'x-tools-passphrase': process.env.TOOLS_PASSPHRASE || ''
+			}
+		});
 	});
 
 exports.onCommentWritten = functions

@@ -4,7 +4,7 @@
 
 import { Divider } from 'antd';
 import BN from 'bn.js';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, v2SupportedNetworks } from '~src/global/networkConstants';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -298,21 +298,22 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className='flex justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-4'>
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
-						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
+						{!v2SupportedNetworks.includes(network) && network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div className=''>
 								<AmbassadorActionButtons />
 							</div>
 						)}
-						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
-							<ProposalActionButtons
-								isCreateProposal={
-									trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin' || trackName === 'WishForChange' || trackName === 'FastGeneralAdmin'
-								}
-								isCancelProposal={trackName === 'ReferendumCanceller'}
-								isKillProposal={trackName === 'ReferendumKiller'}
-							/>
-						)}
-						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
+						{!v2SupportedNetworks.includes(network) &&
+							['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
+								<ProposalActionButtons
+									isCreateProposal={
+										trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin' || trackName === 'WishForChange' || trackName === 'FastGeneralAdmin'
+									}
+									isCancelProposal={trackName === 'ReferendumCanceller'}
+									isKillProposal={trackName === 'ReferendumKiller'}
+								/>
+							)}
+						{trackMetaData?.group === 'Treasury' && !v2SupportedNetworks.includes(network) && treasuryProposalCreationAllowedNetwork.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
 								variant='primary'
@@ -328,7 +329,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</div>
 				</div>
 			</article>
-			{delegatedTo && (
+			{!!delegatedTo && (
 				<Alert
 					message={
 						<span className='flex items-center text-[13px]'>
@@ -496,12 +497,12 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
 					<div className='flex flex-wrap gap-2'>
 						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
-						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
+						{!v2SupportedNetworks.includes(network) && network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<AmbassadorActionButtons />
 							</div>
 						)}
-						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
+						{trackMetaData?.group === 'Treasury' && !v2SupportedNetworks.includes(network) && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
 								variant='primary'

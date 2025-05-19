@@ -37,6 +37,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import MarkdownEditor from '../Editor/MarkdownEditor';
 import { MDXEditorMethods } from '@mdxeditor/editor';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -90,6 +91,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			}
 
 			accounts.forEach((account) => {
+				if (v2SupportedNetworks.includes(network)) return;
 				if (getEncodedAddress(account.address, network) === address) {
 					setCanEdit(true);
 				}

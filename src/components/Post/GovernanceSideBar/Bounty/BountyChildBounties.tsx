@@ -22,6 +22,7 @@ import getBountiesCustomStatuses from '~src/util/getBountiesCustomStatuses';
 import { EBountiesStatuses } from '~src/components/Bounties/BountiesListing/types/types';
 import { isBountiesDashboardSupportedNetwork } from '~src/components/Bounties/utils/isBountiesDashboardSupportedNetwork';
 import { usePostDataContext } from '~src/context';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -113,7 +114,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 					  )
 					: !loading && <PostEmptyState />}
 
-				{canCreateChildBounty() && <CreateChildBountyButton className='mt-4' />}
+				{canCreateChildBounty() && !v2SupportedNetworks.includes(network) && <CreateChildBountyButton className='mt-4' />}
 				<PaginationContainer className='mt-4 flex items-center justify-end'>
 					<Pagination
 						theme={theme}

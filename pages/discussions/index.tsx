@@ -25,7 +25,7 @@ import { useTheme } from 'next-themes';
 import OffChainTabs from '~src/components/Listing/OffChain/OffChainTabs';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
-
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
 	error?: string;
@@ -120,12 +120,14 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					<DiscussionsIcon className='text-lg text-lightBlue dark:text-icon-dark-inactive xs:mr-3 sm:mr-2 sm:mt-[2px]' />
 					Discussions({count})
 				</div>
-				<button
-					onClick={handleClick}
-					className='hidden cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none bg-pink_primary  p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none xs:mt-3 sm:-mt-1 sm:flex sm:h-[40px] sm:w-[120px]'
-				>
-					+ Add Post
-				</button>
+				{!v2SupportedNetworks.includes(network) && (
+					<button
+						onClick={handleClick}
+						className='hidden cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none bg-pink_primary  p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none xs:mt-3 sm:-mt-1 sm:flex sm:h-[40px] sm:w-[120px]'
+					>
+						+ Add Post
+					</button>
+				)}
 			</div>
 
 			{/* Intro and Create Post Button */}
@@ -135,12 +137,14 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				</p>
 			</div>
 			<div className={'fixed bottom-0 z-50 -ml-3 w-full bg-white px-3 py-5 dark:bg-section-dark-overlay sm:hidden'}>
-				<button
-					onClick={handleClick}
-					className='flex h-10 w-full cursor-pointer items-center justify-center rounded-[4px] border-none bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none '
-				>
-					+ Add Post
-				</button>
+				{!v2SupportedNetworks.includes(network) && (
+					<button
+						onClick={handleClick}
+						className='flex h-10 w-full cursor-pointer items-center justify-center rounded-[4px] border-none bg-pink_primary p-3 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none '
+					>
+						+ Add Post
+					</button>
+				)}
 			</div>
 			{isForumSupportedNetwork(network) ? (
 				<OffChainTabs

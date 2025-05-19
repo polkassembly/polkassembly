@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ISocial } from '~src/auth/types';
 import ImageComponent from 'src/components/ImageComponent';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, v2SupportedNetworks } from '~src/global/networkConstants';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
@@ -233,7 +233,7 @@ const QuickView = ({
 					/>
 				</div>
 			</div>
-			{loginUserId != userId && !!loginUserId && (
+			{loginUserId != userId && !!loginUserId && !v2SupportedNetworks.includes(network) && (
 				<div className='mt-2 flex justify-between gap-2'>
 					{!TippingUnavailableNetworks.includes(network) && (
 						<Tooltip

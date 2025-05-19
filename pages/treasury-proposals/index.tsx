@@ -30,6 +30,7 @@ import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverview/index'), {
 	ssr: false
@@ -107,7 +108,7 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 					<DiamondIcon className='mr-2 justify-self-center' />
 					Treasury Proposals ({count})
 				</h1>
-				{isCreationOfTreasuryProposalSupported(network) && (
+				{!v2SupportedNetworks.includes(network) && isCreationOfTreasuryProposalSupported(network) && (
 					<OpenGovTreasuryProposal
 						isUsedInReferedumComponent
 						className='flex h-10 cursor-pointer items-center rounded-md bg-pink_primary px-3'

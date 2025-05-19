@@ -23,6 +23,7 @@ import { IChildBounty } from '~src/types';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const CreateChildBountyButton = dynamic(() => import('~src/components/ChildBountyCreation/CreateChildBountyButton'), {
 	loading: () => <SkeletonButton active />,
@@ -240,9 +241,11 @@ const BountiesCuratorInfo: FC<{ handleClick: (num: number) => void }> = ({ handl
 													)}
 												</div>
 											)}
-											<div className='mx-3 mt-4 rounded-lg py-3 text-center'>
-												<CreateChildBountyButton />
-											</div>
+											{!v2SupportedNetworks.includes(network) && (
+												<div className='mx-3 mt-4 rounded-lg py-3 text-center'>
+													<CreateChildBountyButton />
+												</div>
+											)}
 										</div>
 										<div className='mb-5 mt-3 flex justify-end'>
 											{totalBountiesCount > BOUNTIES_LISTING_LIMIT && (

@@ -14,7 +14,7 @@ import EditProfileModal from './EditProfile';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import { EditIcon } from '~src/ui-components/CustomIcons';
-import { chainProperties } from '~src/global/networkConstants';
+import { chainProperties, v2SupportedNetworks } from '~src/global/networkConstants';
 
 const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), {
 	ssr: false
@@ -77,7 +77,7 @@ const ProfileOverview = ({
 							<span
 								className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
 								onClick={() => {
-									if (username !== userProfile.username) return;
+									if (username !== userProfile.username || v2SupportedNetworks.includes(network)) return;
 									setOpenEditModal(true);
 								}}
 							>
@@ -148,7 +148,7 @@ const ProfileOverview = ({
 										/>
 										About
 									</span>
-									{username === userProfile?.username && (
+									{username === userProfile?.username && !v2SupportedNetworks.includes(network) && (
 										<span
 											className='flex cursor-pointer items-center'
 											onClick={() => {

@@ -62,6 +62,7 @@ import classNames from 'classnames';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import { MDXEditorMethods } from '@mdxeditor/editor';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -489,6 +490,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	};
 
 	const canEditComment = useCallback(async () => {
+		if (v2SupportedNetworks.includes(network)) return;
 		if (comment.isDeleted) {
 			setIsEditable(false);
 			return;
@@ -507,7 +509,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			}
 		}
 		return setIsEditable(false);
-	}, [addresses, id, loginAddress, proposer, userId, comment.isDeleted]);
+	}, [addresses, id, loginAddress, proposer, userId, comment.isDeleted, network]);
 
 	const deleteComment = async () => {
 		const oldComments = comments;
@@ -600,7 +602,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 					)
 			  }
 			: null,
-		isEditable
+		isEditable && !v2SupportedNetworks.includes(network)
 			? {
 					key: 4,
 					label: (
@@ -771,7 +773,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								comment_reactions={comment.comment_reactions}
 								importedReactions={props.isSubsquareUser}
 							/>
-							{id && (
+							{id && !v2SupportedNetworks.includes(network) && (
 								<Button
 									disabled={props.disableEdit || !isCommentAllowed}
 									className={classNames(

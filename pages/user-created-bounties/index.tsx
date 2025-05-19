@@ -22,6 +22,7 @@ import { EUserCreatedBountiesStatuses } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import BountiesTabItems from '~src/components/UserCreatedBounties/BountiesListing/BountiesTabItems';
 import Tooltip from '~src/basic-components/Tooltip';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface IUserBountiesListingProps {
 	network: string;
@@ -129,9 +130,11 @@ const UserBountiesListing: FC<IUserBountiesListingProps> = (props) => {
 							/>
 						</Tooltip>
 					</div>
-					<div className='flex gap-2'>
-						<CreateBountyBtn className='hidden md:block' />
-					</div>
+					{!v2SupportedNetworks.includes(network) && (
+						<div className='flex gap-2'>
+							<CreateBountyBtn className='hidden md:block' />
+						</div>
+					)}
 				</div>
 
 				<BountiesTabItems bounties={data?.bounties} />

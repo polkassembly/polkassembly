@@ -40,7 +40,7 @@ import { ProposalType } from '~src/global/proposalType';
 import getMarkdownContent from '~src/api-utils/getMarkdownContent';
 import MarkdownEditor from '~src/components/Editor/MarkdownEditor';
 import { MDXEditorMethods } from '@mdxeditor/editor';
-
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 interface Props {
 	userId: number;
 	className?: string;
@@ -156,6 +156,7 @@ const EditableReplyContent = ({
 	};
 
 	const canEditComment = useCallback(async () => {
+		if (v2SupportedNetworks.includes(network)) return;
 		if (id === userId) {
 			return setIsEditable(true);
 		}
@@ -170,7 +171,7 @@ const EditableReplyContent = ({
 			}
 		}
 		return setIsEditable(false);
-	}, [addresses, id, loginAddress, proposer, userId]);
+	}, [addresses, id, loginAddress, proposer, userId, network]);
 
 	const handleSave = async () => {
 		const newContent = editableReplyContent;
@@ -584,7 +585,7 @@ const EditableReplyContent = ({
 					)
 			  }
 			: null,
-		id === userId
+		id === userId && !v2SupportedNetworks.includes(network)
 			? {
 					key: 2,
 					label: (
@@ -694,7 +695,7 @@ const EditableReplyContent = ({
 								isReactionOnReply={isReactionOnReply}
 							/>
 							<div className='item-center flex flex-wrap gap-3'>
-								{id ? (
+								{id && !v2SupportedNetworks.includes(network) ? (
 									reply.reply_source === 'subsquare' ? (
 										<Tooltip
 											title='Reply are disabled for imported comments.'

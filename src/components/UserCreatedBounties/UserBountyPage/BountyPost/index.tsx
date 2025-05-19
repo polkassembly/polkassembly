@@ -10,7 +10,7 @@ import { IUserCreatedBounty } from '~src/types';
 import Markdown from '~src/ui-components/Markdown';
 import NameLabel from '~src/ui-components/NameLabel';
 import StatusTag from '~src/ui-components/StatusTag';
-import { chainProperties } from '~src/global/networkConstants';
+import { chainProperties, v2SupportedNetworks } from '~src/global/networkConstants';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
 import TagsModal from '~src/ui-components/TagsModal';
@@ -143,12 +143,14 @@ const BountyPost = ({ post }: { post: IUserCreatedBounty }) => {
 					</button>
 				)}
 			</div>
-			<CreateBountyModal
-				openCreateBountyModal={openCreateBountyModal}
-				setOpenCreateBountyModal={setOpenCreateBountyModal}
-				isUsedForEdit={true}
-				postInfo={post}
-			/>
+			{!v2SupportedNetworks.includes(network) && (
+				<CreateBountyModal
+					openCreateBountyModal={openCreateBountyModal}
+					setOpenCreateBountyModal={setOpenCreateBountyModal}
+					isUsedForEdit={true}
+					postInfo={post}
+				/>
+			)}
 		</section>
 	);
 };

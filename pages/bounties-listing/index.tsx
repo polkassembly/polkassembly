@@ -21,6 +21,7 @@ import { BOUNTIES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Pagination } from '~src/ui-components/Pagination';
 import BountiesTabItems from '~src/components/Bounties/BountiesListing/BountiesTabItems';
 import CuratorDashboardButton from '~src/components/CuratorDashboard/CuratorDashboardButton';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface IBountiesListingProps {
 	data?: {
@@ -104,10 +105,12 @@ const BountiesListing: FC<IBountiesListingProps> = (props) => {
 					<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high dark:text-lightWhite`}>
 						On-chain Bounties
 					</span>
-					<div className='flex gap-2'>
-						<BountyProposalActionButton className='hidden md:block' />
-						<CuratorDashboardButton />
-					</div>
+					{!v2SupportedNetworks.includes(network) && (
+						<div className='flex gap-2'>
+							<BountyProposalActionButton className='hidden md:block' />
+							<CuratorDashboardButton />
+						</div>
+					)}
 				</div>
 
 				<BountiesTabItems bounties={bounties} />

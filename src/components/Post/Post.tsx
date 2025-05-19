@@ -44,7 +44,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
 import { useRouter } from 'next/router';
 import PostAISummary from './PostAISummary';
-
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -108,6 +108,7 @@ function formatDuration(duration: any) {
 }
 
 const Post: FC<IPostProps> = (props) => {
+	const { network } = useNetworkSelector();
 	const { className, post, trackName, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
@@ -115,7 +116,6 @@ const Post: FC<IPostProps> = (props) => {
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 	const [canEdit, setCanEdit] = useState(false);
-	const { network } = useNetworkSelector();
 	const [duration, setDuration] = useState(dayjs.duration(0));
 	const [totalAuditCount, setTotalAuditCount] = useState<number>(0);
 	const [totalVideoCount, setTotalVideoCount] = useState<number>(0);
@@ -149,12 +149,14 @@ const Post: FC<IPostProps> = (props) => {
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
+		const network = getNetwork();
+
+		if (v2SupportedNetworks.includes(network)) return;
 
 		setCanEdit(post.user_id === id);
 		const substrateAddress = getSubstrateAddress(proposer);
 
 		let isProposer = proposer && addresses?.includes(substrateAddress || proposer);
-		const network = getNetwork();
 		if (network == 'moonbeam' && proposalType == ProposalType.DEMOCRACY_PROPOSALS && post_id == 23) {
 			isProposer = addresses?.includes('0xbb1e1722513a8fa80f7593617bb0113b1258b7f1');
 		}

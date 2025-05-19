@@ -23,6 +23,7 @@ import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -150,7 +151,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 					Linked Addresses
 				</span>
 
-				{userProfile?.user_id === id && (
+				{userProfile?.user_id === id && !v2SupportedNetworks.includes(network) && (
 					<Popover
 						destroyTooltipOnHide
 						zIndex={1056}

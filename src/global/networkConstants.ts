@@ -2083,4 +2083,4 @@ export const addressPrefix: Record<string, number> = {
 	curio: 777
 };
 
-export const revampedNetworks = [network.WESTEND];
+export const v2SupportedNetworks = [network.POLKADOT, network.WESTEND];

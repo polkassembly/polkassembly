@@ -28,6 +28,7 @@ import Sidebar from './Sidebar';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { GlobalActions } from '~src/redux/global';
+import MultisigProxyInitializer from '~src/services/multisig/Initializer/MultisigProxyInitializer';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -183,6 +184,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	return (
 		<div>
+			<MultisigProxyInitializer />
 			<Layout className={`${className} relative`}>
 				<div ref={headerRef}>
 					<NavHeader

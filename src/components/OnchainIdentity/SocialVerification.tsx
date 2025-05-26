@@ -325,11 +325,19 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				window.location.href = data?.url;
 			}
 		} else if (error) {
+			// Handle specific error cases
+			let errorMessage = error;
+			if (error.includes('temporarily unavailable')) {
+				errorMessage = 'Twitter service is temporarily unavailable. Please try again in a few minutes.';
+			} else if (error.includes('API credentials')) {
+				errorMessage = 'There was an issue with the Twitter verification service. Please contact support.';
+			}
 			queueNotification({
 				header: 'Error!',
-				message: error,
+				message: errorMessage,
 				status: NotificationStatus.ERROR
 			});
+			setTwitterVerificationStart(false);
 			console.log(error);
 		}
 		startLoading({ isLoading: false, message: '' });

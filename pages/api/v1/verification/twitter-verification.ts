@@ -21,7 +21,15 @@ async function getOAuthRequestToken(network: string, isUserCreatedBounty: boolea
 	const tokenDetails = await new Promise((resolve, reject) => {
 		oauthConsumer.getOAuthRequestToken((error, oauthRequestToken, oauthRequestTokenSecret, results) => {
 			if (error) {
-				reject(new Error(error.data || 'Oops! Something went wrong while getting the OAuth request token.'));
+				console.log('error', error);
+				// Handle specific error cases
+				if (error.statusCode === 503) {
+					reject(new Error('Twitter service is temporarily unavailable. Please try again later.'));
+				} else if (error.statusCode === 401) {
+					reject(new Error('Twitter API credentials are invalid. Please contact support.'));
+				} else {
+					reject(new Error(error.data || 'Oops! Something went wrong while getting the OAuth request token.'));
+				}
 			} else {
 				resolve({ oauthRequestToken, oauthRequestTokenSecret, results });
 			}
@@ -64,7 +72,14 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 		const authorizationUrl = `https://api.twitter.com/oauth/authenticate?oauth_token=${oauthRequestToken}`;
 		return res.status(200).json({ url: authorizationUrl });
 	} catch (err) {
-		return res.status(500).json({ message: err || 'Internal server error' });
+		console.error('Twitter verification error:', err);
+		// Return appropriate status code based on error type
+		if (err.message?.includes('temporarily unavailable')) {
+			return res.status(503).json({ message: err.message });
+		} else if (err.message?.includes('API credentials')) {
+			return res.status(500).json({ message: err.message });
+		}
+		return res.status(500).json({ message: err.message || 'Internal server error' });
 	}
 };
 export default withErrorHandling(handler);

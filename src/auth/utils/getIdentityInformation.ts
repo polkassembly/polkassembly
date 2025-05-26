@@ -57,7 +57,7 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 
 	const encodedAddress = !!parentProxyInfo && !!parentProxyInfo?.address ? getEncodedAddress(parentProxyInfo?.address, network) : encodedQueryAddress;
 
-	const identityInfo: any = await api?.query.identity?.identityOf(encodedAddress).then((res: any) => res?.toHuman()?.[0]);
+	const identityInfo: any = await api?.query.identity?.identityOf(encodedAddress).then((res: any) => res?.toHuman());
 
 	const infoCall = identityInfo?.judgements
 		? identityInfo?.judgements.filter(([, judgement]: any[]): boolean => {

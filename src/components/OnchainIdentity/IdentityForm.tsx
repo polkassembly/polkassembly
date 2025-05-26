@@ -31,7 +31,7 @@ import Input from '~src/basic-components/Input';
 import IdentityTxBreakdown from './identityTxFeeBreakDown';
 import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
-import { network as AllNetworks, chainProperties } from 'src/global/networkConstants';
+import { chainProperties } from 'src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import userProfileBalances from '~src/util/userProfileBalances';
@@ -145,9 +145,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 				setOpenIdentitySuccessModal(true);
 				// TODO: save identity multisig call hash
 			} else {
-				const identityHash = await (peopleChainApi ?? api)?.query?.identity
-					?.identityOf(identityAddress)
-					.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap?.()?.[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
+				const identityHash = await (peopleChainApi ?? api)?.query?.identity?.identityOf(identityAddress).then((res: any) => (res.unwrapOr(null) as any)?.info?.hash?.toHex());
 				if (!identityHash) {
 					setStartLoading({ isLoading: false, message: '' });
 					console.log('Error in unwraping identityHash');

@@ -23,6 +23,7 @@ const extractGeneralIndex = (call: any) => {
 	const interiorAssetId = call?.assetKind?.assetId || null;
 	if (!interiorAssetId) return null;
 	const assetCall = interiorAssetId?.value?.interior?.value || interiorAssetId?.interior?.value;
+	if (!assetCall?.length) return null;
 	return assetCall?.find((item: any) => item.__kind === 'GeneralIndex')?.value || null;
 };
 

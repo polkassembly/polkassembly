@@ -14,15 +14,15 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 function ServiceDiscontinuedModal({ network }: { network: string }) {
 	const router = useRouter();
 	const isDiscontinuedService = DISCONTINUED_SERVICES.includes(network);
-	const isDiscontinuedDate = new Date(DISCONTINUED_SERVICE_DATE);
-	const isDiscontinuedDatePassed = isDiscontinuedDate < new Date();
+	const discontinuedDate = new Date(DISCONTINUED_SERVICE_DATE);
+	const isAfterDiscontinuationDate = discontinuedDate < new Date();
 	const [openModal, setOpenModal] = useState(true);
 
 	const handleNetworkChange = () => {
 		router.push('https://polkadot.polkassembly.io/');
 	};
 
-	return isDiscontinuedService && isDiscontinuedDatePassed ? (
+	return isDiscontinuedService && isAfterDiscontinuationDate ? (
 		<Modal
 			open={openModal}
 			onCancel={() => setOpenModal(false)}

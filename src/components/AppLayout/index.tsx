@@ -28,6 +28,8 @@ import Sidebar from './Sidebar';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { GlobalActions } from '~src/redux/global';
+import ServiceDiscontinuedBanner from '../ServiceDiscontinued/ServiceDiscontinuedBanner';
+import ServiceDiscontinuedModal from '../ServiceDiscontinued/ServiceDiscontinuedModal';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -194,6 +196,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						isVerified={isGood && !isIdentityUnverified}
 						isIdentityExists={isIdentitySet}
 					/>
+					<ServiceDiscontinuedBanner network={network} />
 				</div>
 				<Layout hasSider>
 					<div
@@ -394,6 +397,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				setModalOpen={setLoginOpen}
 				isModal={true}
 			/>
+			<ServiceDiscontinuedModal network={network} />
 		</div>
 	);
 };

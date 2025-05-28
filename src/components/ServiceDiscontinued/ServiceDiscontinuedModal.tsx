@@ -10,12 +10,13 @@ import { useRouter } from 'next/router';
 import { DISCONTINUED_SERVICE_DATE, DISCONTINUED_SERVICES } from 'src/global/discontinuedServices';
 import Modal from '~src/ui-components/Modal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import dayjs from 'dayjs';
 
 function ServiceDiscontinuedModal({ network }: { network: string }) {
 	const router = useRouter();
 	const isDiscontinuedService = DISCONTINUED_SERVICES.includes(network);
-	const discontinuedDate = new Date(DISCONTINUED_SERVICE_DATE);
-	const isAfterDiscontinuationDate = discontinuedDate < new Date();
+	const discontinuedDate = dayjs(DISCONTINUED_SERVICE_DATE);
+	const isAfterDiscontinuationDate = discontinuedDate.isBefore(dayjs());
 	const [openModal, setOpenModal] = useState(true);
 
 	const handleNetworkChange = () => {

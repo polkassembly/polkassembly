@@ -12,7 +12,7 @@ import { Button, TabsProps } from 'antd';
 import DelegationProfile from '~src/components/DelegationDashboard/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -22,6 +22,7 @@ import { useTheme } from 'next-themes';
 import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
 import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 import useIsMobile from '~src/hooks/useIsMobile';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -32,6 +33,7 @@ interface Props {
 
 const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	const userProfile = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const isMobile = useIsMobile();
 	const { delegationDashboardAddress } = userProfile;
@@ -109,14 +111,16 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 		{
 			children: (
 				<>
-					<BecomeDelegate
-						isModalOpen={isModalOpen}
-						setIsModalOpen={setIsModalOpen}
-						profileDetails={profileDetails}
-						userBio={userBio}
-						setUserBio={setUserBio}
-						onchainUsername={identity?.display || identity?.legal || ''}
-					/>
+					{!v2SupportedNetworks.includes(network) && (
+						<BecomeDelegate
+							isModalOpen={isModalOpen}
+							setIsModalOpen={setIsModalOpen}
+							profileDetails={profileDetails}
+							userBio={userBio}
+							setUserBio={setUserBio}
+							onchainUsername={identity?.display || identity?.legal || ''}
+						/>
+					)}
 					<DelegationProfile
 						className='rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
 						profileDetails={profileDetails}

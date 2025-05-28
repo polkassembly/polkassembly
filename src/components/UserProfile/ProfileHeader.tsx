@@ -19,6 +19,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import FollowButton from '../Follow/FollowButton';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -51,64 +52,67 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 	return (
 		<div className={classNames(className, 'wallet-info-board gap mt-[-25px] flex rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:w-[99.3vw] lg:top-[80px]')}>
 			<div className='profile-header mt-0 flex h-[192px] w-full items-end justify-end'>
-				<div className='flex w-full items-center justify-end p-4 sm:p-8'>
-					{username === userProfile.username ? (
-						<div>
-							<EditProfileModal
-								setProfileDetails={setProfileDetails}
-								data={profileDetails}
-							/>
-						</div>
-					) : (
-						<div className='flex gap-3'>
-							{!TippingUnavailableNetworks.includes(network) && (
-								<CustomButton
-									variant='primary'
-									shape='circle'
-									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
-										disableState && 'cursor-not-allowed opacity-50'
-									}`}
-									onClick={() => {
-										if (disableState) return;
-										setOpenTipModal(true);
-										dispatch(setReceiver(addressWithIdentity || ''));
-									}}
-									disabled={!id}
-								>
-									<div className='flex items-center gap-1.5'>
-										<DollarIcon className='text-lg' />
-										<span className='max-md:hidden'>Tip User</span>
-									</div>
-								</CustomButton>
-							)}
-							{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
-								<CustomButton
-									variant='primary'
-									shape='circle'
-									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
-										disableState && 'cursor-not-allowed opacity-50'
-									}`}
-									onClick={() => {
-										if (disableState) return;
-										setOpenDelegateModal(true);
-									}}
-									disabled={!id}
-								>
-									<Image
-										src='/assets/icons/white-delegated-profile.svg'
-										className='mr-1 rounded-full'
-										height={20}
-										width={20}
-										alt='edit logo'
-									/>
-									<span className='max-md:hidden'>Delegate</span>
-								</CustomButton>
-							)}
-							<FollowButton userId={userProfile.user_id} />
-						</div>
-					)}
-				</div>
+				{!v2SupportedNetworks.includes(network) && (
+					<div className='flex w-full items-center justify-end p-4 sm:p-8'>
+						{username === userProfile.username ? (
+							<div>
+								<EditProfileModal
+									setProfileDetails={setProfileDetails}
+									data={profileDetails}
+								/>
+							</div>
+						) : (
+							<div className='flex gap-3'>
+								{!TippingUnavailableNetworks.includes(network) && (
+									<CustomButton
+										variant='primary'
+										shape='circle'
+										className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
+											disableState && 'cursor-not-allowed opacity-50'
+										}`}
+										onClick={() => {
+											if (disableState) return;
+											setOpenTipModal(true);
+											dispatch(setReceiver(addressWithIdentity || ''));
+										}}
+										disabled={!id}
+									>
+										<div className='flex items-center gap-1.5'>
+											<DollarIcon className='text-lg' />
+											<span className='max-md:hidden'>Tip User</span>
+										</div>
+									</CustomButton>
+								)}
+								{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
+									<CustomButton
+										variant='primary'
+										shape='circle'
+										className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
+											disableState && 'cursor-not-allowed opacity-50'
+										}`}
+										onClick={() => {
+											if (disableState) return;
+											setOpenDelegateModal(true);
+										}}
+										disabled={!id}
+									>
+										<Image
+											src='/assets/icons/white-delegated-profile.svg'
+											className='mr-1 rounded-full'
+											height={20}
+											width={20}
+											alt='edit logo'
+										/>
+										<span className='max-md:hidden'>Delegate</span>
+									</CustomButton>
+								)}
+								<FollowButton userId={userProfile.user_id} />
+							</div>
+						)}
+					</div>
+				)}
 			</div>
+
 			{!TippingUnavailableNetworks.includes(network) && (
 				<Tipping
 					open={openTipModal}

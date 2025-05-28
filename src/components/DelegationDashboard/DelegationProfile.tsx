@@ -11,12 +11,13 @@ import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from '../../ui-components/SocialsHandle';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import Image from 'next/image';
 import ExpandableMarkdown from '../Post/Tabs/ExpandableMarkdown';
 import { useTheme } from 'next-themes';
 import useIsMobile from '~src/hooks/useIsMobile';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -45,6 +46,7 @@ interface Props {
 
 const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
 	const { theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const userProfile = useUserDetailsSelector();
 	const isMobile = useIsMobile();
 	const { delegationDashboardAddress: address } = userProfile;
@@ -84,7 +86,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							className='flex h-[105px] w-[105px] items-center justify-center bg-transparent max-sm:mx-auto '
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 						/>
-						{!isSearch && (
+						{!isSearch && !v2SupportedNetworks.includes(network) && (
 							<div className='absolute right-6 top-[34px] flex items-start justify-start gap-2.5 text-pink_primary sm:hidden'>
 								{userBio || bio ? (
 									<div className='flex space-x-2'>
@@ -160,7 +162,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 					)}
 				</div>
 
-				{!isSearch && (
+				{!isSearch && !v2SupportedNetworks.includes(network) && (
 					<div className='hidden items-start justify-start gap-2.5 text-pink_primary sm:flex'>
 						<span className='flex items-center gap-6'>
 							<ChatWithDelegates />

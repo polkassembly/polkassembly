@@ -10,13 +10,14 @@ import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import MessengerIcon from '~assets/icons/messenger.svg';
 import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import { socialLinks } from '~src/components/UserProfile/Socials';
 import Address from '~src/ui-components/Address';
 import SocialLink from '~src/ui-components/SocialLinks';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -32,6 +33,7 @@ interface Props {
 
 const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 	const userProfile = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		achievement_badges: [],
 		addresses: [],
@@ -111,13 +113,19 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 					{!bio ? (
 						<h2
 							className={`mt-2 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
-							onClick={() => setOpenEditModal(true)}
+							onClick={() => {
+								if (v2SupportedNetworks.includes(network)) return;
+								setOpenEditModal(true);
+							}}
 						>
 							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
 						</h2>
 					) : (
 						<h2
-							onClick={() => setOpenEditModal(true)}
+							onClick={() => {
+								if (v2SupportedNetworks.includes(network)) return;
+								setOpenEditModal(true);
+							}}
 							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
 								username === userProfile.username && 'cursor-pointer'
 							}`}
@@ -155,23 +163,25 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 					>
 						<MessengerIcon />
 					</Tooltip>
-					<span>
-						{username === userProfile.username && (
-							<CustomButton
-								onClick={() => setOpenEditModal(true)}
-								height={40}
-								width={87}
-								variant='default'
-								className='max-lg:w-auto'
-							>
-								<EditIcon className='text-sm tracking-wide text-pink_primary ' />
-								<span className='max-md:hidden'>Edit</span>
-							</CustomButton>
-						)}
-					</span>
+					{!v2SupportedNetworks.includes(network) && (
+						<span>
+							{username === userProfile.username && (
+								<CustomButton
+									onClick={() => setOpenEditModal(true)}
+									height={40}
+									width={87}
+									variant='default'
+									className='max-lg:w-auto'
+								>
+									<EditIcon className='text-sm tracking-wide text-pink_primary ' />
+									<span className='max-md:hidden'>Edit</span>
+								</CustomButton>
+							)}
+						</span>
+					)}
 				</div>
 			)}
-			{openEditModal && username === userProfile.username && (
+			{openEditModal && username === userProfile.username && !v2SupportedNetworks.includes(network) && (
 				<EditProfileModal
 					openModal={openEditModal}
 					setOpenModal={setOpenEditModal}

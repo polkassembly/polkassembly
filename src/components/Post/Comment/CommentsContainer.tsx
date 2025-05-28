@@ -52,6 +52,7 @@ import { dmSans } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 export function getStatus(type: string) {
 	if (['DemocracyProposal'].includes(type)) {
@@ -483,10 +484,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							showIcon
 						/>
 					) : (
-						<PostCommentForm
-							className='mb-2'
-							setCurrentState={handleCurrentCommentAndTimeline}
-						/>
+						!v2SupportedNetworks.includes(network) && (
+							<PostCommentForm
+								className='mb-2'
+								setCurrentState={handleCurrentCommentAndTimeline}
+							/>
+						)
 					)}
 				</>
 			) : (

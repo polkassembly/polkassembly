@@ -4,37 +4,4 @@
 
 export const DISCONTINUED_SERVICE_DATE = '2025-06-05';
 
-export const DISCONTINUED_SERVICES = [
-	'hashed',
-	'centrifuge',
-	'basilisk',
-	'hydradx',
-	'acala',
-	'parallel',
-	'xx',
-	'zeitgeist',
-	'equilibrium',
-	'rolimec',
-	'polkadex',
-	'moonbase',
-	'rococo',
-	'integritee',
-	'moonriver',
-	'collectives',
-	'polimec',
-	'kusama',
-	'kilt',
-	'polkadot',
-	'frequency',
-	'robonomics',
-	'cere',
-	'polymesh',
-	'polymesh-test',
-	'pendulum',
-	'amplitude',
-	'moonbeam',
-	'picasso',
-	'vara',
-	'westend',
-	'mythos'
-];
+export const DISCONTINUED_SERVICES = ['basilisk', 'hydradx', 'xx', 'equilibrium', 'picasso'];

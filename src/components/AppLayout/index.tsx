@@ -197,7 +197,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						isVerified={isGood && !isIdentityUnverified}
 						isIdentityExists={isIdentitySet}
 					/>
-					<RevampedNetworkBanner network={network} />
+					<RevampedNetworkBanner
+						network={network}
+						sideDrawer={sidedrawer}
+					/>
 					<ServiceDiscontinuedBanner network={network} />
 				</div>
 				<Layout hasSider>

@@ -9,7 +9,7 @@ function RevampedNetworkBanner({ network, sideDrawer }: { network: string; sideD
 	const isRevampedNetwork = REVAMPED_NETWORKS.includes(network) && !DISCONTINUED_SERVICES.includes(network);
 
 	return isRevampedNetwork ? (
-		<div className={`bg-service-discontinued-banner-gradient px-5 py-2 text-center text-sm font-medium text-white ${sideDrawer && '3xl:pl-0 pl-28'}`}>
+		<div className={`bg-service-discontinued-banner-gradient py-2 text-center text-sm font-medium text-white ${sideDrawer && '3xl:pl-0 pl-28'}`}>
 			This network has been archived on Polkassembly. New on-chain activities will not appear here. Important: On-chain actions (like voting and delegation) will still affect the
 			network.
 		</div>

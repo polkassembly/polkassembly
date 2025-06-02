@@ -161,11 +161,11 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 				desc='Discover more about preimages of on chain governance proposals on Polkassembly'
 				network={network}
 			/>
-			<div className='mb-2 flex items-center justify-between'>
+			<div className='mb-2 items-center justify-between sm:flex'>
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
 					{count} {count > 1 ? 'Preimages' : 'Preimage'}
 				</h1>
-				<div className='flex items-center justify-between gap-3'>
+				<div className='flex items-center justify-end gap-3 sm:justify-between'>
 					<StyledInputSearch
 						placeholder='Search Hash'
 						onSearch={onSearch}

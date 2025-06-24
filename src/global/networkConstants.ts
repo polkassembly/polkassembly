@@ -1505,7 +1505,7 @@ export const chainProperties: types.ChainPropType = {
 		gTag: 'G-EB50MSH198',
 		rpcEndpoints: [
 			{
-				label: 'via PolkadexSup',
+				label: 'via Polkadex (Sup)',
 				key: 'wss://so.polkadex.ee'
 			},
 			{

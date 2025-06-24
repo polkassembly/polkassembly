@@ -1493,7 +1493,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'solo',
 		chainId: 0,
 		logo: polkadexLogo,
-		rpcEndpoint: 'wss://polkadex.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://so.polkadex.ee',
 		ss58Format: 88,
 		subsquidUrl: 'https://squid.subsquid.io/polkadex-polkassembly/graphql',
 		tokenDecimals: 12,
@@ -1505,8 +1505,8 @@ export const chainProperties: types.ChainPropType = {
 		gTag: 'G-EB50MSH198',
 		rpcEndpoints: [
 			{
-				label: 'via OnFinality',
-				key: 'wss://polkadex.api.onfinality.io/public-ws'
+				label: 'via PolkadexSup',
+				key: 'wss://so.polkadex.ee'
 			},
 			{
 				label: 'via RadiumBlock',

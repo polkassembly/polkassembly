@@ -256,7 +256,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					)}
 					{/* who can comment */}
 					<AllowedCommentorsRadioButtons
-						className={isDiscussionLinked ? 'mt-6 ' : '-mt-8'}
+						className='mt-6'
 						onChange={(value) => dispatch(gov1TreasuryProposalActions.setAllowedCommentors(value as EAllowedCommentor))}
 						isLoading={loading}
 						allowedCommentors={allowedCommentors}

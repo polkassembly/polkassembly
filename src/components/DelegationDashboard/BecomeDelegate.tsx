@@ -5,10 +5,11 @@ import { Alert, Button, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Loader from '~src/ui-components/Loader';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const BecomeDelegateModal = dynamic(() => import('../../ui-components/BecomeDelegateModal'), {
 	loading: () => <Loader />,
@@ -26,6 +27,7 @@ interface Props {
 }
 
 const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, setUserBio, onchainUsername }: Props) => {
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const [isBecomedelegateVisible, setsBecomedelegateVisible] = useState(true);
 	const showModal = () => {
@@ -43,15 +45,15 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 						<div className='flex items-center justify-between'>
 							<span className='text-xl font-semibold text-bodyBlue dark:text-white'>How to Delegate on Polkassembly</span>
 							<div className='flex items-center space-x-5'>
-								<Button
-									onClick={showModal}
-									disabled={!currentUser.id || !currentUser.loginAddress}
-									className={`border-pink_primary bg-pink_primary font-medium font-semibold text-white dark:text-black ${
-										(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'
-									}`}
-								>
-									{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
-								</Button>
+								{!v2SupportedNetworks.includes(network) && (
+									<Button
+										onClick={showModal}
+										disabled={!currentUser.id || !currentUser.loginAddress}
+										className={`border-pink_primary bg-pink_primary font-semibold text-white dark:text-black ${(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'}`}
+									>
+										{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
+									</Button>
+								)}
 								<span onClick={handleNotificationNudgeClose}>
 									<CloseIcon className='mt-1 cursor-pointer dark:text-white' />
 								</span>

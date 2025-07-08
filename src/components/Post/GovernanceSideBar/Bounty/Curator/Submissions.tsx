@@ -22,6 +22,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import SubmissionAction from './SubmissionAction';
 import Alert from '~src/basic-components/Alert';
 import classNames from 'classnames';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -270,13 +271,15 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 											className='mb-2'
 										/>
 									)}
-									<div className='flex w-full'>
-										<SubmissionAction
-											submission={submission}
-											handleDelete={handleDelete}
-											handleEditClick={handleEditClick}
-										/>
-									</div>
+									{!v2SupportedNetworks.includes(network) && (
+										<div className='flex w-full'>
+											<SubmissionAction
+												submission={submission}
+												handleDelete={handleDelete}
+												handleEditClick={handleEditClick}
+											/>
+										</div>
+									)}
 								</div>
 							</div>
 						))

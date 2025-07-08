@@ -10,12 +10,15 @@ import { EUserCreatedBountiesStatuses, IUserCreatedBounty } from '~src/types';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import CreateBountyBtn from '../CreateBountyBtn';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IBountiesTabItemsProps {
 	bounties: IUserCreatedBounty[];
 }
 
 const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
+	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
@@ -57,9 +60,8 @@ const BountiesTabItems: FC<IBountiesTabItemsProps> = (props) => {
 						<div className='text-lg font-semibold text-blue-light-high dark:text-blue-dark-high'>Nothing to see here</div>
 						<span className='mt-1 flex gap-1 text-sm text-blue-light-medium dark:text-blue-dark-medium'>
 							No Bounties have been created yet.
-							{!isMobile && (
+							{!isMobile && !v2SupportedNetworks.includes(network) && (
 								<>
-									{' '}
 									<CreateBountyBtn
 										className='hidden md:block'
 										isUsedInTable={true}

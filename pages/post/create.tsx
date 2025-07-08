@@ -10,6 +10,7 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Skeleton from '~src/basic-components/Skeleton';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
@@ -44,6 +45,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
+
+	if (v2SupportedNetworks.includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/'
+			}
+		};
+	}
 	if (networkRedirect) return networkRedirect;
 
 	return { props: { network } };

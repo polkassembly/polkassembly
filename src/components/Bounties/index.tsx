@@ -15,6 +15,8 @@ import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import Link from 'next/link';
 import CuratorDashboardButton from '../CuratorDashboard/CuratorDashboardButton';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -22,6 +24,7 @@ interface IBountiesContainer {
 }
 
 const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
+	const { network } = useNetworkSelector();
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
@@ -43,10 +46,12 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
 				<span className='font-pixelify text-3xl font-bold text-bodyBlue dark:text-blue-dark-high'>Dashboard</span>
-				<div className='flex gap-2'>
-					<BountyProposalActionButton className='hidden md:block' />
-					<CuratorDashboardButton />
-				</div>
+				{!v2SupportedNetworks.includes(network) && (
+					<div className='flex gap-2'>
+						<BountyProposalActionButton className='hidden md:block' />
+						<CuratorDashboardButton />
+					</div>
+				)}
 			</div>
 			<BountiesHeader />
 

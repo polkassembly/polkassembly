@@ -19,6 +19,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { MessageType } from '~src/auth/types';
 import SubmissionAction from '~src/components/Post/GovernanceSideBar/Bounty/Curator/SubmissionAction';
 import MakeChildBountySubmisionModal from '~src/components/Post/GovernanceSideBar/Bounty/Curator/MakeChildBountySubmision';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 interface Props {
 	className?: string;
@@ -160,16 +161,18 @@ const Submission = ({ className, submission, index, updateData, submissions, bou
 					/>
 				)}
 				<Divider className='m-0 mb-2 border-[1px] border-solid border-section-light-container dark:border-separatorDark' />
-				<div className='flex justify-between gap-4 p-2'>
-					<SubmissionAction
-						submission={submission}
-						handleApprove={handleApprove}
-						showRejectModal={setIsRejectModalOpen}
-						handleDelete={handleDelete}
-						handleEditClick={setIsEditModalOpen}
-						isApproveButton
-					/>
-				</div>
+				{!v2SupportedNetworks.includes(network) && (
+					<div className='flex justify-between gap-4 p-2'>
+						<SubmissionAction
+							submission={submission}
+							handleApprove={handleApprove}
+							showRejectModal={setIsRejectModalOpen}
+							handleDelete={handleDelete}
+							handleEditClick={setIsEditModalOpen}
+							isApproveButton
+						/>
+					</div>
+				)}
 			</div>
 
 			{isRejectModalOpen && (

@@ -53,7 +53,7 @@ import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IActiveProposalCount, PostOrigin } from '~src/types';
-import { chainProperties } from '~src/global/networkConstants';
+import { chainProperties, v2SupportedNetworks } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { dmSans } from 'pages/_app';
 import PaLogo from './PaLogo';
@@ -2185,13 +2185,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div
-					className={
-						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || (network === 'polkadot' && !sidebarCollapsed) ? '' : 'mt-6'
-					}
-				>
-					<CreateProposalDropdown sidebarCollapsed={sidebarCollapsed} />
-				</div>
+				{!v2SupportedNetworks.includes(network) && (
+					<div
+						className={
+							onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || (network === 'polkadot' && !sidebarCollapsed) ? '' : 'mt-6'
+						}
+					>
+						<CreateProposalDropdown sidebarCollapsed={sidebarCollapsed} />
+					</div>
+				)}
 				<div
 					className={`hide-scrollbar ${
 						onchainIdentitySupportedNetwork.includes(network) || delegationSupportedNetworks.includes(network) || network === 'polkadot' ? '' : 'mt-7'

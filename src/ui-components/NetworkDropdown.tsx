@@ -5,7 +5,7 @@
 import { Col, Row, Dropdown } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
-import { chainProperties, network, revampedNetworks } from 'src/global/networkConstants';
+import { chainProperties, network, v2SupportedNetworks } from 'src/global/networkConstants';
 import { ArrowDownIcon } from './CustomIcons';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useRouter } from 'next/router';
@@ -38,7 +38,7 @@ for (const key of Object.keys(network)) {
 		? `https://${key}.polkassembly.network`
 		: `https://${key === 'POLYMESHTEST' ? 'polymesh-test' : keyVal}.polkassembly.io`;
 
-	if (isOpenGovSupported(keyVal) && !revampedNetworks.includes(keyVal)) {
+	if (isOpenGovSupported(keyVal) && !v2SupportedNetworks.includes(keyVal)) {
 		link = `${link}/opengov`;
 	}
 	const optionObj: DropdownMenuItemType = {

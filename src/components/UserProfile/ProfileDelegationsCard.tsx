@@ -26,6 +26,7 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import Markdown from '~src/ui-components/Markdown';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import BN from 'bn.js';
+import { v2SupportedNetworks } from '~src/global/networkConstants';
 
 const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
 	ssr: false
@@ -265,7 +266,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							<span>Delegate</span>
 						</CustomButton>
 					)}
-					{userProfile?.user_id === loginId && !!(username || '')?.length && !!delegationMandate?.length && (
+					{userProfile?.user_id === loginId && !!(username || '')?.length && !!delegationMandate?.length && !v2SupportedNetworks.includes(network) && (
 						<span
 							className='flex cursor-pointer items-center'
 							onClick={() => {
@@ -277,7 +278,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							<span className='m-0 p-0 text-pink_primary'>Edit</span>
 						</span>
 					)}
-					{userProfile?.user_id === loginId && !!(username || '')?.length && !delegationMandate?.length && (
+					{userProfile?.user_id === loginId && !!(username || '')?.length && !delegationMandate?.length && !v2SupportedNetworks.includes(network) && (
 						<CustomButton
 							className='delegation-buttons border-none shadow-none'
 							variant='default'

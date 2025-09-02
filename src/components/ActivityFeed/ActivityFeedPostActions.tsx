@@ -309,8 +309,8 @@ export const ActivityFeedPostActions: React.FC<{
 														? '/assets/activityfeed/darkliked.svg'
 														: '/assets/activityfeed/liked.svg'
 													: theme === 'dark'
-													? '/assets/activityfeed/likedark.svg'
-													: '/assets/activityfeed/like.svg'
+														? '/assets/activityfeed/likedark.svg'
+														: '/assets/activityfeed/like.svg'
 											}
 											alt='like icon'
 											className='h-9 w-9 cursor-pointer'
@@ -353,8 +353,8 @@ export const ActivityFeedPostActions: React.FC<{
 														? '/assets/activityfeed/darkdisliked.svg'
 														: '/assets/activityfeed/disliked.svg'
 													: theme === 'dark'
-													? '/assets/activityfeed/dislikedark.svg'
-													: '/assets/activityfeed/dislike.svg'
+														? '/assets/activityfeed/dislikedark.svg'
+														: '/assets/activityfeed/dislike.svg'
 											}
 											alt='dislike icon'
 											className='mt-1 h-4 w-4'

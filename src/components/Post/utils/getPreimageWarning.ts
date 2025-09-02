@@ -74,7 +74,7 @@ function getTicketWithAmountAndProposer(ticket: any[]) {
 		? {
 				amount: ticket[1],
 				who: ticket[0].toString()
-		  }
+			}
 		: undefined;
 }
 
@@ -145,10 +145,10 @@ const getPreimageWarning = async ({ api, apiReady, preimageHash }: Args) => {
 			? getResult(optBytes)
 			: resultPreimageFor
 		: resultPreimageHash
-		? inlineData
-			? getResult(inlineData)
-			: resultPreimageHash
-		: undefined;
+			? inlineData
+				? getResult(inlineData)
+				: resultPreimageHash
+			: undefined;
 
 	return result;
 };

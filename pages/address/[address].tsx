@@ -60,12 +60,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		? await getOnChainUserPosts({
 				addresses: [address] || [],
 				network
-		  })
+			})
 		: await getUserPosts({
 				addresses: userProfile?.data?.addresses || [],
 				network,
 				userId: userProfile?.data?.user_id
-		  });
+			});
 
 	try {
 		if (userProfile?.data?.username) {

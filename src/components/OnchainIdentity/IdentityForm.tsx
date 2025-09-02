@@ -698,7 +698,7 @@ const IdentityForm = ({ closeModal, onCancel, setAddressChangeModalOpen, setStar
 									width={91}
 									className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
 									height={21}
-									variant='primary'
+									variant='solid'
 								/>
 							</div>
 						</div>

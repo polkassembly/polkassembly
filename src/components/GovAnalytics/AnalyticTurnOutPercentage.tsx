@@ -91,7 +91,7 @@ const AnalyticTurnOutPercentage = () => {
 					})),
 					id: 'Turnout'
 				}
-		  ]
+			]
 		: [];
 	return (
 		<StyledCard className='mx-auto max-h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>

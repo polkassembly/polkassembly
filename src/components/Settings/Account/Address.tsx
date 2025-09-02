@@ -261,7 +261,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 				<CustomButton
 					disabled={withClickHandler ? false : true}
 					onClick={() => (withClickHandler ? handleUnlink(address) : null)}
-					variant='default'
+					variant='solid'
 					className={`m-0 border-none p-0 text-red_primary ${!withClickHandler ? 'opacity-50' : ''}`}
 					text='Unlink'
 					height={40}
@@ -285,7 +285,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 		return currentUser.defaultAddress !== address ? (
 			<CustomButton
 				onClick={() => handleDefault(address)}
-				variant='default'
+				variant='solid'
 				className='m-0 border-none p-0 text-grey_primary'
 				text='Set default'
 				height={40}
@@ -404,7 +404,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 																		<CustomButton
 																			onClick={() => handleLink(address, key as Wallet)}
 																			icon={<LinkOutlined />}
-																			variant='default'
+																			variant='solid'
 																			className='m-0 border-none p-0 text-grey_primary'
 																			text='Link'
 																			height={40}
@@ -462,7 +462,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 								}}
 								key='got-it'
 								icon={<CheckOutlined />}
-								variant='primary'
+								variant='solid'
 								className='m-0 border-none text-grey_primary'
 								text='Got it!'
 								height={40}
@@ -472,7 +472,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 						<CustomButton
 							onClick={dismissModal}
 							text='Cancel'
-							variant='default'
+							variant='solid'
 							key='cancel'
 							buttonsize='sm'
 						/>

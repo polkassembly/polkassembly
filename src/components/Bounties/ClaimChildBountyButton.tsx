@@ -140,7 +140,7 @@ const ClaimChildBountyButton = ({ bountyIndex }: Props) => {
 	return (
 		<div className='pb-6'>
 			<CustomButton
-				variant='primary'
+				variant='solid'
 				height={50}
 				className={classNames('w-full', !getEncodedAddress(loginAddress, network) ? 'opacity-50' : '')}
 				onClick={() => handleClaim()}

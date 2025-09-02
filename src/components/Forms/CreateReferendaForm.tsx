@@ -5,7 +5,6 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getTypeDef } from '@polkadot/types/create';
 import { TypeDef, TypeDefInfo } from '@polkadot/types/types';
 import { Button, Form, Input, Radio, Spin } from 'antd';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from '~src/context';
 import BalanceInput from '~src/ui-components/BalanceInput';
@@ -125,8 +124,8 @@ export default function CreateReferendaForm({
 	const { loginWallet } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const [palletRPCs, setPalletRPCs] = useState<ItemType[]>([]);
-	const [callables, setCallables] = useState<ItemType[]>([]);
+	const [palletRPCs, setPalletRPCs] = useState<any[]>([]);
+	const [callables, setCallables] = useState<any[]>([]);
 	const [paramFields, setParamFields] = useState<ParamField[] | null>(null);
 	const [formState, setFormState] = useState(initFormState);
 	const { palletRpc, callable, inputParams } = formState;
@@ -793,7 +792,7 @@ export default function CreateReferendaForm({
 						Back
 					</Button>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						htmlType='submit'
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}

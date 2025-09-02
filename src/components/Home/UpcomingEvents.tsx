@@ -63,15 +63,14 @@ const updateEventsWithTimeStamps = (events: ICalendarEvent[], blockNo: number) =
 	if (!events?.length) return [];
 
 	return events
-		.flatMap(
-			(item) =>
-				item.statusHistory
-					?.filter((status) => status.block >= blockNo)
-					?.map((timeline) => ({
-						...item,
-						blockNo: timeline.block,
-						createdAt: timeline.timestamp
-					}))
+		.flatMap((item) =>
+			item.statusHistory
+				?.filter((status) => status.block >= blockNo)
+				?.map((timeline) => ({
+					...item,
+					blockNo: timeline.block,
+					createdAt: timeline.timestamp
+				}))
 		)
 		.sort((a, b) => a.blockNo - b.blockNo);
 };

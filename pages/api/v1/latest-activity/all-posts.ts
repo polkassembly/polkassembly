@@ -343,11 +343,11 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 						topic: topic
 							? topic
 							: isTopicIdValid(topic_id)
-							? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-							  }
-							: getTopicFromType(ProposalType.DISCUSSIONS),
+								? {
+										id: topic_id,
+										name: getTopicNameFromTopicId(topic_id)
+									}
+								: getTopicFromType(ProposalType.DISCUSSIONS),
 						type: 'Discussions',
 						user_id,
 						username: data?.username || ''

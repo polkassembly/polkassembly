@@ -102,8 +102,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 				const proxyTx = values.createPureProxy
 					? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
 					: values.proxyAddress
-					? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
-					: null;
+						? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
+						: null;
 
 				if (proxyTx) {
 					const accountData = await api?.query?.system?.account(address);
@@ -133,8 +133,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 			const proxyTx = values.createPureProxy
 				? api?.tx?.proxy?.createPure(values.proxyType, 0, 0)
 				: values.proxyAddress
-				? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
-				: null;
+					? api?.tx?.proxy?.addProxy(values.proxyAddress, values.proxyType, 0)
+					: null;
 
 			if (proxyTx) {
 				const gasFee = (await proxyTx?.paymentInfo(address || values.proxyAddress))?.partialFee.toString();
@@ -363,7 +363,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						text='Cancel'
 						height={40}
 						width={145}
-						variant='default'
+						variant='solid'
 					/>
 					<CustomButton
 						onClick={handleSubmit}
@@ -371,7 +371,7 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 						height={40}
 						width={145}
 						text='Create Proxy'
-						variant='primary'
+						variant='solid'
 						className={isCreateProxyDisabled ? 'opacity-50' : ''}
 					/>
 				</div>
@@ -396,8 +396,8 @@ const CreateProxyMainModal = ({ openModal, setOpenProxySuccessModal, className, 
 								advancedDetails.atBlockNo && currentBlock && advancedDetails.atBlockNo.lt(currentBlock)
 									? currentBlock.toString()
 									: advancedDetails.atBlockNo
-									? advancedDetails.atBlockNo.toString()
-									: BN_ONE.toString(),
+										? advancedDetails.atBlockNo.toString()
+										: BN_ONE.toString(),
 							enactment: enactment.key
 						}}
 						disabled={loadingStatus.isLoading}

@@ -95,7 +95,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 							}}
 							buttonsize='sm'
 							text='Yes, Exit'
-							variant='default'
+							variant='solid'
 						/>
 						<CustomButton
 							onClick={() => {
@@ -105,7 +105,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 							height={40}
 							width={200}
 							text='No, Continue Editing'
-							variant='primary'
+							variant='solid'
 						/>
 					</div>
 				</div>

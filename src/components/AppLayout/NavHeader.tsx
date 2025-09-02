@@ -28,7 +28,6 @@ import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { EGovType } from '~src/global/proposalType';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings, ProxyIcon } from '~src/ui-components/CustomIcons';
@@ -141,7 +140,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	};
 
-	const menudropDownItems: ItemType[] = [
+	const menudropDownItems = [
 		{
 			className: 'logo-class',
 			key: 'Townhall',
@@ -220,7 +219,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		label: <ToggleButton />
 	});
 
-	const dropdownMenuItems: ItemType[] = [
+	const dropdownMenuItems = [
 		{
 			key: 'view profile',
 			label: (
@@ -247,7 +246,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							</Link>
 						)
 					}
-			  ]
+				]
 			: []),
 		{
 			key: 'settings',
@@ -431,7 +430,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
 								<CustomButton
-									variant='primary'
+									variant='solid'
 									height={22}
 									width={60}
 									text='Login'

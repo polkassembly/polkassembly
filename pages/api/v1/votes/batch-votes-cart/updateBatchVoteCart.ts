@@ -45,11 +45,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(403).json({ message: messages.INVALID_PARAMS });
 		}
 
-		const voteSnapshot = firestore_db
-			.collection('users')
-			.doc(String(user?.id))
-			.collection('batch_votes_cart')
-			.doc(vote.id);
+		const voteSnapshot = firestore_db.collection('users').doc(String(user?.id)).collection('batch_votes_cart').doc(vote.id);
 
 		const ref = await voteSnapshot.get();
 

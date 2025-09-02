@@ -35,13 +35,13 @@ const ImportPrimaryNetworkSettingModal = ({
 					<CustomButton
 						key='1'
 						onClick={onCancel}
-						variant='default'
+						variant='solid'
 						text='Cancel'
 					/>
 					<CustomButton
 						onClick={onConfirm}
 						key='2'
-						variant='primary'
+						variant='solid'
 						text='Confirm'
 					/>
 				</div>

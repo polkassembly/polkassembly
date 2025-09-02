@@ -181,7 +181,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							key='back'
 							text='Cancel'
 							buttonsize='xs'
-							variant='default'
+							variant='solid'
 							disabled={loading}
 							onClick={() => setOpen(false)}
 							className='rounded-[4px] text-sm sm:text-base'
@@ -191,7 +191,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							key='submit'
 							text='Undelegate'
 							buttonsize='xs'
-							variant='primary'
+							variant='solid'
 							disabled={loading}
 							onClick={handleSubmit}
 							className='rounded-[4px] text-sm sm:text-base'

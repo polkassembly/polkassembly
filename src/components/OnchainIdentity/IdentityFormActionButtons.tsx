@@ -40,7 +40,7 @@ const IdentityFormActionButtons = ({
 				onClick={() => onCancel()}
 				className='rounded-[4px]'
 				text='Cancel'
-				variant='default'
+				variant='solid'
 				buttonsize='xs'
 			/>
 			{!!identityInfo?.email && !!identityInfo?.displayName && handleAllowSetIdentity() && !identityInfo?.alreadyVerified ? (
@@ -50,7 +50,7 @@ const IdentityFormActionButtons = ({
 					disabled={!(availableBalance && availableBalance.gt(totalFee))}
 					className={classNames('rounded-[4px]', !(availableBalance && availableBalance.gt(totalFee)) ? 'opacity-50' : '')}
 					text='Request Judgement'
-					variant='primary'
+					variant='solid'
 					width={186}
 				/>
 			) : (
@@ -73,7 +73,7 @@ const IdentityFormActionButtons = ({
 						'opacity-50'
 					}`}
 					text='Set Identity'
-					variant='primary'
+					variant='solid'
 					buttonsize='xs'
 				/>
 			)}

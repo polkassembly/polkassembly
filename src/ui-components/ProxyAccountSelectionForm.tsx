@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useEffect, useState } from 'react';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import Address from './Address';
 import { dmSans } from 'pages/_app';
 import DownIcon from '~assets/icons/down-icon.svg';
@@ -61,7 +60,7 @@ const ProxyAccountSelectionForm = ({
 	const [walletType, setWalletType] = useState<any>();
 	const { loginAddress } = useUserDetailsSelector();
 
-	const dropdownMenuItems: ItemType[] = proxyAddresses.map((proxyAddress) => {
+	const dropdownMenuItems: any[] = proxyAddresses.map((proxyAddress) => {
 		return {
 			key: proxyAddress,
 			label: (

@@ -171,7 +171,7 @@ const ProgressReportTab = ({ className }: Props) => {
 									<UploadModalContent />
 									<div className='mt-4 flex justify-end'>
 										<CustomButton
-											variant='primary'
+											variant='solid'
 											text='Done'
 											buttonsize='sm'
 											loading={loading}

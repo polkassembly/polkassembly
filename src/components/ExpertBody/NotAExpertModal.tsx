@@ -69,7 +69,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 			api: peopleChainApi ?? api,
 			network: network
 		});
-		setIdentity(info);
+		setIdentity(info as any);
 	};
 
 	const getSocials = async () => {

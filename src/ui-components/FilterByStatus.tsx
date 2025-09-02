@@ -4,7 +4,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import {
 	bountyStatusOptions,
 	childBountyStatusOptions,
@@ -27,7 +26,6 @@ import { useTheme } from 'next-themes';
 import { Checkbox, Divider } from 'antd';
 import styled from 'styled-components';
 import { dmSans } from 'pages/_app';
-import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import Popover from '~src/basic-components/Popover';
 
 interface SortByDropdownProps {
@@ -39,7 +37,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 	const router = useRouter();
 	const trackStatus = router?.query?.trackStatus;
 	const { resolvedTheme: theme } = useTheme();
-	const [checkedItems, setCheckedItems] = useState<CheckboxValueType[]>([]);
+	const [checkedItems, setCheckedItems] = useState<any[]>([]);
 	useEffect(() => {
 		setCheckedItems([]);
 		setStatusItem?.([]);
@@ -110,7 +108,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			break;
 	}
 
-	const sortByOptions: ItemType[] = [...statusOptions];
+	const sortByOptions: any[] = [...statusOptions];
 	const handleSortByClick = (key: any) => {
 		if (key === 'clear_filter') {
 			const newQuery = { ...router.query };
@@ -148,7 +146,7 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 		}
 	};
 
-	const onChange = (list: CheckboxValueType[]) => {
+	const onChange = (list: any[]) => {
 		setCheckedItems(list);
 		handleSortByClick(list);
 	};

@@ -224,7 +224,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 						<CustomButton
 							htmlType='submit'
 							text='Create Proposal'
-							variant='primary'
+							variant='solid'
 							height={40}
 							width={155}
 							className={`${!(discussion.discussionTitle && discussion.discussionContent) && 'opacity-50'}`}

@@ -41,7 +41,7 @@ const CartOptionMenu = () => {
 			<p className='m-0 mr-auto p-0 text-xs text-bodyBlue dark:text-white'>{total_proposals_added_in_Cart || 0} proposal added</p>{' '}
 			<div className='ml-auto flex gap-x-1'>
 				<CustomButton
-					variant='primary'
+					variant='solid'
 					text='View cart'
 					height={36}
 					width={91}

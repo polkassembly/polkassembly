@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
@@ -192,7 +191,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				.account(treasuryAccount)
 				.then((res) => {
 					const freeBalance = new BN(res?.data?.free) || BN_ZERO;
-					treasuryBalance.freeBalance = freeBalance as Balance;
+					treasuryBalance.freeBalance = freeBalance as any;
 				})
 				.catch((e) => {
 					console.error(e);

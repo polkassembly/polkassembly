@@ -112,7 +112,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 				api: peopleChainApi ?? api,
 				network: network
 			});
-			setIdentity(info);
+			setIdentity(info as any);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
@@ -259,7 +259,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 						<CustomButton
 							onClick={handleSend}
 							disabled={loading}
-							variant='primary'
+							variant='solid'
 							htmlType='submit'
 						>
 							{loading ? <>Creating</> : 'Update'}
@@ -276,7 +276,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 									onClick={handleEdit}
 									disabled={loading}
 									htmlType='submit'
-									variant='primary'
+									variant='solid'
 								>
 									{loading ? <>Creating</> : 'Update'}
 								</CustomButton>

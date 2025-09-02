@@ -101,7 +101,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 			social_links: JSON.stringify([]),
 			title: '',
 			user_id: Number(currentUser.id),
-			username: skipUsername ? generateCustomUsername() ?? optionalUsername : optionalUsername
+			username: skipUsername ? (generateCustomUsername() ?? optionalUsername) : optionalUsername
 		});
 
 		if (email && email.length > 0) {
@@ -224,7 +224,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									setSkipUsername(true);
 									handleOptionalDetails(true);
 								}}
-								variant='default'
+								variant='solid'
 								buttonsize='sm'
 								className='tracking-wide'
 								text='Skip'
@@ -232,7 +232,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							<CustomButton
 								loading={loading}
 								htmlType='submit'
-								variant='primary'
+								variant='solid'
 								buttonsize='sm'
 								className='ml-0 tracking-wide'
 								text='Next'
@@ -347,7 +347,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							{!email && !firstPassword && (
 								<CustomButton
 									onClick={handleOptionalSkip}
-									variant='default'
+									variant='solid'
 									buttonsize='sm'
 									text='Skip'
 								/>
@@ -357,7 +357,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									loading={loading}
 									disabled={!email || !firstPassword}
 									htmlType='submit'
-									variant='primary'
+									variant='solid'
 									className={`${!email || !firstPassword ? 'opacity-50' : ''}`}
 									buttonsize='sm'
 									text='Done'

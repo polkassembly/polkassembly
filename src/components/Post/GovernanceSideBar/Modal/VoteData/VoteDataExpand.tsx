@@ -101,8 +101,8 @@ const VoteDataExpand = () => {
 					<span className='text-sm font-normal tracking-tighter'>
 						{parseBalance(
 							voteData && voteData.decision !== 'abstain'
-								? (voteData.totalVotingPower || voteData.votingPower)?.toString() ?? '0'
-								: (BigInt(voteData?.balance?.abstain || 0) / BigInt(10))?.toString() ?? '0',
+								? ((voteData.totalVotingPower || voteData.votingPower)?.toString() ?? '0')
+								: ((BigInt(voteData?.balance?.abstain || 0) / BigInt(10))?.toString() ?? '0'),
 							2,
 							true,
 							network
@@ -114,9 +114,7 @@ const VoteDataExpand = () => {
 				<div className='flex items-center justify-between gap-[50px] border-x-0 border-y-2 border-dashed border-section-light-container py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<CalenderIcon className='text-lightBlue dark:text-blue-dark-medium' />
-						{dayjs(voteData?.createdAt)
-							.format('MM/DD/YYYY, h:mm A')
-							.toString()}
+						{dayjs(voteData?.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 					</span>
 					{voteData?.decision !== 'abstain' && isReferendum2 && (
 						<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>

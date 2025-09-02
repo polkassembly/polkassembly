@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Avatar } from 'antd';
-import { AvatarSize } from 'antd/lib/avatar/SizeContext';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -13,7 +12,7 @@ interface Props {
 	className?: string;
 	username: string | null;
 	id: number | null;
-	size?: AvatarSize;
+	size?: any;
 	profile?: ProfileDetailsResponse;
 }
 

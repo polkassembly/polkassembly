@@ -35,7 +35,7 @@ interface ICalendarViewProps {
 	emitCalendarEvents?: React.Dispatch<React.SetStateAction<any[]>> | undefined;
 }
 
-const StyledCalendar: any = styled(Calendar)`
+const StyledCalendar: any = styled(Calendar as any)`
 	.events-calendar-mini {
 		border: 2px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#e8e8e8')} !important;
 		.rbc-month-view {

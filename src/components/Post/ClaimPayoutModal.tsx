@@ -125,7 +125,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 		<div className={className}>
 			<CustomButton
 				onClick={() => setShowModal(true)}
-				variant='primary'
+				variant='solid'
 				text='Claim Payout'
 				className='inline'
 				height={40}
@@ -142,7 +142,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 						onClick={handleSignAndSubmit}
 						loading={isLoading}
 						disabled={extensionNotAvailable || !apiReady}
-						variant='primary'
+						variant='solid'
 						text='Sign & Submit'
 						height={40}
 					/>

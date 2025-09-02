@@ -216,11 +216,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 						topic: topic
 							? topic
 							: isTopicIdValid(topic_id)
-							? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-							  }
-							: topicFromType,
+								? {
+										id: topic_id,
+										name: getTopicNameFromTopicId(topic_id)
+									}
+								: topicFromType,
 						track_no: !isNaN(trackNumber) ? trackNumber : null,
 						type: type || ProposalType.REFERENDUM_V2,
 						user_id: data?.user_id || 1

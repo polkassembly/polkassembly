@@ -62,7 +62,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			api: peopleChainApi ?? api,
 			network: network
 		});
-		setIdentity(info);
+		setIdentity(info as any);
 	};
 
 	useEffect(() => {

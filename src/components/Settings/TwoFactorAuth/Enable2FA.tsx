@@ -136,7 +136,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 							onClick={dismissModal}
 							className='px-7 py-5 font-semibold leading-7'
 							disabled={loading}
-							variant='default'
+							variant='solid'
 							text='Cancel'
 							fontSize='md'
 						/>
@@ -148,7 +148,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 							}}
 							disabled={loading}
 							className='px-7 py-5 font-semibold leading-7'
-							variant='primary'
+							variant='solid'
 							text='Enable'
 							fontSize='md'
 						/>

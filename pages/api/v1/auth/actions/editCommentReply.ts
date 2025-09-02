@@ -50,13 +50,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	const replyDoc = await replyRef.get();
 	if (!replyDoc.exists) return res.status(404).json({ message: 'Reply not found' });
-	const replyUserAddress = (
-		await firestore_db
-			.collection('addresses')
-			.where('user_id', '==', replyDoc.data()?.user_id)
-			.where('isMultisig', '==', true)
-			.get()
-	).docs.map((doc) => doc.data());
+	const replyUserAddress = (await firestore_db.collection('addresses').where('user_id', '==', replyDoc.data()?.user_id).where('isMultisig', '==', true).get()).docs.map((doc) =>
+		doc.data()
+	);
 	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map((doc) => doc.data());
 	const isAuthor = await checkIsProposer(
 		replyUserAddress?.[0]?.address,

@@ -39,7 +39,7 @@ const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: bo
 					<CustomButton
 						key='1'
 						onClick={onCancel}
-						variant='default'
+						variant='solid'
 						fontSize='lg'
 						height={40}
 						className='px-[36px] py-[4px] capitalize'
@@ -48,7 +48,7 @@ const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: bo
 					<CustomButton
 						onClick={onConfirm}
 						key='2'
-						variant='primary'
+						variant='solid'
 						fontSize='lg'
 						height={40}
 						className='px-[36px] py-[4px] capitalize'

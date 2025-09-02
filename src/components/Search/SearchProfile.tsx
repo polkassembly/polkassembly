@@ -161,7 +161,7 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 								onClick={() => setOpenEditModal(true)}
 								height={40}
 								width={87}
-								variant='default'
+								variant='solid'
 								className='max-lg:w-auto'
 							>
 								<EditIcon className='text-sm tracking-wide text-pink_primary ' />

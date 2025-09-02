@@ -144,11 +144,11 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 						topic: topic
 							? topic
 							: isTopicIdValid(topic_id)
-							? {
-									id: topic_id,
-									name: getTopicNameFromTopicId(topic_id)
-							  }
-							: getTopicFromType(strProposalType as ProposalType),
+								? {
+										id: topic_id,
+										name: getTopicNameFromTopicId(topic_id)
+									}
+								: getTopicFromType(strProposalType as ProposalType),
 						user_id: docData?.user_id || 1,
 						username: docData?.username
 					};

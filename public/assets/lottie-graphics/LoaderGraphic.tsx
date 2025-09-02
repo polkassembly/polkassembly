@@ -8,11 +8,10 @@ import Lottie from 'react-lottie-player';
 import LoaderJson from './lottie-files/loader.json';
 
 interface Props {
-	width?: number
+	width?: number;
 }
 
 function LoaderGraphic({ width = 200 }: Props): ReactElement {
-
 	return (
 		<div>
 			<Lottie

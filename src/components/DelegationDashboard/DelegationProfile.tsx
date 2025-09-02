@@ -92,7 +92,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 											onClick={() => setIsEditModalOpen(true)}
 											height={40}
 											width={40}
-											variant='default'
+											variant='solid'
 											className='sm:hidden'
 										>
 											<Image
@@ -170,7 +170,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 										onClick={() => setIsEditModalOpen(true)}
 										height={40}
 										width={87}
-										variant='default'
+										variant='solid'
 										className='max-lg:w-auto'
 									>
 										<EditIcon className='mt-1 text-base text-pink_primary ' />

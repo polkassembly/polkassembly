@@ -570,9 +570,9 @@ class AuthService {
 		const isValidSr = skipSignCheck
 			? true
 			: // : address.startsWith('0x') && [Wallet.METAMASK, Wallet.TALISMAN, Wallet.SUBWALLET].includes(wallet)
-			address.startsWith('0x')
-			? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
-			: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
+				address.startsWith('0x')
+				? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
+				: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);
 
 		// If this linked address is the first address to be linked. Then set it as default.

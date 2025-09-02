@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useAssetsCurrentPriceSelector, useNetworkSelector } from '~src/redux/selectors';
 import { fetchTokenPrice } from '~src/util/fetchTokenPrice';
 import { IBeneficiary } from '~src/types';
@@ -221,52 +221,49 @@ const AmountTooltip = ({ beneficiaries, proposalCreatedAt, timeline, postId, cla
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
-	const popoverContent = () => {
-		return (
-			<Spin spinning={loading}>
-				<div className='flex flex-col gap-2 px-4 py-3 font-medium dark:text-blue-dark-high'>
-					{beneficiaries?.length > 1 && (
-						<div className='flex gap-1'>
-							{beneficiaries?.map((beneficiary, index) => (
-								<div
-									key={index}
-									className='text-xs font-medium text-lightBlue dark:text-blue-dark-high'
-								>
-									{beneficiary?.genralIndex
-										? getBeneficiaryAmountAndAsset({ amount: beneficiary.amount.toString(), assetId: beneficiary?.genralIndex, network })
-										: parseBalance(beneficiary?.amount, 2, true, network)}
-									{beneficiaries?.length - 1 !== index && (
-										<Divider
-											className='bg-section-light-container dark:bg-blue-dark-medium'
-											orientation='right'
-											type='vertical'
-										/>
-									)}
-								</div>
-							))}
-						</div>
-					)}
+	const PopoverContent: ReactNode = (
+		<Spin spinning={loading}>
+			<div className='flex flex-col gap-2 px-4 py-3 font-medium dark:text-blue-dark-high'>
+				{beneficiaries?.length > 1 && (
+					<div className='flex gap-1'>
+						{beneficiaries?.map((beneficiary, index) => (
+							<div
+								key={index}
+								className='text-xs font-medium text-lightBlue dark:text-blue-dark-high'
+							>
+								{beneficiary?.genralIndex
+									? getBeneficiaryAmountAndAsset({ amount: beneficiary.amount.toString(), assetId: beneficiary?.genralIndex, network })
+									: parseBalance(beneficiary?.amount, 2, true, network)}
+								{beneficiaries?.length - 1 !== index && (
+									<Divider
+										className='bg-section-light-container dark:bg-blue-dark-medium'
+										orientation='right'
+										type='vertical'
+									/>
+								)}
+							</div>
+						))}
+					</div>
+				)}
 
-					<div className='flex items-center gap-1 text-xs'>
-						<span className='font-normal text-bodyBlue dark:text-blue-dark-medium'>{isProposalClosed ? 'Value on day of txn:' : 'Current Value:'}</span>
-						<span>{currentOrValueOnDayOfTxn}</span>
-					</div>
-					<div className='flex items-center gap-1 text-xs'>
-						<span className='font-normal text-bodyBlue dark:text-blue-dark-medium'>Value on day of creation:</span>
-						<span>{valueOnDayOfCreation}</span>
-					</div>
+				<div className='flex items-center gap-1 text-xs'>
+					<span className='font-normal text-bodyBlue dark:text-blue-dark-medium'>{isProposalClosed ? 'Value on day of txn:' : 'Current Value:'}</span>
+					<span>{currentOrValueOnDayOfTxn}</span>
 				</div>
-			</Spin>
-		);
-	};
-
+				<div className='flex items-center gap-1 text-xs'>
+					<span className='font-normal text-bodyBlue dark:text-blue-dark-medium'>Value on day of creation:</span>
+					<span>{valueOnDayOfCreation}</span>
+				</div>
+			</div>
+		</Spin>
+	);
 	return (
 		<div className={className}>
 			{loading ? (
 				<SkeletonButton active />
 			) : (
 				<Popover
-					content={popoverContent}
+					content={PopoverContent}
 					overlayClassName={classNames(dmSans?.className, dmSans?.variable, 'track-popover')}
 					className=''
 				>

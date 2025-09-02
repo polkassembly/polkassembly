@@ -434,7 +434,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 				<CustomButton
 					onClick={getAccounts}
 					className='mt-2 border-none'
-					variant='primary'
+					variant='solid'
 					text='Vote'
 					buttonsize='xs'
 				/>
@@ -528,7 +528,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 															onClick={() => handleRemove(vote)}
 															loading={loadingStatus?.remove?.[vote?.refIndex?.toString()]?.isLoading}
 															className='border-none'
-															variant='primary'
+															variant='solid'
 															text='Remove'
 															buttonsize='xs'
 														/>
@@ -573,7 +573,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 																onClick={() => handleUnlock(unlock)}
 																loading={loadingStatus?.unlock?.[unlock?.trackId?.toString()]?.isLoading}
 																className='border-none'
-																variant='primary'
+																variant='solid'
 																text='Unlock'
 																buttonsize='xs'
 															/>

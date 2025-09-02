@@ -301,7 +301,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 										width={91}
 										className='change-wallet-button mr-1 flex items-center justify-center'
 										height={21}
-										variant='primary'
+										variant='solid'
 									/>
 								</div>
 							</div>
@@ -474,7 +474,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 					<CustomButton
 						text='Create Proposal'
 						onClick={handleCreateProposal}
-						variant='primary'
+						variant='solid'
 						height={40}
 						width={155}
 						className={`${(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading || gasFee.gte(availableBalance)) && 'opacity-50'} `}

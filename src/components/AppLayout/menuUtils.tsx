@@ -11,7 +11,6 @@ import styled from 'styled-components';
 import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 export type MenuItem = Required<MenuProps>['items'][number];
 
@@ -58,7 +57,7 @@ const getUserDropDown = ({
 }: IUserDropdown): MenuItem => {
 	const profileUsername = identityUsername || username || '';
 
-	const dropdownMenuItems: ItemType[] = [
+	const dropdownMenuItems = [
 		{
 			key: 'view profile',
 			label: (

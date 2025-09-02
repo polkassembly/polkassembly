@@ -100,7 +100,7 @@ const ContinueWithoutLinking: FC<IContinueWithoutLinking> = (props) => {
 					className='flex items-center justify-end'
 				>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						loading={formDisabled}
 						disabled={formDisabled}
 						onClick={() => form.submit()}

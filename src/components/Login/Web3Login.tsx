@@ -565,7 +565,7 @@ const Web3Login: FC<Props> = ({
 								<div className='web3-button-container ml-auto flex'>
 									<CustomButton
 										text='Go Back'
-										variant='default'
+										variant='solid'
 										buttonsize='sm'
 										onClick={() => handleBackToLogin()}
 										className='web3-button mr-3 w-[144px]'
@@ -575,7 +575,7 @@ const Web3Login: FC<Props> = ({
 										<CustomButton
 											icon={<CheckOutlined />}
 											text='Got it!'
-											variant='primary'
+											variant='solid'
 											buttonsize='sm'
 											onClick={() => {
 												getAccounts(chosenWallet)
@@ -681,14 +681,14 @@ const Web3Login: FC<Props> = ({
 													<div className='my-2 flex items-center justify-center gap-x-2 px-4'>
 														<CustomButton
 															text='Go Back'
-															variant='default'
+															variant='solid'
 															buttonsize='sm'
 															onClick={() => handleBackToLogin()}
 															className='mr-3'
 														/>
 														<CustomButton
 															text='Login'
-															variant='primary'
+															variant='solid'
 															buttonsize='sm'
 															loading={loading}
 															disabled={withPolkasafe && !multisigAddress}
@@ -715,7 +715,7 @@ const Web3Login: FC<Props> = ({
 									<div className='flex items-center justify-center'>
 										<CustomButton
 											text='Go Back'
-											variant='default'
+											variant='solid'
 											buttonsize='sm'
 											onClick={() => handleBackToLogin()}
 										/>

@@ -86,7 +86,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 							className='px-7 py-5 font-semibold leading-7'
 							onClick={handleSubmit}
 							disabled={loading}
-							variant='default'
+							variant='solid'
 							text='Disable'
 							fontSize='md'
 						/>
@@ -95,7 +95,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 							onClick={dismissModal}
 							className='px-7 py-5 font-semibold leading-7'
 							disabled={loading}
-							variant='primary'
+							variant='solid'
 							text='Cancel'
 							fontSize='md'
 						/>
@@ -133,7 +133,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 			<CustomButton
 				onClick={() => setShowModal(true)}
 				htmlType='submit'
-				variant='default'
+				variant='solid'
 				className='h-full w-full border-none p-4 text-left text-blue-light-high dark:border-[#3B444F] dark:text-blue-dark-high'
 			>
 				<span className='align-center flex text-[16px] font-medium'>

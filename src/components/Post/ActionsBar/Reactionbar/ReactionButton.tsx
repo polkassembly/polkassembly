@@ -155,7 +155,7 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	const button = (
 		<span className={className}>
 			<CustomButton
-				variant='default'
+				variant='solid'
 				onClick={handleReact}
 				className='m-0 mr-3 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}

@@ -10,7 +10,6 @@ import { Spin, Checkbox, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { noTitle } from '~src/global/noTitle';
 import Link from 'next/link';
 import Address from './Address';
@@ -79,7 +78,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [delegatorsLoading, setDelegatorsLoading] = useState<boolean>(false);
 	const [sortByPostIndex, setSortByPostIndex] = useState<boolean>(false);
-	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
+	const [checkedAddressList, setCheckedAddressList] = useState<any[]>(addresses as any[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [openVoteDataModal, setOpenVoteDataModal] = useState(false);
 	const [expandViewVote, setExpandViewVote] = useState<IVotesData | null>(null);

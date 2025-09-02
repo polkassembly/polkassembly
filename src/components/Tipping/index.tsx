@@ -297,7 +297,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 text-sm dark:border-[#3B444F]'>
 						<CustomButton
-							variant='default'
+							variant='solid'
 							onClick={handleCancel}
 							className='font-semibold'
 							disabled={loadingStatus.isLoading}
@@ -305,7 +305,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							text={'Go Back'}
 						/>
 						<CustomButton
-							variant='primary'
+							variant='solid'
 							disabled={disable}
 							htmlType='submit'
 							key='submit'
@@ -340,7 +340,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								disableTooltip
 							/>
 							<CustomButton
-								variant='primary'
+								variant='solid'
 								onClick={() => {
 									setOpenAddressChangeModal(true);
 									setOpen(false);

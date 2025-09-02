@@ -41,7 +41,7 @@ export function PeopleChainApiContextProvider(props: PeopleChainApiContextProvid
 		let api = undefined;
 		if (!provider.current) return;
 
-		api = new ApiPromise({ provider: provider.current, typesBundle });
+		api = new ApiPromise({ provider: provider.current, typesBundle: typesBundle as any });
 		setPeopleChainApi(api);
 	}, [props.network, wsProvider]);
 

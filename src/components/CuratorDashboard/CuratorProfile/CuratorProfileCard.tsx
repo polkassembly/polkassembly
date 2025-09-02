@@ -148,7 +148,7 @@ const CuratorProfileCard = ({ curatorData }: { curatorData: CuratorData }) => {
 							</span>
 						</div>
 						<CustomButton
-							variant='default'
+							variant='solid'
 							onClick={handleEditClick}
 							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer gap-1 border-none p-0 text-sm font-bold text-pink_primary`}
 						>

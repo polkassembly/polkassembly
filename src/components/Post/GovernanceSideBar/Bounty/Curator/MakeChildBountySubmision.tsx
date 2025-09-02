@@ -234,14 +234,14 @@ const MakeChildBountySubmisionModal: FC<IBountyChildBountiesProps> = (props) => 
 					<div className='-mx-6 mt-6 flex justify-end gap-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							text='Back'
-							variant='default'
+							variant='solid'
 							height={40}
 							width={155}
 							onClick={() => setOpen(false)}
 						/>
 						<CustomButton
 							text='Send'
-							variant='primary'
+							variant='solid'
 							onClick={() => handleSubmit()}
 							height={40}
 							width={155}

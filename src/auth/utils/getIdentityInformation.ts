@@ -62,12 +62,12 @@ const getIdentityInformation = async ({ api, address, network }: Args): Promise<
 	const infoCall = identityInfo?.judgements
 		? identityInfo?.judgements.filter(([, judgement]: any[]): boolean => {
 				return ['KnownGood', 'Reasonable'].includes(judgement);
-		  })
+			})
 		: [];
 	const verifiedByPolkassembly = infoCall
 		? infoCall.some(([index, judgement]: any[]) => {
 				return Number(getIdentityRegistrarIndex({ network })) == index && ['KnownGood', 'Reasonable'].includes(judgement);
-		  })
+			})
 		: false;
 
 	const unverified = !infoCall?.length || !identityInfo?.judgements?.length;

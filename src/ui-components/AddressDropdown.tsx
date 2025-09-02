@@ -4,7 +4,6 @@
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Tag } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
@@ -60,7 +59,7 @@ const AddressDropdown = ({
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
 	const dropdownList: { [index: string]: string } = {};
-	const addressItems: ItemType[] = [];
+	const addressItems: any[] = [];
 	const currentUser = useUserDetailsSelector();
 	const { addresses } = currentUser;
 	const dispatch = useDispatch();
@@ -114,7 +113,7 @@ const AddressDropdown = ({
 			label: (
 				<div className='mt-2 flex items-center justify-center'>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						onClick={() => setSwitchModalOpen(true)}
 						text='Switch Wallet'
 						className={`w-full ${dmSans.variable} ${dmSans.className}`}

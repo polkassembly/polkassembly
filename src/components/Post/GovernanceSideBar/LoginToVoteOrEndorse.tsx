@@ -20,7 +20,7 @@ const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 	return (
 		<div>
 			<CustomButton
-				variant='primary'
+				variant='solid'
 				fontSize='lg'
 				onClick={() => {
 					setModalOpen(!modalOpen);

@@ -519,7 +519,7 @@ const Post: FC<IPostProps> = (props) => {
 						key: 'ai-summary',
 						label: 'AI Summary'
 					}
-			  ]
+				]
 			: []),
 		...getOnChainTabs()
 	];

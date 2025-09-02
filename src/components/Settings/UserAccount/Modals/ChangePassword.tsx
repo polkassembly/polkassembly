@@ -181,7 +181,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 							<CustomButton
 								text='Cancel'
 								key='1'
-								variant='default'
+								variant='solid'
 								onClick={onCancel}
 								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
@@ -192,7 +192,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 								htmlType='submit'
 								text='Save'
 								key='2'
-								variant='default'
+								variant='solid'
 								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>

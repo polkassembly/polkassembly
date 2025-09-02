@@ -317,7 +317,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							fontSize='md'
 							width={150}
 							height={40}
-							variant='primary'
+							variant='solid'
 						/>
 					</Form.Item>
 				</Form>

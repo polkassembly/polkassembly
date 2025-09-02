@@ -142,7 +142,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									text='Cancel'
 									key='cancel'
 									onClick={dismissModal}
-									variant='default'
+									variant='solid'
 									className='px-8 py-5 font-semibold'
 								/>
 								<CustomButton
@@ -154,7 +154,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									loading={loading}
 									disabled={!isFormValid}
 									text='Delete'
-									variant='primary'
+									variant='solid'
 									style={{ opacity: !isFormValid ? 0.6 : 1 }}
 									className='mr-6 px-8 py-5 font-semibold'
 								/>

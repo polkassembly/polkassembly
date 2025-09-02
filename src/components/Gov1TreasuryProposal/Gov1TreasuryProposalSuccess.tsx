@@ -48,7 +48,7 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 					<CustomButton
 						height={40}
 						className='w-full'
-						variant='primary'
+						variant='solid'
 						text='View Proposal'
 					/>
 				</Link>

@@ -39,7 +39,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 								}`}
 								height={30}
 								width={144}
-								variant='primary'
+								variant='solid'
 							>
 								{status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)
 									? 'Confirm'

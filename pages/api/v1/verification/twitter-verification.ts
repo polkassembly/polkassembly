@@ -21,7 +21,7 @@ async function getOAuthRequestToken(network: string, isUserCreatedBounty: boolea
 	const tokenDetails = await new Promise((resolve, reject) => {
 		oauthConsumer.getOAuthRequestToken((error, oauthRequestToken, oauthRequestTokenSecret, results) => {
 			if (error) {
-				reject(new Error(error.data || 'Oops! Something went wrong while getting the OAuth request token.'));
+				reject(new Error(String(error instanceof Error ? error.message : error?.data) || 'Oops! Something went wrong while getting the OAuth request token.'));
 			} else {
 				resolve({ oauthRequestToken, oauthRequestTokenSecret, results });
 			}

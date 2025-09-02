@@ -153,14 +153,14 @@ const SubmissionTippingModal = ({
 			footer={
 				<div className='flex justify-end gap-2'>
 					<CustomButton
-						variant='default'
+						variant='solid'
 						onClick={handleCancel}
 						width={120}
 						disabled={loadingStatus.isLoading}
 						text='Cancel'
 					/>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						onClick={handleTip}
 						width={120}
 						disabled={disable}

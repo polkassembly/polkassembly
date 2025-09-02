@@ -287,7 +287,7 @@ const Submissions: FC<IBountyChildBountiesProps> = (props) => {
 			</Spin>
 			{!!loginAddress?.length && (
 				<CustomButton
-					variant='primary'
+					variant='solid'
 					className={classNames('flex w-full cursor-pointer items-center justify-center gap-x-1 rounded-md border-none', hasSubmitted || loading ? 'opacity-50' : '')}
 					onClick={() => {
 						if (hasSubmitted) {

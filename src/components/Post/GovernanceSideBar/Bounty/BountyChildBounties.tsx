@@ -110,7 +110,7 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 										</div>
 									</Link>
 								)
-					  )
+						)
 					: !loading && <PostEmptyState />}
 
 				{canCreateChildBounty() && <CreateChildBountyButton className='mt-4' />}

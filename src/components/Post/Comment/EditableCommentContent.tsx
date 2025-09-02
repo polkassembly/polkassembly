@@ -183,11 +183,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						comments[key] = prev?.[key]?.map((comment: IComment) => {
 							const newComment = comment;
 							if (comment.id === commentId) {
-								(newComment.history = [
+								((newComment.history = [
 									{ content: newComment?.content, created_at: newComment?.created_at, sentiment: newComment?.sentiment || 0 },
 									...(newComment?.history || [])
 								]),
-									(newComment.content = editedContent);
+									(newComment.content = editedContent));
 								newComment.updated_at = new Date();
 								newComment.sentiment = sentiment || 0;
 								flag = true;
@@ -566,7 +566,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							</span>
 						</div>
 					)
-			  }
+				}
 			: null,
 		{
 			key: 2,
@@ -598,7 +598,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							isButtonOnComment={true}
 						/>
 					)
-			  }
+				}
 			: null,
 		isEditable
 			? {
@@ -619,23 +619,23 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							Delete
 						</div>
 					)
-			  }
+				}
 			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network) && postType
-			? {
-					key: 4,
-					label: (
-						<ReportButton
-							isDeleteModal={true}
-							proposalType={(comment.post_type as any) || postType}
-							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
-							type={EReportType.COMMENT}
-							onSuccess={removeCommentContent}
-							commentId={commentId}
-							postId={(comment.post_index as any) || postIndex}
-						/>
-					)
-			  }
-			: null
+				? {
+						key: 4,
+						label: (
+							<ReportButton
+								isDeleteModal={true}
+								proposalType={(comment.post_type as any) || postType}
+								className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${dmSans.variable} ${dmSans.className} `}
+								type={EReportType.COMMENT}
+								onSuccess={removeCommentContent}
+								commentId={commentId}
+								postId={(comment.post_index as any) || postIndex}
+							/>
+						)
+					}
+				: null
 	];
 
 	const handleSentimentText = () => {

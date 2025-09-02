@@ -8,7 +8,7 @@ interface ICustomButton extends ButtonProps {
 	text?: string | ReactNode;
 	fontSize?: string;
 	className?: string;
-	variant?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
+	variant?: 'link' | 'text' | 'dashed' | 'outlined' | 'solid' | 'filled';
 	width?: number;
 	height?: number;
 	style?: any;
@@ -36,10 +36,10 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 			} font-medium ${
 				!customColor
 					? `${
-							variant === 'primary'
+							variant === 'solid'
 								? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
 								: 'border border-pink_primary bg-transparent text-pink_primary'
-					  }`
+						}`
 					: `border-${customBorderColor} text-${customTextColor} bg-${customColor}`
 			} ${className} `}
 			style={{ height: `${height}px`, width: `${width}px`, ...style }}

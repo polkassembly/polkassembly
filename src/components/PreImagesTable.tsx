@@ -313,7 +313,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay '}
 					footer={[
 						<CustomButton
-							variant='default'
+							variant='solid'
 							text='Close'
 							key='back'
 							onClick={() => setModalArgs(null)}

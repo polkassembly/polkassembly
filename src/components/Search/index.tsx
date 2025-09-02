@@ -6,7 +6,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Checkbox, List, Modal, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
 import _ from 'lodash';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import ResultPosts from './ResultPosts';
@@ -100,9 +99,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	const [filterBy, setFilterBy] = useState<EFilterBy>(EFilterBy.Referenda);
 	const [dateFilter, setDateFilter] = useState<EDateFilter | null>(null);
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
-	const [selectedOpengovTracks, setSelectedOpengovTracks] = useState<CheckboxValueType[]>([]);
-	const [selectedGov1Tracks, setSelectedGov1Tracks] = useState<CheckboxValueType[]>([]);
-	const [selectedTopics, setSelectedTopics] = useState<CheckboxValueType[]>([]);
+	const [selectedOpengovTracks, setSelectedOpengovTracks] = useState<any[]>([]);
+	const [selectedGov1Tracks, setSelectedGov1Tracks] = useState<any[]>([]);
+	const [selectedTopics, setSelectedTopics] = useState<any[]>([]);
 	const [selectedNetworks, setSelectedNetworks] = useState<string[]>([]);
 	const [peopleResults, setPeopleResults] = useState<any[] | null>(null);
 	const [onchainPostResults, setOnchainPostResults] = useState<{ data: any[]; total: number } | null>(null);
@@ -159,8 +158,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			!isSuperSearch
 				? [`network:${network}`]
 				: selectedNetworks.length > 0
-				? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
-				: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
+					? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
+					: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
 			selectedTags.map((tag) => {
 				return `tags:${tag}`;
 			}),

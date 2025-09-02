@@ -103,7 +103,7 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);
 					}}
-					variant='primary'
+					variant='solid'
 					height={40}
 					className='mt-4 w-full'
 				/>

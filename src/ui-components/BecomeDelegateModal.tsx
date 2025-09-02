@@ -141,7 +141,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 					</div>
 					<div className='mt-4 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-4 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium sm:mt-5 sm:px-5 sm:py-4'>
 						<Button
-							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-xs font-medium font-semibold tracking-wide text-white dark:bg-pink_primary sm:text-sm ${
+							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-xs font-semibold tracking-wide text-white dark:bg-pink_primary sm:text-sm ${
 								newBio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'

@@ -14,7 +14,6 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
@@ -64,7 +63,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const [lock, setLockValue] = useState<number>(0);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [availableTransferableBalance, setAvailableTransferableBalance] = useState<BN>(ZERO_BN);
-	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
+	const [checkedList, setCheckedList] = useState<any[]>([]);
 	const [indeterminate, setIndeterminate] = useState(false);
 	const [checkAll, setCheckAll] = useState(false);
 	const [openSuccessPopup, setOpenSuccessPopup] = useState<boolean>(false);
@@ -120,7 +119,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setCheckAll(newList.length === trackArr.length);
 	};
 
-	const getTxFee = (checkedTracksList?: CheckboxValueType[], convictionVal?: number) => {
+	const getTxFee = (checkedTracksList?: any[], convictionVal?: number) => {
 		if (!checkedTracksList) {
 			checkedTracksList = checkedList;
 		}
@@ -179,7 +178,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						? {
 								name: values[0],
 								trackId: values[1].trackId
-						  }
+							}
 						: null;
 				});
 				setTrackArr(tracks);
@@ -192,7 +191,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setLoading(false);
 	};
 
-	const onChange = (list: CheckboxValueType[]) => {
+	const onChange = (list: any[]) => {
 		setCheckedList(list);
 		getTxFee(list);
 		setIndeterminate(!!list.length && list.length < trackArr.length);
@@ -328,7 +327,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 				<div>
 					<CustomButton
 						className='delegation-buttons'
-						variant='default'
+						variant='solid'
 						buttonsize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
@@ -359,13 +358,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						<CustomButton
 							text='Cancel'
 							className='rounded-[4px] text-sm sm:text-base'
-							variant='default'
+							variant='solid'
 							buttonsize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
 							text='Delegate'
-							variant='primary'
+							variant='solid'
 							className={`rounded-[4px] text-sm sm:text-base ${delegateButtonDisable && 'opacity-50'}`}
 							disabled={delegateButtonDisable}
 							onClick={async () => {
@@ -440,7 +439,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 											<span className='text-sm text-[#ff4d4f]'>
 												{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address'}
 											</span>
-									  )
+										)
 									: null}
 
 								{addressAlert && (

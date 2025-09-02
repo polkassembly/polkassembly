@@ -212,7 +212,7 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 													~{' '}
 													{post?.assetId && post?.requestedAmount ? (
 														`${getUsdValueFromAsset({
-															currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+															currentTokenPrice: isProposalClosed ? (usdValueOnClosed ?? currentTokenPrice) : currentTokenPrice || '0',
 															dedTokenUsdPrice: dedTokenUsdPrice || '0',
 															generalIndex: post?.assetId,
 															inputAmountValue: new BN(post?.requestedAmount)
@@ -228,8 +228,8 @@ export const ActivityFeedPostHeader: React.FC<IPostHeaderProps> = ({
 																		!isProposalClosed
 																			? new BN(Number(currentTokenPrice))?.mul(new BN('10')?.pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
 																			: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-																			? new BN(Number(currentTokenPrice))?.mul(new BN('10')?.pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-																			: bnUsdValueOnClosed
+																				? new BN(Number(currentTokenPrice))?.mul(new BN('10')?.pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																				: bnUsdValueOnClosed
 																	)
 																	?.toString() || '0',
 																0,

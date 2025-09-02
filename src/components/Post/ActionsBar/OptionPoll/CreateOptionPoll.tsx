@@ -171,7 +171,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 				footer={
 					<div className='flex justify-end space-x-4'>
 						<CustomButton
-							variant='default'
+							variant='solid'
 							key='back'
 							text='Cancel'
 							buttonsize='xs'
@@ -182,7 +182,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 							}}
 						/>
 						<CustomButton
-							variant='primary'
+							variant='solid'
 							htmlType='submit'
 							key='submit'
 							text='Create Poll'

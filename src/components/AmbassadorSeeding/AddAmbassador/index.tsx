@@ -89,7 +89,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 							}}
 							buttonsize='sm'
 							text='Yes, Exit'
-							variant='default'
+							variant='solid'
 						/>
 						<CustomButton
 							onClick={() => {
@@ -99,7 +99,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 							height={40}
 							width={200}
 							text='No, Continue Editing'
-							variant='primary'
+							variant='solid'
 						/>
 					</div>
 				</div>

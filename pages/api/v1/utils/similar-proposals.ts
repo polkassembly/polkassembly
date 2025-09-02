@@ -83,11 +83,11 @@ const buildFirestoreData = async (docData: any, strProposalType: string, network
 		topic: topic
 			? topic
 			: isTopicIdValid(topic_id)
-			? {
-					id: topic_id,
-					name: getTopicNameFromTopicId(topic_id)
-			  }
-			: getTopicFromType(getFirestoreProposalType(strProposalType) as ProposalType),
+				? {
+						id: topic_id,
+						name: getTopicNameFromTopicId(topic_id)
+					}
+				: getTopicFromType(getFirestoreProposalType(strProposalType) as ProposalType),
 		user_id: docData?.user_id || 1,
 		username: docData?.username
 	};

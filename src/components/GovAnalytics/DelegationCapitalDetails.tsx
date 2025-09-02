@@ -198,7 +198,7 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 							min={0}
 							max={Object.keys(delegationData).length - 1}
 							value={selectedRange}
-							onChange={onChange}
+							onChange={onChange as any}
 							marks={marks}
 							tooltip={{
 								formatter: (value) => {

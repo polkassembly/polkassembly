@@ -234,7 +234,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				footer={
 					<div className='-mx-6 mt-8 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
-							variant='default'
+							variant='solid'
 							key='cancel'
 							onClick={() => {
 								setOpenModal && setOpenModal(false);
@@ -246,7 +246,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 							text='Cancel'
 						/>
 						<CustomButton
-							variant='primary'
+							variant='solid'
 							key='update profile'
 							disabled={loading}
 							loading={loading}

@@ -251,7 +251,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, ayeNa
 								<div className='mt-5 flex items-center justify-end px-6'>
 									<CustomButton
 										text='Got it!'
-										variant='primary'
+										variant='solid'
 										buttonsize='xs'
 										onClick={() => setVoteCalculationModalOpen(false)}
 										className='gap-10 px-4 py-1'

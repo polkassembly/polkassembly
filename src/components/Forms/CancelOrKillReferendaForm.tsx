@@ -268,7 +268,7 @@ export default function CancelOrKillReferendaForm({
 								Back
 							</Button>
 							<CustomButton
-								variant='primary'
+								variant='solid'
 								htmlType='submit'
 								buttonsize='sm'
 								onClick={handleSubmit}

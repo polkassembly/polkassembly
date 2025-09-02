@@ -43,6 +43,8 @@ export default function getNetwork(): Network {
 		network = 'moonbase';
 	} else if (network == 'polkadot-old') {
 		network = 'polkadot';
+	} else if (network == 'kusama-old') {
+		network = 'kusama';
 	}
 
 	if (!possibleNetworks.includes(network)) {

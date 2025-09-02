@@ -64,7 +64,14 @@ const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) 
 		const authorizationUrl = `https://api.twitter.com/oauth/authenticate?oauth_token=${oauthRequestToken}`;
 		return res.status(200).json({ url: authorizationUrl });
 	} catch (err) {
-		return res.status(500).json({ message: err || 'Internal server error' });
+		console.error('Twitter verification error:', err);
+		// Return appropriate status code based on error type
+		if (err.message?.includes('temporarily unavailable')) {
+			return res.status(503).json({ message: err.message });
+		} else if (err.message?.includes('API credentials')) {
+			return res.status(500).json({ message: err.message });
+		}
+		return res.status(500).json({ message: err.message || 'Internal server error' });
 	}
 };
 export default withErrorHandling(handler);

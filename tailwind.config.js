@@ -138,7 +138,8 @@ module.exports = {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'rhs-card-gradient': 'linear-gradient(97deg, #04d9bb 0.25%, #06d7bb 0.26%, #6e49c9 112.25%)',
 				'rhs-indicator-gradient': 'linear-gradient(153deg, #08D4BB 16.67%, #6F47C9 100%)',
-				'custom-gradient': 'linear-gradient(180deg, rgba(234, 234, 234, 0.00) 0%, rgba(234, 234, 234, 0.53) 27.5%, rgba(74, 72, 72, 0.39) 82.5%, rgba(46, 43, 43, 0.40) 100%)'
+				'custom-gradient': 'linear-gradient(180deg, rgba(234, 234, 234, 0.00) 0%, rgba(234, 234, 234, 0.53) 27.5%, rgba(74, 72, 72, 0.39) 82.5%, rgba(46, 43, 43, 0.40) 100%)',
+				'service-discontinued-banner-gradient': 'linear-gradient(90deg, #d80676 0%, #ff778f 100%)'
 			}
 		}
 	},

@@ -34,6 +34,8 @@ import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { network as allNetworks } from '~src/global/networkConstants';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	className?: string;
@@ -43,6 +45,8 @@ interface Props {
 	setOpenSuccessModal: (pre: boolean) => void;
 }
 const ZERO_BN = new BN(0);
+
+const TREASURY_SPEND_LOCAL_SUPPORTED_NETWORKS = [allNetworks.INTEGRITEE];
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
@@ -66,11 +70,23 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = network ? chainProperties[network]?.tokenSymbol : null;
 
+	const getTx = useCallback(
+		(api: ApiPromise, fundingAmount: string, beneficiary: string) => {
+			if (TREASURY_SPEND_LOCAL_SUPPORTED_NETWORKS.includes(network)) {
+				return api.tx.treasury.spendLocal(fundingAmount, beneficiary);
+			}
+			return api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[api, beneficiary, fundingAmount, network]
+	);
+
 	const getGasFee = useCallback(async () => {
 		if (!api || !apiReady || !beneficiary || !getEncodedAddress(beneficiary, network) || !proposer || new BN(fundingAmount || '0').eq(ZERO_BN)) return;
-		const tx = api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
+		const tx = getTx(api, fundingAmount, beneficiary);
 		const gasFee = await tx.paymentInfo(proposer);
 		setGasFee(new BN(gasFee.partialFee || '0'));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, beneficiary, fundingAmount, network, proposer]);
 
 	const handleOnchange = (obj: any) => {
@@ -142,7 +158,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
-		const tx = api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
+		const tx = getTx(api, fundingAmount, beneficiary);
 		const postId = Number(await api.query.treasury.proposalCount());
 
 		const onSuccess = () => {

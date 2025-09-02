@@ -21,7 +21,6 @@ import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import IdentitySuccessState from './IdentitySuccessState';
-import { network as AllNetworks } from 'src/global/networkConstants';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
@@ -72,9 +71,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		try {
 			const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
 
-			const identityHash = await (peopleChainApi ?? api)?.query?.identity
-				?.identityOf(encoded_addr)
-				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res?.unwrap?.()?.[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
+			const identityHash = await (peopleChainApi ?? api)?.query?.identity?.identityOf(encoded_addr).then((res: any) => (res.unwrapOr(null) as any)?.info.hash.toHex());
 			if (!identityHash) {
 				console.log('Error in unwrapping identity hash');
 			}

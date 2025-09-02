@@ -9,11 +9,10 @@ import LatestActivityJson from './lottie-files/latest-activity.json';
 import Slash from './Slash.svg';
 
 interface Props {
-	width?: number
+	width?: number;
 }
 
 function LatestActivityEmptyState({ width = 80 }: Props): ReactElement {
-
 	const [playing, setPlaying] = useState(false);
 
 	return (

@@ -35,7 +35,7 @@ export const gov1TreasuryProposalStore = createSlice({
 	name: 'gov1TreasuryProposal',
 	reducers: {
 		resetGov1TreasuryProposal: (state) => {
-			(state.beneficiary = ''), (state.content = '');
+			((state.beneficiary = ''), (state.content = ''));
 			state.allowedCommentors = EAllowedCommentor.ALL;
 			state.discussionLink = '';
 			state.discussionId = null;

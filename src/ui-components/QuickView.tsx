@@ -245,7 +245,7 @@ const QuickView = ({
 							<div className='flex w-1/2 items-center'>
 								<CustomButton
 									onClick={handleTipping}
-									variant={theme == 'dark' ? 'link' : 'default'}
+									variant={theme == 'dark' ? 'link' : 'outlined'}
 									shape='circle'
 									height={32}
 									className={`w-full rounded-full p-5 dark:border-[#FF4098] dark:text-[#FF4098]  ${!loginUserId || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}

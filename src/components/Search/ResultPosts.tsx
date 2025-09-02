@@ -45,7 +45,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 		: [...postsData].sort((a, b) => {
 				if (!a?.created_at || !b?.created_at) return 0;
 				return b.created_at - a.created_at;
-		  });
+			});
 
 	const eventRef = useRef<HTMLDivElement | null>(null);
 

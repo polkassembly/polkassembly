@@ -155,7 +155,7 @@ const TinderCards: FC<ITinderCards> = (props) => {
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
-							variant='default'
+							variant='solid'
 							text='Show More'
 							className='w-full'
 							buttonsize='sm'

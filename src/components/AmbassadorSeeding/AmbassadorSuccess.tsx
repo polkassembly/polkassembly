@@ -114,7 +114,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 						<CustomButton
 							height={40}
 							className='w-full rounded-[4px]'
-							variant='primary'
+							variant='solid'
 							text='View Proposal'
 						/>
 					</Link>

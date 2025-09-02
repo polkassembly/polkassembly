@@ -439,7 +439,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 									<CustomButton
 										disabled={loading}
 										onClick={handleLogin}
-										variant='primary'
+										variant='solid'
 										buttonsize='xs'
 										text='Login'
 									/>
@@ -457,7 +457,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 					onClick={() => setDisplayWeb2}
 					text='Login with username'
 					className='border-none'
-					variant='default'
+					variant='solid'
 				/>
 			</div>
 			<Divider plain>Or</Divider>
@@ -467,7 +467,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 					onClick={() => setPolkadotWallet()}
 					text='Login with polkadot.js'
 					className='border-none'
-					variant='default'
+					variant='solid'
 				/>
 			</div>
 		</div>

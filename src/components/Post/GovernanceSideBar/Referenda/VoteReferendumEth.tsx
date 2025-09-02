@@ -383,7 +383,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	return (
 		<div className={className}>
 			<CustomButton
-				variant='primary'
+				variant='solid'
 				fontSize='lg'
 				className='mx-auto mb-8 w-full rounded-xxl p-[26px] font-semibold lg:w-[480px] xl:w-full'
 				onClick={() => setShowModal(true)}

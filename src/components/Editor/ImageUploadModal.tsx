@@ -87,7 +87,7 @@ const ImageUploadModal = ({
 				<div className='flex items-center justify-end gap-1'>
 					<CustomButton
 						key='cancel'
-						variant='default'
+						variant='solid'
 						onClick={() => setOpen(false)}
 						className={`${theme === 'dark' ? 'border-separatorDark bg-transparent text-white' : ''}`}
 					>
@@ -95,7 +95,7 @@ const ImageUploadModal = ({
 					</CustomButton>
 					<CustomButton
 						key='save'
-						variant='primary'
+						variant='solid'
 						onClick={handleImageInsertion}
 						disabled={!imageUrl}
 						loading={imageUploading}
@@ -111,7 +111,7 @@ const ImageUploadModal = ({
 				<div className='mb-4'>
 					<div className='mb-4 flex'>
 						<CustomButton
-							variant={imageUploadTab === 'upload' ? 'primary' : 'default'}
+							variant={imageUploadTab === 'upload' ? 'solid' : 'outlined'}
 							onClick={() => setImageUploadTab('upload')}
 							className={`mr-2 ${imageUploadTab === 'upload' ? 'bg-pink_primary' : ''}`}
 							height={30}
@@ -120,7 +120,7 @@ const ImageUploadModal = ({
 							<UploadOutlined /> Upload from device
 						</CustomButton>
 						<CustomButton
-							variant={imageUploadTab === 'url' ? 'primary' : 'default'}
+							variant={imageUploadTab === 'url' ? 'solid' : 'outlined'}
 							onClick={() => setImageUploadTab('url')}
 							className={`${imageUploadTab === 'url' && 'bg-pink_primary'}`}
 							height={30}

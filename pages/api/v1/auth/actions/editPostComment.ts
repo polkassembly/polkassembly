@@ -49,13 +49,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if (!commentDoc.exists) return res.status(404).json({ message: 'Comment not found' });
 	const commentData = commentDoc.data();
-	const commentAddress = (
-		await firestore_db
-			.collection('addresses')
-			.where('user_id', '==', commentData?.user_id)
-			.where('isMultisig', '==', true)
-			.get()
-	).docs.map((doc) => doc.data());
+	const commentAddress = (await firestore_db.collection('addresses').where('user_id', '==', commentData?.user_id).where('isMultisig', '==', true).get()).docs.map((doc) =>
+		doc.data()
+	);
 	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map((doc) => doc.data());
 	const isAuthor = await checkIsProposer(
 		commentAddress?.[0]?.address,

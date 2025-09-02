@@ -288,10 +288,10 @@ const DashboardTrackListing = ({ className }: Props) => {
 													status === ETrackDelegationStatus.RECEIVED_DELEGATION
 														? 'bg-[#E7DCFF] text-blue-light-high dark:bg-[#6C2CF8] dark:text-blue-dark-high'
 														: status === ETrackDelegationStatus.DELEGATED
-														? 'bg-[#FFFBD8] text-blue-light-high dark:bg-[#69600B] dark:text-blue-dark-high'
-														: status === ETrackDelegationStatus.UNDELEGATED
-														? 'bg-[#FFDAD8] text-blue-light-high dark:bg-[#EF6158] dark:text-blue-dark-high'
-														: 'bg-gray-100 text-gray-800'
+															? 'bg-[#FFFBD8] text-blue-light-high dark:bg-[#69600B] dark:text-blue-dark-high'
+															: status === ETrackDelegationStatus.UNDELEGATED
+																? 'bg-[#FFDAD8] text-blue-light-high dark:bg-[#EF6158] dark:text-blue-dark-high'
+																: 'bg-gray-100 text-gray-800'
 												} ${status === ETrackDelegationStatus.RECEIVED_DELEGATION && item.status && item.status.length > 1 ? 'w-[95px] truncate' : ''}`}
 											>
 												{/* Conditional Text Rendering */}
@@ -330,7 +330,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 							<CustomButton
 								className={`ml-[16px] border-none dark:bg-transparent max-md:mt-[10px] ${!api || (!apiReady && 'opacity-50')}`}
 								disabled={!api || !apiReady}
-								variant='default'
+								variant='solid'
 								onClick={() => {
 									setStatusValue(ETrackDelegationStatus.UNDELEGATED);
 									filterByStatus(ETrackDelegationStatus.UNDELEGATED);

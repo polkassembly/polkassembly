@@ -143,7 +143,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 												display: true,
 												font: {
 													size: window.innerWidth < 400 ? 10 : 12,
-													weight: window.innerWidth > 400 ? '500' : '400'
+													weight: window.innerWidth > 400 ? 500 : 400
 												},
 												text: 'Days'
 											},
@@ -164,7 +164,7 @@ const ThresholdGraph: FC<IThresholdGraph> = (props) => {
 												display: true,
 												font: {
 													size: window.innerWidth < 400 ? 10 : 12,
-													weight: window.innerWidth > 400 ? '500' : '400'
+													weight: window.innerWidth > 400 ? 500 : 400
 												},
 												text: 'Passing Percentage'
 											}

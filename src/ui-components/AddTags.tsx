@@ -113,7 +113,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 							<span className={`text-[10px] tracking-wide text-[#90A0B7] ${dmSans.className} ${dmSans.variable} `}>Press enter to add new tag.</span>
 						</div>
 					)
-			  }
+				}
 			: null,
 		...filteredTags.slice(0, 5).map((tag, index) => {
 			return {
@@ -177,9 +177,9 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 												</span>
 											}
 										/>
-								  )
+									)
 								: tags.length < 5 &&
-								  !disabled && (
+									!disabled && (
 										<Tag
 											onClick={showInput}
 											className='flex cursor-pointer items-center rounded-xl border-pink_primary bg-white px-4 py-1 text-xs text-pink_primary dark:bg-section-dark-overlay'
@@ -187,7 +187,7 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 											<PlusOutlined className='mr-1' />
 											Add new tag
 										</Tag>
-								  )}
+									)}
 						</div>
 						{tags.map((tag, index) => (
 							<Tag

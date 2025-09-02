@@ -321,7 +321,7 @@ const Web2Login: FC<Props> = ({
 								htmlType='submit'
 								text='Login'
 								buttonsize='xs'
-								variant='primary'
+								variant='solid'
 							/>
 						</div>
 

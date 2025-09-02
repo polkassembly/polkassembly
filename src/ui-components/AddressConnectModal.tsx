@@ -325,7 +325,7 @@ const AddressConnectModal = ({
 		setWallet(wallet);
 		(async () => {
 			setLoading(true);
-			const accountData = await getAccountsFromWallet({ api: usedInIdentityFlow ? peopleChainApi ?? api : api, apiReady, chosenWallet: wallet, loginAddress, network });
+			const accountData = await getAccountsFromWallet({ api: usedInIdentityFlow ? (peopleChainApi ?? api) : api, apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
 			setLoading(false);
@@ -355,7 +355,7 @@ const AddressConnectModal = ({
 		(async () => {
 			setLoading(true);
 			const accountData = await getAccountsFromWallet({
-				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
+				api: usedInIdentityFlow ? (peopleChainApi ?? api) : api,
 				apiReady,
 				chosenAddress: (loginAddress || address) as string,
 				chosenWallet: (loginWallet || wallet) as Wallet,
@@ -376,15 +376,15 @@ const AddressConnectModal = ({
 			}
 			try {
 				//deposit balance
-				const depositBase = (usedInIdentityFlow ? peopleChainApi ?? api : api).consts.multisig?.depositBase?.toString() || '0';
-				const depositFactor = (usedInIdentityFlow ? peopleChainApi ?? api : api).consts.multisig?.depositFactor?.toString() || '0';
+				const depositBase = (usedInIdentityFlow ? (peopleChainApi ?? api) : api).consts.multisig?.depositBase?.toString() || '0';
+				const depositFactor = (usedInIdentityFlow ? (peopleChainApi ?? api) : api).consts.multisig?.depositFactor?.toString() || '0';
 				setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			} catch (e) {
 				setTotalDeposit(ZERO_BN);
 			} finally {
 				//initiator balance
 				if (multisig) {
-					const initiatorBalance = await (usedInIdentityFlow ? peopleChainApi ?? api : api)?.query?.system?.account(address);
+					const initiatorBalance = await (usedInIdentityFlow ? (peopleChainApi ?? api) : api)?.query?.system?.account(address);
 					setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
 				}
 			}
@@ -425,7 +425,7 @@ const AddressConnectModal = ({
 					disabled={!accounts || (showMultisig && !multisig)}
 					width={155}
 					height={40}
-					variant='primary'
+					variant='solid'
 					className={`mt-4 ${accounts.length === 0 || (showMultisig && !multisig) || (Object.keys(availableWallets || {}).length === 0 && !loading) ? 'opacity-50' : ''}`}
 				>
 					{isUnlinkedAddress && linkAddressNeeded ? 'Link Address' : linkAddressNeeded ? 'Next' : 'Confirm'}

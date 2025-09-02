@@ -470,7 +470,7 @@ const CreateProposal = ({
 				<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
 					<CustomButton
 						text='Create Proposal'
-						variant='primary'
+						variant='solid'
 						height={40}
 						width={155}
 						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lt(submitionDeposite)}

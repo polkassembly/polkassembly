@@ -204,7 +204,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 								theme={theme as any}
 								max={delegationSplitData.length - 1}
 								value={selectedRange}
-								onChange={onChange}
+								onChange={onChange as any}
 								marks={marks}
 								included
 								tooltip={{

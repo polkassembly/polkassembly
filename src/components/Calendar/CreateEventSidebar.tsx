@@ -259,14 +259,14 @@ const CreateEventSidebar = ({ className, selectedNetwork, setSidebarCreateEvent,
 					<div className='form-actions flex justify-end gap-x-2'>
 						<CustomButton
 							text='Cancel'
-							variant='default'
+							variant='solid'
 							onClick={closeCreateEventSidebar}
 							disabled={loading}
 							buttonsize='sm'
 						/>
 						<CustomButton
 							text='Create Event'
-							variant='primary'
+							variant='solid'
 							onClick={handleCreateEvent}
 							loading={loading}
 							width={160}

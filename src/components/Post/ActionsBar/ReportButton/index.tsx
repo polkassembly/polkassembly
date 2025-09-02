@@ -283,7 +283,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							disabled={loading}
 							onClick={() => setShowModal(false)}
 							text='Cancel'
-							variant='default'
+							variant='solid'
 							buttonsize='xs'
 						/>
 						<CustomButton
@@ -293,7 +293,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							onClick={() => {
 								isDeleteModal ? handleDelete() : handleReport();
 							}}
-							variant='primary'
+							variant='solid'
 							buttonsize='xs'
 						>
 							{isDeleteModal ? 'Delete' : 'Report'}

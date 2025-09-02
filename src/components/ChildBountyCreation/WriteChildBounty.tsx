@@ -130,7 +130,7 @@ const WriteChildBounty = ({ setStep, className }: Props) => {
 					<CustomButton
 						htmlType='submit'
 						text='Next'
-						variant='primary'
+						variant='solid'
 						height={40}
 						width={155}
 						className={`${(!title || !content || (!!link?.length && !link?.startsWith('https:'))) && 'opacity-50'}`}

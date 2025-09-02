@@ -409,7 +409,7 @@ const Address = (props: Props) => {
 						profileCreatedAt={profileCreatedAt}
 						userId={userIdForThisAddress}
 						address={address}
-						identity={identity}
+						identity={identity as any}
 						username={addressPrefix}
 						polkassemblyUsername={username}
 						imgUrl={imgUrl}
@@ -448,7 +448,7 @@ const Address = (props: Props) => {
 										(!!identity && !!mainDisplay && (
 											<IdentityBadge
 												theme={theme}
-												identity={identity}
+												identity={identity as any}
 												flags={flags}
 												className='text-navBlue'
 											/>
@@ -483,7 +483,7 @@ const Address = (props: Props) => {
 												{!!kiltName ||
 													(!!identity && !!mainDisplay && (
 														<IdentityBadge
-															identity={identity}
+															identity={identity as any}
 															flags={flags}
 														/>
 													))}

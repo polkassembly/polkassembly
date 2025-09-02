@@ -115,7 +115,7 @@ const LatestActivityExplore: React.FC = () => {
 						?.toLowerCase();
 
 					return formattedTrackName === currentTab;
-			  });
+				});
 
 	return (
 		<div className=''>
@@ -202,7 +202,7 @@ const LatestActivityFollowing: React.FC = () => {
 						?.toLowerCase();
 
 					return formattedTrackName === currentTab;
-			  });
+				});
 
 	useEffect(() => {
 		fecthAllSubscribedPosts();

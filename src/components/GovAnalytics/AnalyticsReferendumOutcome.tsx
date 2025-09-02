@@ -309,7 +309,7 @@ const AnalyticsReferendumOutcome = () => {
 											translateX: 40,
 											translateY: 0
 										}
-								  ]
+									]
 						}
 					/>
 				</div>

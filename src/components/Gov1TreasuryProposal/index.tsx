@@ -61,15 +61,15 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage, isUsedInSidebar
 	return (
 		<div className={theme}>
 			<CustomButton
-				variant={isUsedInTreasuryPage ? 'primary' : 'text'}
+				variant={isUsedInTreasuryPage ? 'solid' : 'text'}
 				onClick={handleClick}
 				height={isUsedInSidebar ? 32 : 40}
 				className={classNames(
 					isUsedInSidebar
 						? 'flex h-6 gap-2 border-none bg-none p-0 font-normal text-lightBlue dark:text-blue-dark-medium'
 						: isUsedInTreasuryPage
-						? 'flex gap-1'
-						: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center gap-2 rounded-[8px] border-none bg-none align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+							? 'flex gap-1'
+							: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center gap-2 rounded-[8px] border-none bg-none align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 				)}
 			>
 				{isUsedInTreasuryPage ? (

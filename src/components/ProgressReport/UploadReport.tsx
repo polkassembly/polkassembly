@@ -88,7 +88,7 @@ const UploadReport = () => {
 			footer={
 				<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 					<CustomButton
-						variant='default'
+						variant='solid'
 						text='Cancel'
 						buttonsize='sm'
 						onClick={() => {
@@ -96,7 +96,7 @@ const UploadReport = () => {
 						}}
 					/>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						text='Done'
 						buttonsize='sm'
 						loading={loading}

@@ -1105,7 +1105,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								usingInRefPage
 							>
 								<CustomButton
-									variant='primary'
+									variant='solid'
 									fontSize='lg'
 									className='mx-auto w-full rounded-xxl p-7 font-bold lg:w-[480px] xl:w-full'
 									onClick={() => setOpenClaimModal(true)}

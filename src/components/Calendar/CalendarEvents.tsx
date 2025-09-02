@@ -148,7 +148,7 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 					<span className='text-xl font-semibold'>Events</span>
 					<span className='mt-0.5 text-lg font-normal'>({dayjs(selectedDate).format('MMM DD, YYYY')})</span>
 				</main>
-				<div className='min-h-40 mt-4 flex flex-col gap-4'>
+				<div className='mt-4 flex min-h-40 flex-col gap-4'>
 					{formatedEvents && Object.keys(formatedEvents)?.length
 						? Object.entries(formatedEvents).map(([key, value], index) => {
 								return (
@@ -242,13 +242,9 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 																		<span className='text-lightBlue dark:text-icon-dark-inactive'>Track:</span>
 																		<Link
 																			className='hover:underline'
-																			href={`/${getTrackNameFromId(network, event?.trackNo)
-																				.split('_')
-																				.join('-')}`}
+																			href={`/${getTrackNameFromId(network, event?.trackNo).split('_').join('-')}`}
 																		>
-																			{getTrackNameFromId(network, event?.trackNo)
-																				?.split('_')
-																				.join(' ')}
+																			{getTrackNameFromId(network, event?.trackNo)?.split('_').join(' ')}
 																		</Link>
 																	</div>
 																)}
@@ -270,13 +266,13 @@ const CalendarEvents = ({ selectedDate, setCalendarEvents, setCalendarLoading }:
 										)}
 									</div>
 								);
-						  })
+							})
 						: !loading && (
 								<PostEmptyState
 									className='my-0'
 									text='No Calendar Event Found!'
 								/>
-						  )}
+							)}
 				</div>
 			</div>
 		</Spin>

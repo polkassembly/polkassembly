@@ -235,7 +235,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 					className='flex items-center justify-end'
 				>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						loading={loading}
 						disabled={formDisabled}
 						onClick={() => {
@@ -320,7 +320,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 							<LinkPostPreview post={post} />
 							<div className='my-2 flex items-center justify-end'>
 								<CustomButton
-									variant='primary'
+									variant='solid'
 									text='Unlink'
 									loading={loading}
 									disabled={formDisabled}

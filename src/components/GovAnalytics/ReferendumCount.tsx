@@ -103,7 +103,7 @@ const ReferendumCount = () => {
 				id: key.split('_').join(' '),
 				label: key,
 				value: value
-		  }))
+			}))
 		: [];
 
 	const visibleData = showMore ? data : data.slice(0, 6);
@@ -277,7 +277,7 @@ const ReferendumCount = () => {
 											translateX: -100,
 											translateY: 0
 										}
-								  ]
+									]
 						}
 					/>
 				</div>

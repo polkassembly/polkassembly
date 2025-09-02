@@ -63,7 +63,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 						<div className='flex gap-3'>
 							{!TippingUnavailableNetworks.includes(network) && (
 								<CustomButton
-									variant='primary'
+									variant='solid'
 									shape='circle'
 									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
 										disableState && 'cursor-not-allowed opacity-50'
@@ -83,7 +83,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 							)}
 							{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
 								<CustomButton
-									variant='primary'
+									variant='solid'
 									shape='circle'
 									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
 										disableState && 'cursor-not-allowed opacity-50'

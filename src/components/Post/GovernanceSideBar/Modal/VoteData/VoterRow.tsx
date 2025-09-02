@@ -314,7 +314,7 @@ const VoterRow: FC<IVoterRow> = ({
 			theme={theme as any}
 			// isSmallScreen={isSmallScreen}
 		>
-			<StyledCollapse.Panel
+			<Collapse.Panel
 				className={`rounded-none p-0 ${
 					active && !isSmallScreen ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''
 				} gap-[0px] text-bodyBlue dark:text-blue-dark-high dark:[&>.ant-collapse-content]:bg-section-dark-overlay`}
@@ -435,7 +435,7 @@ const VoterRow: FC<IVoterRow> = ({
 						)}
 					</div>
 				)}
-			</StyledCollapse.Panel>
+			</Collapse.Panel>
 		</StyledCollapse>
 	) : (
 		<div

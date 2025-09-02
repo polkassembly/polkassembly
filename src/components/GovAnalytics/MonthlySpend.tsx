@@ -4,7 +4,6 @@
 import { Card } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
@@ -196,7 +195,7 @@ const MonthlySpend = () => {
 				.account(treasuryAccount)
 				.then((res) => {
 					const freeBalance = new BN(res?.data?.free) || BN_ZERO;
-					treasuryBalance.freeBalance = freeBalance as Balance;
+					treasuryBalance.freeBalance = freeBalance as any;
 				})
 				.catch((e) => {
 					console.error(e);

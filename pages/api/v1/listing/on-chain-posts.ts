@@ -241,11 +241,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							topic: topic
 								? topic
 								: isTopicIdValid(topic_id)
-								? {
-										id: topic_id,
-										name: getTopicNameFromTopicId(topic_id)
-								  }
-								: getTopicFromType(strProposalType as ProposalType),
+									? {
+											id: topic_id,
+											name: getTopicNameFromTopicId(topic_id)
+										}
+									: getTopicFromType(strProposalType as ProposalType),
 							user_id: docData?.user_id || 1,
 							username: docData?.username
 						};
@@ -427,11 +427,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							topic: topic
 								? topic
 								: isTopicIdValid(topic_id)
-								? {
-										id: topic_id,
-										name: getTopicNameFromTopicId(topic_id)
-								  }
-								: topicFromType,
+									? {
+											id: topic_id,
+											name: getTopicNameFromTopicId(topic_id)
+										}
+									: topicFromType,
 							track_no: !isNaN(trackNumber) ? trackNumber : null,
 							type: type || subsquidProposalType,
 							user_id: data?.user_id || 1
@@ -983,11 +983,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								topic: topic
 									? topic
 									: isTopicIdValid(topic_id)
-									? {
-											id: topic_id,
-											name: getTopicNameFromTopicId(topic_id)
-									  }
-									: topicFromType,
+										? {
+												id: topic_id,
+												name: getTopicNameFromTopicId(topic_id)
+											}
+										: topicFromType,
 								track_no: !isNaN(trackNumber) ? trackNumber : null,
 								type: type || subsquidProposalType,
 								user_id: data?.user_id || 1

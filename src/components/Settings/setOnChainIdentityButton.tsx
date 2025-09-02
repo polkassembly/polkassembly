@@ -379,7 +379,7 @@ const SetOnChainIdentityButton = ({
 			<CustomButton
 				disabled={!id}
 				onClick={() => setModalOpen(true)}
-				variant='primary'
+				variant='solid'
 				text='Set On-Chain Identity'
 				height={40}
 			/>
@@ -393,7 +393,7 @@ const SetOnChainIdentityButton = ({
 			{' '}
 			<CustomButton
 				disabled={true}
-				variant='primary'
+				variant='solid'
 				text='Set On-Chain Identity'
 				height={40}
 				className='w-full md:h-[69px]'
@@ -423,7 +423,7 @@ const SetOnChainIdentityButton = ({
 						<CustomButton
 							key='close'
 							onClick={() => setModalOpen(false)}
-							variant='primary'
+							variant='solid'
 							text='Close'
 							buttonsize='xs'
 						/>
@@ -431,7 +431,7 @@ const SetOnChainIdentityButton = ({
 							key='submit'
 							disabled={!okAll}
 							onClick={handleSignAndSubmit}
-							variant='primary'
+							variant='solid'
 							text='Set Identity'
 							height={40}
 						/>

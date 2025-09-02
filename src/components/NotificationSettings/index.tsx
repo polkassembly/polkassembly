@@ -173,7 +173,7 @@ const NotificationSettings = () => {
 					loading={loading}
 					disabled={!changed}
 					htmlType='submit'
-					variant='primary'
+					variant='solid'
 					className={`rounded-lg border-none px-14 py-3 text-lg font-semibold ${changed ? 'bg-pink_primary' : 'bg-icon_grey'}`}
 				/>
 			</article>

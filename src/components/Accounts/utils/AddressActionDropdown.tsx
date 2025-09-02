@@ -117,7 +117,7 @@ const AddressActionDropdown = ({
 							</div>
 						)
 					}
-			  ]
+				]
 			: []),
 		...(isUsedInProxy
 			? []
@@ -133,14 +133,14 @@ const AddressActionDropdown = ({
 							</div>
 						)
 					}
-			  ])
+				])
 	];
 
 	return (
 		<section>
 			{isUsedInLandingPage ? (
 				<CustomButton
-					variant='primary'
+					variant='solid'
 					className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}
 					disabled={!id}
 					height={42}

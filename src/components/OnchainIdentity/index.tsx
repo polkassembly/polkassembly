@@ -217,7 +217,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 							text='Yes, Exit'
 							height={38}
 							width={145}
-							variant='default'
+							variant='solid'
 						/>
 						<CustomButton
 							onClick={() => {
@@ -227,7 +227,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 							text='No, continue verification'
 							height={38}
 							width={215}
-							variant='primary'
+							variant='solid'
 						/>
 					</div>
 				</div>

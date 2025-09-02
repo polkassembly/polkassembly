@@ -14,7 +14,7 @@ function CustomToolbar(props: any) {
 		return (
 			<div>
 				<CustomButton
-					variant='primary'
+					variant='solid'
 					disabled={disabled}
 					onClick={() => {
 						if (!disabled) props.setSidebarCreateEvent(true);

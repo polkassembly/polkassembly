@@ -195,7 +195,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 					className='-mx-6 mt-8 flex items-center justify-end border-0 border-t-[1px] border-solid border-lightBlue px-6 pt-4 dark:border-separatorDark'
 				>
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						loading={loading}
 						disabled={formDisabled}
 						onClick={() => form.submit()}

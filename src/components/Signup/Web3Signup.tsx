@@ -399,7 +399,7 @@ const Web3Signup: FC<Props> = ({
 								<div className='web3-button-container ml-auto flex justify-end'>
 									<CustomButton
 										text='Go Back'
-										variant='default'
+										variant='solid'
 										buttonsize='sm'
 										onClick={() => handleBackToSignUp()}
 										className='web3-button mr-3'
@@ -408,7 +408,7 @@ const Web3Signup: FC<Props> = ({
 										<CustomButton
 											icon={<CheckOutlined />}
 											text='Got it!'
-											variant='primary'
+											variant='solid'
 											buttonsize='sm'
 											onClick={() => {
 												getAccounts(chosenWallet)
@@ -482,14 +482,14 @@ const Web3Signup: FC<Props> = ({
 												<div className='flex items-center justify-center'>
 													<CustomButton
 														text='Go Back'
-														variant='default'
+														variant='solid'
 														buttonsize='sm'
 														onClick={() => handleBackToSignUp()}
 														className='mr-3'
 													/>
 													<CustomButton
 														text='Sign-up'
-														variant='primary'
+														variant='solid'
 														buttonsize='sm'
 														disabled={loading}
 														htmlType='submit'
@@ -504,7 +504,7 @@ const Web3Signup: FC<Props> = ({
 									<div className='flex items-center justify-center'>
 										<CustomButton
 											text='Go Back'
-											variant='default'
+											variant='solid'
 											buttonsize='sm'
 											onClick={() => handleBackToSignUp()}
 										/>

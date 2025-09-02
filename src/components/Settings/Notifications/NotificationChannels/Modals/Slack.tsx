@@ -86,7 +86,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 							<CustomButton
 								loading={loading}
 								onClick={handleGenerateToken}
-								variant='primary'
+								variant='solid'
 								text='Generate Token'
 							/>
 						</div>

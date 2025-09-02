@@ -258,7 +258,7 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selecte
 						: {
 								from: 'color',
 								modifiers: [['darker', 10]] // Keep existing style for light mode
-						  }
+							}
 				}
 				borderWidth={1}
 				borderColor={{

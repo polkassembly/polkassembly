@@ -141,7 +141,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 						{userProfile?.user_id !== loginId && !!username?.length && (
 							<CustomButton
 								className='delegation-buttons border-none shadow-none'
-								variant='default'
+								variant='solid'
 								buttonsize='xs'
 								onClick={() => {
 									setOpenTipModal(true);

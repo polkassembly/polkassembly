@@ -67,11 +67,7 @@ const handler: NextApiHandler<{ curator: number; submissions: number } | Message
 		}
 
 		//sent submission
-		const sentSubmissions = await submissionsSnapshot
-			?.where('proposer', '==', getEncodedAddress(userAddress, network))
-			.where('user_id', '==', user?.id)
-			.count()
-			.get();
+		const sentSubmissions = await submissionsSnapshot?.where('proposer', '==', getEncodedAddress(userAddress, network)).where('user_id', '==', user?.id).count().get();
 
 		return res.status(200).json({
 			curator: curatorReqSubsquidRes?.data?.bounties?.totalCount || 0 + curatorReqSubsquidRes?.data?.childBounties?.totalCount || 0,

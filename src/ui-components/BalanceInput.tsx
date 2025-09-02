@@ -91,7 +91,7 @@ const BalanceInput = ({
 				...(chainProperties?.[network]?.supportedAssets?.map((item) => {
 					return { img: item?.img, label: item.symbol.toUpperCase(), value: getGeneralIndexFromAsset({ asset: item.symbol, network }) || null };
 				}) || [])
-		  ]
+			]
 		: [];
 
 	const onBalanceChange = (value: string | null): void => {
@@ -168,7 +168,7 @@ const BalanceInput = ({
 										}
 									}
 								}
-						  ]
+							]
 				}
 			>
 				<Input

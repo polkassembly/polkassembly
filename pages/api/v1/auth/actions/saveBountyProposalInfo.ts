@@ -89,7 +89,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 			? {
 					id: Number(bountyId),
 					type: ProposalType.BOUNTIES
-			  }
+				}
 			: null,
 		proposer_address: proposerAddress,
 		title,

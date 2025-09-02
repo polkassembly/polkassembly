@@ -60,7 +60,7 @@ const SearchErrorsCard = ({
 			</div>
 			{!isSuperSearch && (
 				<CustomButton
-					variant='primary'
+					variant='solid'
 					onClick={() => {
 						setFilterBy(EFilterBy.Referenda);
 						setPostsPage(1);
@@ -96,7 +96,7 @@ const SearchErrorsCard = ({
 		<div className='mb-2 flex flex-col items-center justify-center'>
 			<label className='text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'>Didn’t find what you were looking for?</label>
 			<CustomButton
-				variant='primary'
+				variant='solid'
 				onClick={() => {
 					setFilterBy(EFilterBy.Referenda);
 					setPostsPage(1);

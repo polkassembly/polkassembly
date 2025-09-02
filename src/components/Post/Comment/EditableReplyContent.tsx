@@ -582,7 +582,7 @@ const EditableReplyContent = ({
 							)}
 						</button>
 					)
-			  }
+				}
 			: null,
 		id === userId
 			? {
@@ -596,24 +596,24 @@ const EditableReplyContent = ({
 							<span className='m-0 p-1'>Delete</span>
 						</button>
 					)
-			  }
+				}
 			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network)
-			? {
-					key: 2,
-					label: (
-						<ReportButton
-							isDeleteModal={true}
-							proposalType={(reply.post_type as any) || postType}
-							className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${dmSans.variable} ${dmSans.className}`}
-							type={EReportType.REPLY}
-							onSuccess={removeReplyContent}
-							commentId={commentId}
-							replyId={replyId}
-							postId={(reply.post_index as any) || postIndex}
-						/>
-					)
-			  }
-			: null,
+				? {
+						key: 2,
+						label: (
+							<ReportButton
+								isDeleteModal={true}
+								proposalType={(reply.post_type as any) || postType}
+								className={`flex w-[100%] items-center rounded-none text-xs leading-4 text-pink_primary shadow-none hover:bg-transparent dark:text-blue-dark-helper ${dmSans.variable} ${dmSans.className}`}
+								type={EReportType.REPLY}
+								onSuccess={removeReplyContent}
+								commentId={commentId}
+								replyId={replyId}
+								postId={(reply.post_index as any) || postIndex}
+							/>
+						)
+					}
+				: null,
 		id && id !== userId && !isEditing
 			? {
 					key: 3,
@@ -627,7 +627,7 @@ const EditableReplyContent = ({
 							replyId={replyId}
 						/>
 					)
-			  }
+				}
 			: null
 	];
 

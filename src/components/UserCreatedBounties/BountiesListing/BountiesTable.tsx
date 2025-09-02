@@ -79,7 +79,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 						? {
 								...bounty,
 								childbounties: childBounties as IChildBounty[]
-						  }
+							}
 						: bounty
 				);
 				return updatedBounties;
@@ -313,9 +313,7 @@ const BountiesTable: FC<IOnchainBountiesProps> = (props) => {
 													const relativeCreatedAt = childBounty.createdAt
 														? dayjs(childBounty?.createdAt)?.isBefore(dayjs()?.subtract(1, 'w'))
 															? dayjs(childBounty?.createdAt)?.format("Do MMM 'YY")
-															: dayjs(childBounty?.createdAt)
-																	?.startOf('day')
-																	?.fromNow()
+															: dayjs(childBounty?.createdAt)?.startOf('day')?.fromNow()
 														: null;
 													return (
 														<Link

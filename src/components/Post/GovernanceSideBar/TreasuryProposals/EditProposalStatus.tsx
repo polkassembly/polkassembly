@@ -156,7 +156,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 					onClick={() => setModalOpen(true)}
 					height={60}
 					className='w-full transition-colors duration-300'
-					variant='primary'
+					variant='solid'
 				/>
 			) : canEdit && isUpdate ? (
 				<div className='transition:colors duration:500 edit-icon-wrapper flex h-[60px] w-full items-center justify-center rounded-md bg-white drop-shadow-md dark:bg-section-dark-overlay'>
@@ -196,7 +196,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 							key='close'
 							onClick={() => setModalOpen(false)}
 							height={40}
-							variant='default'
+							variant='solid'
 						/>
 						<CustomButton
 							text='Save'
@@ -205,7 +205,7 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 							loading={loading}
 							disabled={loading}
 							height={40}
-							variant='primary'
+							variant='solid'
 							className='transition-colors duration-300'
 						/>
 					</div>

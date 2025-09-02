@@ -193,7 +193,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
 							<CustomButton
-								variant='default'
+								variant='solid'
 								htmlType='button'
 								onClick={toggleEdit}
 								className='mr-2'
@@ -202,7 +202,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								<CloseOutlined /> Cancel
 							</CustomButton>
 							<CustomButton
-								variant='primary'
+								variant='solid'
 								htmlType='submit'
 								loading={loading}
 								buttonsize='xs'

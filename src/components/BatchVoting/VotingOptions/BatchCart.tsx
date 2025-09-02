@@ -311,7 +311,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 				maskClosable={false}
 				footer={
 					<CustomButton
-						variant='primary'
+						variant='solid'
 						className='w-full'
 						text='close'
 						onClick={() => {

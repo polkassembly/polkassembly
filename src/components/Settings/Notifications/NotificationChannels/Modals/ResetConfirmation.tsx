@@ -39,14 +39,14 @@ const ResetConfirmation = ({ open, onConfirm, onCancel, channel }: { open: boole
 					<CustomButton
 						key='1'
 						onClick={onCancel}
-						variant='default'
+						variant='solid'
 						text='Cancel'
 						buttonsize='xs'
 					/>
 					<CustomButton
 						onClick={onConfirm}
 						key='2'
-						variant='primary'
+						variant='solid'
 						text='Confirm'
 						buttonsize='xs'
 					/>

@@ -10,7 +10,6 @@ import { dmSans } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType, IUserPost, IUserPostsListingResponse } from '~src/types';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import styled from 'styled-components';
 import Link from 'next/link';
 import GovernanceCard from '../GovernanceCard';
@@ -54,14 +53,14 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
-	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
+	const [checkedAddressList, setCheckedAddressList] = useState<any[]>(addresses as any[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [subFilterExpand, setSubFilterExpand] = useState(false);
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [selectedFilter, setSelectedFilter] = useState(handleInitialFilter(userPosts, selectedGov));
 	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
-	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
+	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<any[]>(Object.keys(selectedSubFilters));
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {

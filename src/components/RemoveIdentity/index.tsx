@@ -193,7 +193,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<CustomButton
 							text='Cancel'
 							onClick={() => dispatch(setOpenRemoveIdentityModal(false))}
-							variant='default'
+							variant='solid'
 							height={40}
 							width={155}
 							disabled={loading.isLoading}
@@ -201,7 +201,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<CustomButton
 							text='Confirm'
 							onClick={handleRemoveIdentity}
-							variant='primary'
+							variant='solid'
 							height={40}
 							width={155}
 							className={`${isDisable && 'opacity-50'} `}
@@ -275,7 +275,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 									width={91}
 									className='change-wallet-button mr-1 flex items-center justify-center'
 									height={21}
-									variant='primary'
+									variant='solid'
 								/>
 							</div>
 						</div>

@@ -90,7 +90,7 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 					}}
 					className='mb-2 mt-4 w-full tracking-wide'
 					height={40}
-					variant='primary'
+					variant='solid'
 					text='Verified successfully'
 				/>
 			</>

@@ -4,7 +4,6 @@
 
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { dmSans } from 'pages/_app';
 import BN from 'bn.js';
@@ -26,7 +25,7 @@ interface Props {
 	className?: string;
 	open: boolean;
 	setOpen: (pre: boolean) => void;
-	tracks?: CheckboxValueType[];
+	tracks?: any[];
 	address?: string;
 	isDelegate?: boolean;
 	balance?: BN;

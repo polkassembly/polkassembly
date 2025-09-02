@@ -197,7 +197,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 								form.submit();
 							}}
 							loading={loading}
-							variant='primary'
+							variant='solid'
 							fontSize='lg'
 							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
 							text='Sign'
@@ -205,7 +205,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						<CustomButton
 							key='cancel'
 							onClick={dismissModal}
-							variant='default'
+							variant='solid'
 							fontSize='lg'
 							className={`px-7 py-3 ${accountsNotFound ? 'bg-gray-300' : ''}`}
 							text='Cancel'

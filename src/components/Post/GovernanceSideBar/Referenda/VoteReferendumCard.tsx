@@ -236,7 +236,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 					),
 					value: 'abstain'
 				}
-		  ]
+			]
 		: ayeNayVotesArr;
 
 	const VoteUI = (

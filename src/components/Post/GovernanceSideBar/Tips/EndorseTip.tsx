@@ -133,7 +133,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 				<CustomButton
 					onClick={getAccounts}
 					text='Endorse'
-					variant='primary'
+					variant='solid'
 				/>
 			</Form.Item>
 		</Form>
@@ -167,7 +167,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 			<CustomButton
 				text='Endorse'
 				onClick={handleEndorse}
-				variant='primary'
+				variant='solid'
 				disabled={!apiReady}
 			/>
 		</div>
@@ -192,7 +192,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 				}
 			/>
 			<CustomButton
-				variant='primary'
+				variant='solid'
 				text='Let me try still'
 				onClick={() => setForceEndorse(true)}
 			/>

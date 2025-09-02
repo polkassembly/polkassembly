@@ -119,6 +119,8 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 			network = 'moonriver';
 		} else if (network == 'polkadot-old') {
 			network = 'polkadot';
+		} else if (network == 'kusama-old') {
+			network = 'kusama';
 		} else {
 			network = process.env.NEXT_PUBLIC_APP_ENV === 'development' ? defaultNetwork : network;
 		}

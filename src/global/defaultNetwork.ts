@@ -9,6 +9,9 @@ export const defaultNetwork = (() => {
 		if (hostname.startsWith('polkadot-old.')) {
 			return 'polkadot';
 		}
+		if (hostname.startsWith('kusama-old.')) {
+			return 'kusama';
+		}
 	}
 
 	const defaultNetwork = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;

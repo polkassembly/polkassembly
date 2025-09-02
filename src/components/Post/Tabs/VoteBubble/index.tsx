@@ -16,6 +16,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CirclePacking from './CirclePacking';
 import { Segmented } from 'antd';
+import DecentralizedVoices from './DecentralizedVoices';
 
 interface IVoteBubbleProps {
 	postId: string;
@@ -42,9 +43,9 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	const colors = useMemo(
 		() => ({
-			abstain: theme === 'dark' ? '#407BFFBF' : '#407BFFBF',
-			aye: theme === 'dark' ? '#64A057BF' : '#2ED47A80',
-			nay: theme === 'dark' ? '#BD2020BF' : '#E84865BF'
+			abstain: { primary: theme === 'dark' ? '#407BFFBF' : '#407BFFBF', secondary: theme === 'dark' ? '#407BFF' : '#407BFF' },
+			aye: { primary: theme === 'dark' ? '#1B4931' : '#BAF1D3', secondary: theme === 'dark' ? '#6DE1A2' : '#009B46' },
+			nay: { primary: theme === 'dark' ? '#4F2028' : '#FFCAD3', secondary: theme === 'dark' ? '#FF778F' : '#E84865' }
 		}),
 		[theme]
 	);
@@ -57,21 +58,25 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 			const votingPower = bnToIntBalance(new BN(vote?.selfVotingPower || '0').add(new BN(vote?.delegatedVotingPower || '0')));
 
 			let color;
+			let decision;
 			switch (vote.decision) {
 				case 'yes':
-					color = colors.aye;
+					color = colors.aye.primary;
+					decision = 'aye';
 					break;
 				case 'no':
-					color = colors.nay;
+					color = colors.nay.primary;
+					decision = 'nay';
 					break;
 				default:
-					color = colors.abstain;
+					color = colors.abstain.primary;
+					decision = 'abstain';
 			}
 
 			return {
 				balance,
 				color,
-				decision: vote.decision,
+				decision,
 				delegators: vote.delegatorsCount,
 				lockPeriod: vote.lockPeriod,
 				voter: vote.voter,
@@ -145,34 +150,35 @@ const VoteBubble: FC<IVoteBubbleProps> = ({ postId, postType }) => {
 
 	return (
 		<div className='flex w-full flex-col items-center justify-center gap-2'>
-			<div className='flex w-full items-center justify-between gap-5 border'>
-				<h2 className='text-base font-semibold'>Votes Bubble</h2>
+			<div className='flex w-full items-start justify-between gap-5 border md:items-center'>
 				<Segmented
 					value={selectedTab}
 					onChange={(value) => setSelectedTab(value as 'nested' | 'flattened')}
 					options={['nested', 'flattened']}
-					className='ml-auto capitalize dark:bg-gray-800'
+					className='bg-[#F6F8FB] capitalize dark:bg-[#353535]'
 				/>
+				<div className='ml-auto flex flex-col items-start justify-center gap-2 text-xs md:flex-row md:items-center md:gap-5 md:text-sm'>
+					<div className='flex items-center gap-2'>
+						<span className='h-2 w-2 rounded-full bg-green-500/60' />
+						<span>Aye</span>
+					</div>
+					<div className='flex items-center gap-2'>
+						<span className='h-2 w-2 rounded-full bg-red-500/60' />
+						<span>Nay</span>
+					</div>
+					<div className='flex items-center gap-2'>
+						<span className='h-2 w-2 rounded-full bg-blue-500/60' />
+						<span>Abstain</span>
+					</div>
+				</div>
 			</div>
 			<CirclePacking
 				data={selectedTab === 'flattened' ? flattenedVotesData : nestedVotesData}
 				name='votes'
 				selectedTab={selectedTab}
+				colors={colors}
 			/>
-			<div className='flex items-center justify-center gap-5'>
-				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-green-500/50' />
-					<span className='text-sm'>Aye</span>
-				</div>
-				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-red-500/75' />
-					<span className='text-sm'>Nay</span>
-				</div>
-				<div className='flex items-center gap-2'>
-					<span className='h-2 w-2 rounded-full bg-blue-500/75' />
-					<span className='text-sm'>Abstain</span>
-				</div>
-			</div>
+			{selectedTab === 'nested' && ['kusama', 'polkadot'].includes(network) ? <DecentralizedVoices votes={nestedVotesData} /> : null}
 		</div>
 	);
 };

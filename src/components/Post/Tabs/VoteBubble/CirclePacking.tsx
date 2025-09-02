@@ -18,8 +18,8 @@ import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils
 import { ApiPromise } from '@polkadot/api';
 
 const LABEL_CONFIG = [
-	{ charCount: 10, minRadius: 60 },
-	{ charCount: 8, minRadius: 50 },
+	{ charCount: 13, minRadius: 60 },
+	{ charCount: 10, minRadius: 50 },
 	{ charCount: 7, minRadius: 40 },
 	{ charCount: 6, minRadius: 30 },
 	{ charCount: 5, minRadius: 20 },
@@ -172,6 +172,11 @@ interface ICirclePackingProps {
 	data: IVoteData[];
 	name: string;
 	selectedTab: 'flattened' | 'nested';
+	colors: {
+		aye: { primary: string; secondary: string };
+		nay: { primary: string; secondary: string };
+		abstain: { primary: string; secondary: string };
+	};
 }
 
 // Helper function to generate node labels
@@ -190,9 +195,9 @@ const generateNodeLabel = (id: string | number, radius: number, displayInfo: Rec
 		// Add verification badge symbols
 		let prefix = '';
 		if (info.isVerified && info.isGood) {
-			prefix = '✅ '; // Verified and good (green checkmark)
+			prefix = '✅'; // Verified and good (green checkmark)
 		} else if (info.isVerified) {
-			prefix = '✓ '; // Just verified (checkmark)
+			prefix = '✓'; // Just verified (checkmark)
 		} else if (info.name.length > 10) {
 			// Likely has some identity but not verified
 			prefix = ''; // Information symbol
@@ -200,7 +205,7 @@ const generateNodeLabel = (id: string | number, radius: number, displayInfo: Rec
 
 		// Format the final label with prefix and name
 		const nameWithPrefix = prefix + displayName;
-		return nameWithPrefix.length > charCount + prefix.length ? nameWithPrefix.slice(0, charCount + prefix.length) + '...' : nameWithPrefix;
+		return nameWithPrefix.length > charCount + prefix.length ? nameWithPrefix.slice(0, charCount) + '...' : nameWithPrefix;
 	}
 
 	// Fallback to address truncation
@@ -209,7 +214,7 @@ const generateNodeLabel = (id: string | number, radius: number, displayInfo: Rec
 	return id.slice(0, charCount) + (id.length > charCount ? '...' : '');
 };
 
-const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selectedTab }) => {
+const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selectedTab, colors }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -243,27 +248,19 @@ const CirclePacking: FC<ICirclePackingProps> = ({ className, data, name, selecte
 				id='voter'
 				value={selectedTab === 'flattened' ? 'balance' : 'votingPower'}
 				colors={(circle) => circle.data.color}
-				childColor={{
-					from: 'color',
-					modifiers: [['opacity', 0.5]]
-				}}
 				padding={4}
 				leavesOnly={true}
 				enableLabels={true}
 				label={(datum) => generateNodeLabel(datum.id, datum.radius, displayInfo, selectedTab === 'nested')}
 				labelsSkipRadius={30}
-				labelTextColor={
-					theme === 'dark'
-						? '#FFFFFF' // White text for dark mode
-						: {
-								from: 'color',
-								modifiers: [['darker', 10]] // Keep existing style for light mode
-						  }
-				}
+				labelTextColor={({ id }) => {
+					const voteData = data.find((item) => item.voter === id);
+					return voteData ? colors[voteData.decision as keyof typeof colors]?.secondary : '#000';
+				}}
 				borderWidth={1}
-				borderColor={{
-					from: 'color',
-					modifiers: [['darker', 2]]
+				borderColor={({ id }) => {
+					const voteData = data.find((item) => item.voter === id);
+					return voteData ? colors[voteData.decision as keyof typeof colors]?.secondary : '#000';
 				}}
 				tooltip={({ id }) => {
 					const item = data.find((item) => item.voter === id);

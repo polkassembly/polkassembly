@@ -464,7 +464,7 @@ const Address = (props: Props) => {
 											title={mainDisplay || encodedAddr}
 											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex items-center gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
-											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'} ${isUsedInAccountsPage ? 'sm:text-xl' : ''}`}
+											} hover:text-bodyBlue ${inPostHeading ? 'text-xs' : 'text-sm'} ${isUsedInAccountsPage ? 'sm:text-xl' : ''}`}
 										>
 											{!!addressPrefix && (
 												<span className={`${isTruncateUsername && !usernameMaxLength && 'max-w-[85px] truncate'}`}>

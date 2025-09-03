@@ -60,6 +60,8 @@ interface IHomeProps {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
+	console.log('getServerSideProps network : ', network);
+
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 

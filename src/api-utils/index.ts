@@ -106,8 +106,10 @@ export function isGovTypeValid(govType: string) {
 
 export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 	let network = '';
+	console.log('getNetworkFromReqHeaders headers : ', headers);
 	if (headers.host && !headers.host.includes('localhost:')) {
 		network = headers.host.split('.')[0];
+		console.log('getNetworkFromReqHeaders network : ', network);
 	}
 
 	if (!Object.values(AllNetworks).includes(network)) {
@@ -124,7 +126,10 @@ export function getNetworkFromReqHeaders(headers: IncomingHttpHeaders) {
 		} else {
 			network = process.env.NEXT_PUBLIC_APP_ENV === 'development' ? defaultNetwork : network;
 		}
+		console.log('getNetworkFromReqHeaders network 2 : ', network);
 	}
+
+	console.log('getNetworkFromReqHeaders network 3 : ', network);
 
 	if (!network) {
 		network = 'kusama';

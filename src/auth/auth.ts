@@ -570,9 +570,9 @@ class AuthService {
 		const isValidSr = skipSignCheck
 			? true
 			: // : address.startsWith('0x') && [Wallet.METAMASK, Wallet.TALISMAN, Wallet.SUBWALLET].includes(wallet)
-			address.startsWith('0x')
-			? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
-			: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
+				address.startsWith('0x')
+				? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
+				: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);
 
 		// If this linked address is the first address to be linked. Then set it as default.
@@ -897,7 +897,7 @@ class AuthService {
 		const storedToken = await redisGet(key);
 		if (!storedToken) throw apiErrorWithStatusCode(messages.PASSWORD_RESET_TOKEN_NOT_FOUND, 403);
 
-		const isValid = timingSafeEqual(Buffer.from(token), Buffer.from(storedToken));
+		const isValid = timingSafeEqual(new Uint8Array(Buffer.from(token)), new Uint8Array(Buffer.from(storedToken)));
 		if (!isValid) throw apiErrorWithStatusCode(messages.PASSWORD_RESET_TOKEN_INVALID, 403);
 
 		const { password, salt } = await this.getSaltAndHashedPassword(newPassword);

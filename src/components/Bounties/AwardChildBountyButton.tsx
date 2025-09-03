@@ -192,7 +192,7 @@ const AwardChildBountyModal = ({
 					<div className='-mx-6 mt-6 flex items-center justify-end gap-2 border-0 border-t-[1px] border-solid border-section-light-container px-6  pt-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<CustomButton
 							text='Cancel'
-							variant='default'
+							type='default'
 							width={140}
 							className='tracking-wide'
 							height={36}
@@ -200,7 +200,7 @@ const AwardChildBountyModal = ({
 						/>
 						<CustomButton
 							text='Award'
-							variant='primary'
+							type='primary'
 							width={140}
 							className={classNames('tracking-wide', !getEncodedAddress(beneficiary, network) ? 'opacity-50' : '')}
 							disabled={!getEncodedAddress(beneficiary, network)}
@@ -277,7 +277,7 @@ const AwardChildBountyButton = ({ bountyIndex }: Props) => {
 	return (
 		<div className='pb-6'>
 			<CustomButton
-				variant='primary'
+				type='primary'
 				height={50}
 				className='w-full'
 				onClick={() => setOpenModal(true)}

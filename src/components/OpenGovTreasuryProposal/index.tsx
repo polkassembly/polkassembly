@@ -390,7 +390,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							onClick={handleClose}
 							buttonsize='sm'
 							text='Yes, Exit'
-							variant='default'
+							type='default'
 						/>
 						<CustomButton
 							onClick={() => {
@@ -401,7 +401,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							height={40}
 							width={200}
 							text='No, Continue Editing'
-							variant='primary'
+							type='primary'
 						/>
 					</div>
 				</div>

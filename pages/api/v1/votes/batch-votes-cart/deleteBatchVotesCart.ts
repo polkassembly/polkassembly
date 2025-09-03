@@ -32,31 +32,15 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const batch = firestore_db.batch();
 
 		if (deleteWholeCart) {
-			const cartRefs = await firestore_db
-				.collection('users')
-				.doc(String(user?.id))
-				.collection('batch_votes_cart')
-				.get();
+			const cartRefs = await firestore_db.collection('users').doc(String(user?.id)).collection('batch_votes_cart').get();
 
-			cartRefs.docs.map((doc) =>
-				batch.delete(
-					firestore_db
-						.collection('users')
-						.doc(String(user?.id))
-						.collection('batch_votes_cart')
-						.doc(doc.id)
-				)
-			);
+			cartRefs.docs.map((doc) => batch.delete(firestore_db.collection('users').doc(String(user?.id)).collection('batch_votes_cart').doc(doc.id)));
 
 			await batch.commit();
 		} else {
 			if (typeof id !== 'string') return res.status(403).json({ message: messages.INVALID_PARAMS });
 
-			const voteSnaphot = firestore_db
-				.collection('users')
-				.doc(String(user?.id))
-				.collection('batch_votes_cart')
-				.doc(id);
+			const voteSnaphot = firestore_db.collection('users').doc(String(user?.id)).collection('batch_votes_cart').doc(id);
 
 			const ref = await voteSnaphot.get();
 

@@ -81,14 +81,14 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 					const key = sentimentsKey[i];
 					sentiments[key] = sentiments[key]
 						? sentiments[key] +
-						  (
+							(
 								await postDocRef
 									.collection('comments')
 									.where('isDeleted', '==', false)
 									.where('sentiment', '==', i + 1)
 									.count()
 									.get()
-						  ).data().count
+							).data().count
 						: (
 								await postDocRef
 									.collection('comments')
@@ -96,7 +96,7 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 									.where('sentiment', '==', i + 1)
 									.count()
 									.get()
-						  ).data().count;
+							).data().count;
 				}
 			}
 		}

@@ -47,8 +47,8 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 		(async () => {
 			const { transferableBalance, totalBalance, freeBalance } = await userProfileBalances({
 				address: address || '',
-				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
-				apiReady: usedInIdentityFlow ? peopleChainApiReady ?? apiReady : apiReady,
+				api: usedInIdentityFlow ? (peopleChainApi ?? api) : api,
+				apiReady: usedInIdentityFlow ? (peopleChainApiReady ?? apiReady) : apiReady,
 				network
 			});
 

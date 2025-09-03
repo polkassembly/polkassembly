@@ -137,7 +137,7 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 				? {
 						action: EUserCreatedBountyActions.EDIT,
 						submissionId: submission.id
-				  }
+					}
 				: {})
 		};
 
@@ -203,13 +203,13 @@ const CreateSubmissionForm = ({ openModal, setOpenModal, parentBountyIndex, isUs
 					<CustomButton
 						onClick={() => setOpenModal(false)}
 						text='Cancel'
-						variant='default'
+						type='default'
 						height={40}
 						width={156}
 					/>
 					<CustomButton
 						onClick={handleSubmit}
-						variant='primary'
+						type='primary'
 						htmlType='submit'
 						height={40}
 						width={156}

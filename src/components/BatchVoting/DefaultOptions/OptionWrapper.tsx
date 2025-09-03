@@ -193,7 +193,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					),
 					value: 'abstain'
 				}
-		  ]
+			]
 		: ayeNayVotesArr;
 
 	const VoteUI = (

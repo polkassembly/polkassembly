@@ -514,7 +514,7 @@ const GetTracksColumns = (
 							}}
 							disabled={undelegationButtonDisable || false}
 							height={40}
-							variant='default'
+							type='default'
 							className={classNames(
 								'gap-2 px-2 max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none',
 								undelegationButtonDisable ? 'opacity-50' : ''

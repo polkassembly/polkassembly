@@ -162,7 +162,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			{isCreateProposal && (
 				<CustomButton
 					className='w-min'
-					variant='primary'
+					type='primary'
 					height={40}
 					onClick={() => handleClick(1)}
 				>
@@ -178,7 +178,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			{isCancelProposal && (
 				<CustomButton
 					className='w-min'
-					variant='primary'
+					type='primary'
 					height={40}
 					onClick={() => handleClick(2)}
 				>
@@ -195,7 +195,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			{isKillProposal && (
 				<CustomButton
 					className='w-min'
-					variant='primary'
+					type='primary'
 					height={40}
 					onClick={() => handleClick(3)}
 				>

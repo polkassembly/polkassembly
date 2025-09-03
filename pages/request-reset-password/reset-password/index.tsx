@@ -134,7 +134,7 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 											htmlType='submit'
 											width={224}
 											height={40}
-											variant='primary'
+											type='primary'
 											text='Set new password'
 										/>
 									</div>

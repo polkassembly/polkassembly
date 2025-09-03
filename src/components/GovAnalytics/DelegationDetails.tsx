@@ -55,8 +55,8 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 	}, [delegationData]);
 
 	// Function to handle slider value change
-	const onChange = (value: [number, number]) => {
-		setSelectedRange(value);
+	const onChange = (value: number[]) => {
+		setSelectedRange(value as [number, number]);
 	};
 
 	const data = Object.keys(delegationData || {})

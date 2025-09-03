@@ -288,11 +288,7 @@ const trackLevelAnalytics = async () => {
 	if (trackDetails.length) {
 		const batch = firestoreDB.batch();
 		trackDetails.map((item) => {
-			const snapshot = firestoreDB
-				.collection('networks')
-				.doc(item?.network)
-				.collection('track_level_analytics')
-				.doc(String(item.trackNumber));
+			const snapshot = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber));
 			batch.set(snapshot, { totalProposalsCount: item?.count || 0 });
 		});
 

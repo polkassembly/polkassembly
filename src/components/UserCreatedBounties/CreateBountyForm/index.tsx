@@ -327,7 +327,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 												width={120}
 												className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
 												height={24}
-												variant='primary'
+												type='primary'
 											/>
 										</div>
 									</Form.Item>
@@ -378,7 +378,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 															}}
 															className={`change-wallet-button mr-1 flex items-center justify-center text-[10px] ${twitterUrl?.length < 0 || startLoading ? 'opacity-60' : ''}`}
 															height={24}
-															variant='primary'
+															type='primary'
 														/>
 													) : (
 														<span className='flex items-center justify-center gap-1 text-xs text-[#8d99a9]'>
@@ -560,7 +560,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 					<div className='-mx-6 flex items-center justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-separatorDark'>
 						<Form.Item className='mb-1 pb-0'>
 							<CustomButton
-								variant='default'
+								type='default'
 								text='Cancel'
 								disabled={loading}
 								htmlType='reset'
@@ -572,7 +572,7 @@ const CreateBountyForm: FC<ICreateBountyForm> = (props) => {
 						</Form.Item>
 						<Form.Item className='mb-1 pb-0'>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								text={isUsedForEdit ? 'Edit' : 'Create'}
 								loading={loading}
 								disabled={loading || !allowCreateBounty()}

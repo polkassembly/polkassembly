@@ -2,14 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Popover as AntdPopover } from 'antd';
-import { RenderFunction, TooltipPlacement } from 'antd/lib/tooltip';
+import { TooltipPlacement } from 'antd/lib/tooltip';
 import { ReactNode } from 'react';
 
 interface Props {
 	children?: ReactNode;
 	open?: boolean;
 	defaultOpen?: boolean;
-	content: ReactNode | RenderFunction;
+	content: ReactNode | (() => ReactNode);
 	title?: ReactNode | (() => ReactNode);
 	className?: string;
 	zIndex?: number;

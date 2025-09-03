@@ -285,7 +285,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 				<CustomButton
 					onClick={getAccounts}
 					className='mt-2 border-none'
-					variant='primary'
+					type='primary'
 					text='Vote'
 					buttonsize='xs'
 				/>
@@ -382,7 +382,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 															<CustomButton
 																onClick={handleUnlock}
 																loading={loadingStatus.isLoading}
-																variant='primary'
+																type='primary'
 																text='Unlock'
 																buttonsize='sm'
 															/>
@@ -390,7 +390,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 															<CustomButton
 																onClick={() => handleRemove(vote.refIndex)}
 																loading={loadingStatus.isLoading}
-																variant='primary'
+																type='primary'
 																text='Remove'
 																buttonsize='sm'
 															/>
@@ -411,7 +411,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 								<CustomButton
 									onClick={handleUnlock}
 									loading={loadingStatus.isLoading}
-									variant='primary'
+									type='primary'
 									text='Unlock'
 									className='mt-2'
 									buttonsize='sm'

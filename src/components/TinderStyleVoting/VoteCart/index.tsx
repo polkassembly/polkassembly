@@ -239,7 +239,7 @@ const VoteCart: React.FC = () => {
 				maskClosable={false}
 				footer={
 					<CustomButton
-						variant='primary'
+						type='primary'
 						className='w-full'
 						text='close'
 						onClick={() => {

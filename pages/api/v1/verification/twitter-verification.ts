@@ -23,12 +23,12 @@ async function getOAuthRequestToken(network: string, isUserCreatedBounty: boolea
 			if (error) {
 				console.log('error', error);
 				// Handle specific error cases
-				if (error.statusCode === 503) {
+				if (!(error instanceof Error) && error.statusCode === 503) {
 					reject(new Error('Twitter service is temporarily unavailable. Please try again later.'));
-				} else if (error.statusCode === 401) {
+				} else if (!(error instanceof Error) && error.statusCode === 401) {
 					reject(new Error('Twitter API credentials are invalid. Please contact support.'));
 				} else {
-					reject(new Error(error.data || 'Oops! Something went wrong while getting the OAuth request token.'));
+					reject(new Error((error instanceof Error ? error.message : error?.data) || 'Oops! Something went wrong while getting the OAuth request token.'));
 				}
 			} else {
 				resolve({ oauthRequestToken, oauthRequestTokenSecret, results });

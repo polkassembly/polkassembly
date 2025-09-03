@@ -10,7 +10,7 @@ import { dmSans } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { EGovType, IUserPost, IUserPostsListingResponse } from '~src/types';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import styled from 'styled-components';
 import Link from 'next/link';
 import GovernanceCard from '../GovernanceCard';

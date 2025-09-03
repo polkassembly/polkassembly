@@ -6,7 +6,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Checkbox, List, Modal, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
 import _ from 'lodash';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import ResultPosts from './ResultPosts';
@@ -159,8 +159,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			!isSuperSearch
 				? [`network:${network}`]
 				: selectedNetworks.length > 0
-				? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
-				: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
+					? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
+					: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
 			selectedTags.map((tag) => {
 				return `tags:${tag}`;
 			}),

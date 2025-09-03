@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Layout, Menu as AntdMenu, MenuProps, Tooltip } from 'antd';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
+type ItemType = Required<MenuProps>['items'][number];
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -358,7 +358,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-				  ]
+					]
 				: [],
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && isPolymesh(network)
@@ -411,7 +411,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							'/community',
 							<CommunityPIPsIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						)
-				  ]
+					]
 				: [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -432,7 +432,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					),
 					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className=' -ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		councilItems:
 			chainProperties[network]?.subsquidUrl || [AllNetworks.MYTHOS].includes(network)
@@ -452,7 +452,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<MotionsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem('Members', '/council', <MembersIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-				  ]
+					]
 				: [],
 
 		democracyItems: chainProperties[network]?.subsquidUrl
@@ -485,7 +485,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						'/referenda',
 						<ReferendaIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
-			  ]
+				]
 			: [],
 
 		overviewItems: [
@@ -531,7 +531,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						'/tech-comm-proposals',
 						<TechComProposalIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
-			  ]
+				]
 			: [],
 
 		treasuryItems: chainProperties[network]?.subsquidUrl
@@ -560,7 +560,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						'/tips',
 						<TipsIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
-			  ]
+				]
 			: []
 	};
 	if (isGrantsSupported(network)) {
@@ -591,15 +591,47 @@ const Sidebar: React.FC<SidebarProps> = ({
 						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER, AllNetworks.LAOSSIGMA].includes(network)
 							? [...gov1Items.treasuryItems]
 							: network === AllNetworks.MOONBEAM
-							? [
-									...[
+								? [
+										...[
+											getSiderMenuItem(
+												<div className='flex items-center justify-between'>
+													Bounties
+													<span
+														className={`text-[10px] ${
+															totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
+														} rounded-lg px-[4px] py-1`}
+													>
+														{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
+													</span>
+												</div>,
+												'/bounties',
+												<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+											),
+											getSiderMenuItem(
+												<div className='flex items-center justify-between'>
+													Child Bounties
+													<span
+														className={`text-[10px] ${
+															totalActiveProposalsCount?.['childBountiesCount'] ? getSpanStyle('ChildBounties', totalActiveProposalsCount['childBountiesCount']) : ''
+														} rounded-lg px-2 py-1`}
+													>
+														{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
+													</span>
+												</div>,
+												'/child_bounties',
+												<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+											)
+										]
+									]
+								: [
+										...gov1Items.treasuryItems,
 										getSiderMenuItem(
-											<div className='flex items-center justify-between'>
+											<div className='flex items-center justify-between text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
 												Bounties
 												<span
 													className={`text-[10px] ${
 														totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
-													} rounded-lg px-[4px] py-1`}
+													} rounded-lg px-2 py-1`}
 												>
 													{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 												</span>
@@ -608,7 +640,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 										),
 										getSiderMenuItem(
-											<div className='flex items-center justify-between'>
+											<div className='flex items-center justify-center text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
 												Child Bounties
 												<span
 													className={`text-[10px] ${
@@ -622,11 +654,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 										)
 									]
-							  ]
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.LAOSSIGMA].includes(network)
+							? [...gov1Items.treasuryItems.slice(0, 1)]
 							: [
 									...gov1Items.treasuryItems,
 									getSiderMenuItem(
-										<div className='flex items-center justify-between text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
+										<div className='flex items-center justify-between'>
 											Bounties
 											<span
 												className={`text-[10px] ${
@@ -637,10 +670,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 											</span>
 										</div>,
 										'/bounties',
-										<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+										<BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									),
 									getSiderMenuItem(
-										<div className='flex items-center justify-center text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>
+										<div className='flex items-center justify-between'>
 											Child Bounties
 											<span
 												className={`text-[10px] ${
@@ -651,42 +684,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											</span>
 										</div>,
 										'/child_bounties',
-										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+										<ChildBountiesIcon className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									)
-							  ]
-						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.LAOSSIGMA].includes(network)
-						? [...gov1Items.treasuryItems.slice(0, 1)]
-						: [
-								...gov1Items.treasuryItems,
-								getSiderMenuItem(
-									<div className='flex items-center justify-between'>
-										Bounties
-										<span
-											className={`text-[10px] ${
-												totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
-											} rounded-lg px-2 py-1`}
-										>
-											{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
-										</span>
-									</div>,
-									'/bounties',
-									<BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-								),
-								getSiderMenuItem(
-									<div className='flex items-center justify-between'>
-										Child Bounties
-										<span
-											className={`text-[10px] ${
-												totalActiveProposalsCount?.['childBountiesCount'] ? getSpanStyle('ChildBounties', totalActiveProposalsCount['childBountiesCount']) : ''
-											} rounded-lg px-2 py-1`}
-										>
-											{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
-										</span>
-									</div>,
-									'/child_bounties',
-									<ChildBountiesIcon className='-ml-2 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-								)
-						  ]
+								]
 				),
 
 				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
@@ -1150,7 +1150,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					</div>,
 					[...bountiesSubItems]
-			  ),
+				),
 		getSiderMenuItem(
 			<div
 				style={{

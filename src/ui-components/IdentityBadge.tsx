@@ -3,13 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
-import { DeriveAccountFlags, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { DeriveAccountFlags } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import React from 'react';
 import styled from 'styled-components';
 
 interface Props {
 	className?: string;
-	identity?: DeriveAccountRegistration | null;
+	identity?: IIdentityInfo | null;
 	flags?: DeriveAccountFlags;
 	web3Name?: string;
 	theme?: string;

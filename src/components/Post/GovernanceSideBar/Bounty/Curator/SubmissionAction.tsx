@@ -30,8 +30,8 @@ const StatusUI = ({ status }: { status: EChildbountySubmissionStatus | EUserCrea
 				status == EChildbountySubmissionStatus.PENDING
 					? 'bg-[#fefced] text-[#EDB10A] dark:bg-[#30250d]'
 					: status == EChildbountySubmissionStatus.APPROVED
-					? ' bg-[#E0F7E5] text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'
-					: 'bg-[#ffe3e7] text-[#FB123C] dark:bg-[#2f1716] dark:text-[#FF3737] '
+						? ' bg-[#E0F7E5] text-[#07641C] dark:bg-[#122d15] dark:text-[#1BC240]'
+						: 'bg-[#ffe3e7] text-[#FB123C] dark:bg-[#2f1716] dark:text-[#FF3737] '
 			)}
 		>
 			<span>
@@ -71,7 +71,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 					isApproveButton && (
 						<div className='flex w-full gap-2'>
 							<CustomButton
-								variant='default'
+								type='default'
 								aria-label='Reject submission'
 								onKeyDown={(e) => e.key === 'Enter' && showRejectModal?.(true)}
 								onClick={() => showRejectModal?.(true)}
@@ -91,7 +91,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 				) : getEncodedAddress(submission?.proposer, network) === encodedAddress && submission?.status === EChildbountySubmissionStatus.PENDING ? (
 					<div className='flex w-full gap-2'>
 						<CustomButton
-							variant='default'
+							type='default'
 							onClick={() => setIsDeleteConfirm(true)}
 							disabled={loading}
 							className='h-8 w-full'
@@ -101,7 +101,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							Delete
 						</CustomButton>
 						<CustomButton
-							variant='primary'
+							type='primary'
 							onClick={() => handleEditClick(true, submission)}
 							disabled={loading}
 							className='h-8 w-full'
@@ -140,7 +140,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 							<CustomButton
 								onClick={handleDeleteSubmission}
 								text='Yes'
-								variant='default'
+								type='default'
 								width={100}
 								height={32}
 							/>
@@ -151,7 +151,7 @@ const SubmissionAction: React.FC<SubmissionActionProps> = ({ isApproveButton = f
 								height={32}
 								width={100}
 								text='Cancel'
-								variant='primary'
+								type='primary'
 							/>
 						</div>
 					</div>

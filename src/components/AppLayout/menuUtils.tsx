@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
+type ItemType = Required<MenuProps>['items'][number];
 
 export type MenuItem = Required<MenuProps>['items'][number];
 

@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { Tag } from 'antd';
+import type { MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
+type ItemType = Required<MenuProps>['items'][number];
 import { dmSans } from 'pages/_app';
 import React, { useState } from 'react';
 import Address from 'src/ui-components/Address';
@@ -114,7 +115,7 @@ const AddressDropdown = ({
 			label: (
 				<div className='mt-2 flex items-center justify-center'>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						onClick={() => setSwitchModalOpen(true)}
 						text='Switch Wallet'
 						className={`w-full ${dmSans.variable} ${dmSans.className}`}

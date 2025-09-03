@@ -8,7 +8,6 @@ interface ICustomButton extends ButtonProps {
 	text?: string | ReactNode;
 	fontSize?: string;
 	className?: string;
-	variant?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
 	width?: number;
 	height?: number;
 	style?: any;
@@ -16,10 +15,9 @@ interface ICustomButton extends ButtonProps {
 	customColor?: string;
 	customBorderColor?: string;
 	customTextColor?: string;
-	shape?: 'default' | 'circle' | 'round';
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { buttonsize, style, text, className, variant, fontSize, customColor, customTextColor, customBorderColor, shape } = props;
+	const { buttonsize, style, text, className, type, fontSize, customColor, customTextColor, customBorderColor, shape } = props;
 	let { height, width } = props;
 	if (buttonsize && buttonsize === 'xs') {
 		width = 134;
@@ -36,10 +34,10 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 			} font-medium ${
 				!customColor
 					? `${
-							variant === 'primary'
+							type === 'primary'
 								? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
 								: 'border border-pink_primary bg-transparent text-pink_primary'
-					  }`
+						}`
 					: `border-${customBorderColor} text-${customTextColor} bg-${customColor}`
 			} ${className} `}
 			style={{ height: `${height}px`, width: `${width}px`, ...style }}

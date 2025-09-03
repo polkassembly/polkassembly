@@ -58,14 +58,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const userPosts = !userProfile
 		? await getOnChainUserPosts({
-				addresses: [address] || [],
+				addresses: address ? [address] : [],
 				network
-		  })
+			})
 		: await getUserPosts({
 				addresses: userProfile?.data?.addresses || [],
 				network,
 				userId: userProfile?.data?.user_id
-		  });
+			});
 
 	try {
 		if (userProfile?.data?.username) {

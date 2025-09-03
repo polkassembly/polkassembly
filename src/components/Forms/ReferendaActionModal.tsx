@@ -166,10 +166,10 @@ const ReferendaActionModal = ({
 						referendaModal === 1
 							? 'Creating a Referendum'
 							: referendaModal === 2
-							? 'Cancelling a Referendum'
-							: referendaModal === 3
-							? 'Killing a Referendum'
-							: 'Treasury Proposal Creation'
+								? 'Cancelling a Referendum'
+								: referendaModal === 3
+									? 'Killing a Referendum'
+									: 'Treasury Proposal Creation'
 					}
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
@@ -203,7 +203,7 @@ const ReferendaActionModal = ({
 							onClick={handleClose}
 							buttonsize='sm'
 							text='Yes, Exit'
-							variant='default'
+							type='default'
 						/>
 						<CustomButton
 							onClick={() => {
@@ -213,7 +213,7 @@ const ReferendaActionModal = ({
 							height={40}
 							width={200}
 							text='No, Continue Editing'
-							variant='primary'
+							type='primary'
 						/>
 					</div>
 				</div>

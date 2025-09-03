@@ -77,7 +77,7 @@ const CreateProxyModal = ({ openModal, setOpenModal, className, setOpenProxyMain
 							height={40}
 							className='w-full'
 							text="Let's Begin"
-							variant='primary'
+							type='primary'
 						/>
 					</div>
 				</div>

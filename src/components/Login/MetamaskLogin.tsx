@@ -436,7 +436,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 						<div className='flex justify-end'>
 							<CustomButton
 								text='Go Back'
-								variant='default'
+								type='default'
 								className='mr-3'
 								buttonsize='sm'
 								onClick={() => handleBackToLogin()}
@@ -445,7 +445,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 								key='got-it'
 								icon={<CheckOutlined />}
 								text='Got it!'
-								variant='primary'
+								type='primary'
 								buttonsize='sm'
 								onClick={() => {
 									getAccounts()
@@ -548,14 +548,14 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										<div className='flex items-center justify-center gap-x-2'>
 											<CustomButton
 												text='Go Back'
-												variant='default'
+												type='default'
 												buttonsize='sm'
 												onClick={() => handleBackToLogin()}
 												className='mr-3'
 											/>
 											<CustomButton
 												text='Login'
-												variant='primary'
+												type='primary'
 												buttonsize='sm'
 												loading={loading}
 												htmlType='submit'
@@ -581,7 +581,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 						<div className='mb-6 mt-4 flex items-center justify-center'>
 							<CustomButton
 								text='Go Back'
-								variant='default'
+								type='default'
 								buttonsize='sm'
 								onClick={() => handleBackToLogin()}
 							/>

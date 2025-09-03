@@ -73,7 +73,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 						loading={loading}
 						width={224}
 						height={40}
-						variant='primary'
+						type='primary'
 					/>
 
 					<div className='w-[260px]'>
@@ -83,7 +83,7 @@ const TFALoginForm = ({ className, error, loading, onSubmit, onBack }: Props) =>
 								text='Go back'
 								htmlType='button'
 								disabled={loading}
-								variant='default'
+								type='default'
 								height={40}
 							/>
 						</Divider>

@@ -4,7 +4,7 @@
 
 import React, { useEffect } from 'react';
 import { Modal } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { dmSans } from 'pages/_app';
 import BN from 'bn.js';

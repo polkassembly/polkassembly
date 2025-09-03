@@ -296,7 +296,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 										width={91}
 										className='_button mr-1 flex w-[70px] items-center justify-center text-[10px] tracking-wide'
 										height={21}
-										variant='primary'
+										type='primary'
 									/>
 								</div>
 							}

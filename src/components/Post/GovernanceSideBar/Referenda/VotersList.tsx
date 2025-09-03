@@ -241,8 +241,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 					...(isPolymesh(network)
 						? votesSortOptions.slice(2, 5)
 						: proposalType === ProposalType.REFERENDUM_V2
-						? votesSortOptions.slice(2, votesSortOptions.length - 2)
-						: votesSortOptions.slice(0, votesSortOptions.length - 2))
+							? votesSortOptions.slice(2, votesSortOptions.length - 2)
+							: votesSortOptions.slice(0, votesSortOptions.length - 2))
 				],
 				onClick: handleSortByClick,
 				selectable: true

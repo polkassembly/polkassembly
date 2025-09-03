@@ -290,11 +290,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 					post.topic = topic
 						? topic
 						: isTopicIdValid(topic_id)
-						? {
-								id: topic_id,
-								name: getTopicNameFromTopicId(topic_id)
-						  }
-						: topicFromType;
+							? {
+									id: topic_id,
+									name: getTopicNameFromTopicId(topic_id)
+								}
+							: topicFromType;
 					post.totalVotes = totalVotes || 0;
 					post.user_id = data?.user_id || 0;
 				}

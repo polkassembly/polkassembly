@@ -39,7 +39,7 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 						<div className='flex justify-center'>
 							<CustomButton
 								onClick={() => window.location.reload()}
-								variant='primary'
+								type='primary'
 								text='Refresh'
 								className='transition-colors duration-300'
 							/>
@@ -48,7 +48,7 @@ export const ErrorState: FC<IErrorStateProps> = ({ errorMessage, isRefreshBtnVis
 					{showMoreDiscussions ? (
 						<div className='flex justify-center'>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								text='Show More Discussions'
 								className='transition-colors duration-300'
 							>

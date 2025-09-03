@@ -19,7 +19,7 @@ const AccountsMain = () => {
 				{id && (
 					<div className='item-center flex gap-4'>
 						<CustomButton
-							variant='link'
+							type='link'
 							className={`px-2 text-xs font-normal ${!id && 'opacity-50'}`}
 							onClick={() => setOpenProxyModal(true)}
 							disabled={!id}

@@ -5,7 +5,8 @@ import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getTypeDef } from '@polkadot/types/create';
 import { TypeDef, TypeDefInfo } from '@polkadot/types/types';
 import { Button, Form, Input, Radio, Spin } from 'antd';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import type { MenuProps } from 'antd';
+type ItemType = Required<MenuProps>['items'][number];
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from '~src/context';
 import BalanceInput from '~src/ui-components/BalanceInput';
@@ -793,7 +794,7 @@ export default function CreateReferendaForm({
 						Back
 					</Button>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						htmlType='submit'
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}

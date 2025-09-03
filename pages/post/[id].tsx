@@ -94,7 +94,7 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 						</Link>
 					</p>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						text='Back to Feed'
 						size='large'
 						className='mt-4 w-[556px] transition-colors duration-300 max-md:w-full'

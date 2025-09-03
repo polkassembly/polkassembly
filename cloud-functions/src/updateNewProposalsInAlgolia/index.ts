@@ -51,15 +51,9 @@ async function fetchSubsquareData(network: string, proposalIndex: string) {
 	}
 }
 
-async function updateFirestoreProposal(network: string, proposalIndex: string, data: { title: string, content: string, proposer: string }) {
+async function updateFirestoreProposal(network: string, proposalIndex: string, data: { title: string; content: string; proposer: string }) {
 	try {
-		const docRef = firestoreDB
-			.collection('networks')
-			.doc(network)
-			.collection('post_types')
-			.doc('referendums_v2')
-			.collection('posts')
-			.doc(String(proposalIndex));
+		const docRef = firestoreDB.collection('networks').doc(network).collection('post_types').doc('referendums_v2').collection('posts').doc(String(proposalIndex));
 
 		await docRef.update({
 			title: data.title || '',
@@ -119,14 +113,7 @@ async function processProposal(network: string, proposal: any) {
 		};
 
 		// Check Firestore first
-		const firebaseDoc = await firestoreDB
-			.collection('networks')
-			.doc(network)
-			.collection('post_types')
-			.doc(post_type)
-			.collection('posts')
-			.doc(String(proposal.index))
-			.get();
+		const firebaseDoc = await firestoreDB.collection('networks').doc(network).collection('post_types').doc(post_type).collection('posts').doc(String(proposal.index)).get();
 
 		if (firebaseDoc.exists) {
 			const firebaseData = firebaseDoc.data();

@@ -55,7 +55,7 @@ export async function getUserCreatedBountyById({ bountyId, network }: Args): Pro
 		const history = bountyData?.history
 			? bountyData.history.map((item: any) => {
 					return { ...item, created_at: item?.created_at?.toDate ? String(item?.created_at.toDate()) : item?.created_at };
-			  })
+				})
 			: [];
 
 		const claimedSubmissionsPercentage = await getClaimedSubmissionsPercentage(bountyDoc.ref, bountyData?.reward || '0');

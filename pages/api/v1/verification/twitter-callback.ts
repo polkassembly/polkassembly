@@ -57,7 +57,9 @@ async function getOAuthAccessTokenWith(
 
 	return new Promise((resolve, reject) => {
 		oauthConsumer.getOAuthAccessToken(oauthRequestToken, oauthRequestTokenSecret, oauthVerifier, function (error, oauthAccessToken, oauthAccessTokenSecret, results) {
-			return error ? reject(new Error(String(error?.data) || 'Error getting Oauth access token')) : resolve({ oauthAccessToken, oauthAccessTokenSecret, results });
+			return error
+				? reject(new Error(String(error instanceof Error ? error.message : error?.data) || 'Error getting Oauth access token'))
+				: resolve({ oauthAccessToken, oauthAccessTokenSecret, results });
 		});
 	});
 }

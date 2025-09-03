@@ -283,7 +283,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	return (
 		<div className={className}>
 			<CustomButton
-				variant='primary'
+				type='primary'
 				text='Second'
 				onClick={openModal}
 				className='mx-auto mb-10 flex w-[90%]'
@@ -296,7 +296,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<CustomButton
-						variant='primary'
+						type='primary'
 						text='Second'
 						key='second'
 						loading={loadingStatus.isLoading}

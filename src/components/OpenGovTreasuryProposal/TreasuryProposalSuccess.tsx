@@ -111,7 +111,7 @@ const TreasuryProposalSuccessPopup = ({
 					<CustomButton
 						height={40}
 						className='w-full'
-						variant='primary'
+						type='primary'
 						text='View Proposal'
 					/>
 				</Link>
@@ -128,10 +128,10 @@ const TreasuryProposalSuccessPopup = ({
 					{isCancelReferendaForm
 						? 'Referendum Canceled Successfully '
 						: isKillReferendumForm
-						? 'Referendum Killed successfully'
-						: isCreateReferendumForm
-						? 'Referendum created successfully'
-						: 'Proposal created successfully for'}
+							? 'Referendum Killed successfully'
+							: isCreateReferendumForm
+								? 'Referendum created successfully'
+								: 'Proposal created successfully for'}
 				</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>

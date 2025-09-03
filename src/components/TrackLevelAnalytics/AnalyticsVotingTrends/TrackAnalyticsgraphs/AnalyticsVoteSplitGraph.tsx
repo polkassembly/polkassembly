@@ -86,8 +86,8 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 		};
 	});
 
-	const onChange = (value: [number, number]) => {
-		setSelectedRange(value);
+	const onChange = (value: number[]) => {
+		setSelectedRange(value as [number, number]);
 	};
 
 	const tickvalueDivisor = isSmallScreen ? 10 : 20;

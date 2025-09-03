@@ -151,7 +151,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 							<CustomButton
 								text='Cancel'
 								key='1'
-								variant='default'
+								type='default'
 								onClick={onCancel}
 								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
@@ -161,7 +161,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 								htmlType='submit'
 								text='Save'
 								key='2'
-								variant='default'
+								type='default'
 								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>

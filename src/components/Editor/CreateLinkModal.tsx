@@ -113,13 +113,13 @@ const CreateLinkModal = ({ className, isLinkModalVisible, setOpen, editorRef }: 
 
 				<div className='mt-6 flex justify-end gap-2'>
 					<CustomButton
-						variant='default'
+						type='default'
 						onClick={handleCancel}
 					>
 						Cancel
 					</CustomButton>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						onClick={handleInsertLink}
 						className='border-none'
 					>

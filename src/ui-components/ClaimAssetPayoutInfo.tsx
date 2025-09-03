@@ -126,8 +126,8 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 						typeof addr.address === 'string'
 							? addr.address
 							: (addr.address as any)?.value?.length
-							? (addr.address as any)?.value
-							: ((addr?.address as any)?.value?.interior?.value?.id as string) || (addr?.address as any)?.value?.interior?.value[0]?.id || '',
+								? (addr.address as any)?.value
+								: ((addr?.address as any)?.value?.interior?.value?.id as string) || (addr?.address as any)?.value?.interior?.value[0]?.id || '',
 						network
 					) || addr
 			);
@@ -171,7 +171,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 									disabled={loading.isLoading}
 									className={classNames('text-xm rounded-[4px] tracking-wide', loading.isLoading ? 'opacity-50' : '')}
 									text='Cancel'
-									variant='default'
+									type='default'
 									width={120}
 									height={38}
 								/>
@@ -179,7 +179,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 									onClick={() => handleSubmitTx()}
 									className={classNames('rounded-[4px] text-xs tracking-wide', loading.isLoading || availableBalance?.lt(txFee) ? 'opacity-50' : '')}
 									text='Claim'
-									variant='primary'
+									type='primary'
 									width={120}
 									height={38}
 									disabled={loading.isLoading || availableBalance?.lt(txFee)}
@@ -233,7 +233,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 												width={91}
 												className='_button mr-1 flex items-center justify-center text-[10px]'
 												height={21}
-												variant='primary'
+												type='primary'
 											>
 												<span className='text-[10px]'>Change Wallet</span>
 											</CustomButton>

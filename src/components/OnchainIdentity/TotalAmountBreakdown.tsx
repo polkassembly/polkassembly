@@ -186,7 +186,7 @@ const TotalAmountBreakdown = ({ className, txFee, loading, setStartLoading, chan
 					}}
 					height={40}
 					className={classNames('w-full')}
-					variant='primary'
+					type='primary'
 				/>
 				<button
 					disabled={buttonLoading}

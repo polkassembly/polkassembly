@@ -40,7 +40,7 @@ function RejectModal({
 				footer={
 					<div className='mt-6 flex w-full items-center justify-end gap-1'>
 						<CustomButton
-							variant='default'
+							type='default'
 							key='cancel'
 							onClick={() => setOpen(false)}
 							height={30}
@@ -50,7 +50,6 @@ function RejectModal({
 						</CustomButton>
 						<CustomButton
 							key='reject'
-							variant='primary'
 							type='primary'
 							onClick={handleReject}
 							disabled={!comment?.length}

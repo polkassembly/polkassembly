@@ -50,14 +50,14 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 						<CustomButton
 							text='Login'
 							onClick={() => handleClick('login')}
-							variant='primary'
+							type='primary'
 							className='ml-2 w-[360px] p-5'
 							height={40}
 						/>
 						<CustomButton
 							text='Signup'
 							onClick={() => handleClick('signup')}
-							variant='default'
+							type='default'
 							className='w-[360px] p-5'
 							height={40}
 						/>

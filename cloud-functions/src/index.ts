@@ -163,7 +163,7 @@ exports.onUserWritten = functions
 		const user: IUser = {
 			id: Number(userId),
 			username: userRecord.username,
-			createdAt: (userData?.created_at?.toDate?.() || new Date()),
+			createdAt: userData?.created_at?.toDate?.() || new Date(),
 			email: userData.email || '',
 			address: userData.address,
 			salt: userData.salt,

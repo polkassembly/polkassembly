@@ -5,8 +5,8 @@
 import BN from 'bn.js';
 
 interface Options {
-  numberAfterComma?: number;
-  withThousandDelimitor?: boolean;
+	numberAfterComma?: number;
+	withThousandDelimitor?: boolean;
 }
 
 const getTokenDecimal = (network: string) => {

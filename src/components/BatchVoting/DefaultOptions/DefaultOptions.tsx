@@ -118,7 +118,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 									width={120}
 									className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
 									height={24}
-									variant='primary'
+									type='primary'
 								/>
 							</div>
 						</div>
@@ -138,7 +138,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 			{!!id && (
 				<div className='mb-2 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-4'>
 					<CustomButton
-						variant='default'
+						type='default'
 						text='Skip'
 						buttonsize='sm'
 						onClick={() => {
@@ -146,7 +146,7 @@ const DefaultOptions: FC<IDefaultOptions> = ({ forSpecificPost, postEdit }) => {
 						}}
 					/>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						text='Next'
 						buttonsize='sm'
 						onClick={() => {

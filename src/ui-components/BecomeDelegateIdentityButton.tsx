@@ -30,7 +30,7 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 				To add socials to your delegate profile{' '}
 				<span
 					onClick={() => {
-						handleIdentityButtonClick(), closeModal();
+						(handleIdentityButtonClick(), closeModal());
 					}}
 					className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-pink_primary'
 				>

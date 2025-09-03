@@ -258,7 +258,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 										onClick={extendsPoll}
 										text='Extend Poll'
 										className='info'
-										variant='primary'
+										type='primary'
 									/>
 								) : (
 									''
@@ -271,7 +271,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 								<CustomButton
 									onClick={cancelVote}
 									className='info text-muted cancelVoteLink'
-									variant='primary'
+									type='primary'
 								>
 									Cancel <span className='capitalize'>&nbsp;{ownVote.toLowerCase()}&nbsp;</span> vote
 								</CustomButton>

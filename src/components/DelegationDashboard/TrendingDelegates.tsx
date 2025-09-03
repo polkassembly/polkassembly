@@ -359,7 +359,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					/>
 
 					<CustomButton
-						variant='primary'
+						type='primary'
 						className={classNames('mr-1 h-11 justify-around gap-2 rounded-none rounded-e-md px-4 py-1', loading || !searchInput.length ? 'opacity-50' : '')}
 						height={40}
 						onClick={() => {

@@ -49,7 +49,7 @@ function ServiceDiscontinuedModal({ network }: { network: string }) {
 				<span className='text-center text-xl font-semibold'>Services for this network are no longer available</span>
 				<div className='flex w-full max-w-md flex-col items-center justify-center gap-5 pb-4'>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						onClick={() => {
 							setOpenModal(false);
 						}}
@@ -57,7 +57,7 @@ function ServiceDiscontinuedModal({ network }: { network: string }) {
 						text='View Archived Posts'
 					/>
 					<CustomButton
-						variant='default'
+						type='default'
 						onClick={handleNetworkChange}
 						className='w-full'
 						text='Change Network'

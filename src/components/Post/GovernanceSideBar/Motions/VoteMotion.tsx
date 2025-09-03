@@ -253,7 +253,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 		<GovSidebarCard>
 			<h3 className='mb-6 text-xl font-semibold leading-6 tracking-[0.0015em] text-blue-light-high dark:text-blue-dark-high'>Cast your Vote!</h3>
 			<CustomButton
-				variant='primary'
+				type='primary'
 				text='Cast Vote'
 				onClick={openModal}
 				fontSize='lg'
@@ -350,7 +350,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 				}
 			/>
 			<CustomButton
-				variant='default'
+				type='default'
 				onClick={() => setForceVote(true)}
 				text='Let me try still.'
 				className='border-none'

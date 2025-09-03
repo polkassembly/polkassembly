@@ -72,8 +72,8 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 		return { delegated, solo };
 	};
 
-	const onChange = (value: [number, number]) => {
-		setSelectedRange(value);
+	const onChange = (value: number[]) => {
+		setSelectedRange(value as [number, number]);
 	};
 
 	const data = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({

@@ -7,7 +7,8 @@ import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
 
-import { NotificationSettings, UpdatedDataResponseType } from '~src/auth/types';
+import type { NotificationSettings } from '~src/auth/types';
+import { UpdatedDataResponseType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -173,7 +174,7 @@ const NotificationSettings = () => {
 					loading={loading}
 					disabled={!changed}
 					htmlType='submit'
-					variant='primary'
+					type='primary'
 					className={`rounded-lg border-none px-14 py-3 text-lg font-semibold ${changed ? 'bg-pink_primary' : 'bg-icon_grey'}`}
 				/>
 			</article>

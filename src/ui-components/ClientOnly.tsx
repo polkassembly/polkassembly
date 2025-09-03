@@ -20,12 +20,14 @@ const Search: FC<{ network: string }> = (props) => {
 	const { network } = props;
 	return (
 		<>
-			<Helmet>
-				<script
-					async
-					src='https://cse.google.com/cse.js?cx=27ceb2d02ebf44c39'
-				></script>
-			</Helmet>
+			{React.createElement(
+				Helmet as any,
+				{},
+				React.createElement('script', {
+					async: true,
+					src: 'https://cse.google.com/cse.js?cx=27ceb2d02ebf44c39'
+				})
+			)}
 			<div
 				className='gcse-search'
 				data-as_sitesearch={['moonbase', 'moonbeam', 'moonriver', 'kilt'].includes(network) ? `${network}.polkassembly.network` : `${network}.polkassembly.io`}

@@ -4,7 +4,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import type { MenuProps } from 'antd';
+type ItemType = Required<MenuProps>['items'][number];
 import {
 	bountyStatusOptions,
 	childBountyStatusOptions,
@@ -27,7 +28,7 @@ import { useTheme } from 'next-themes';
 import { Checkbox, Divider } from 'antd';
 import styled from 'styled-components';
 import { dmSans } from 'pages/_app';
-import type { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import Popover from '~src/basic-components/Popover';
 
 interface SortByDropdownProps {

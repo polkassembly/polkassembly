@@ -43,9 +43,9 @@ export async function fetchAuctionInfo(api: ApiPromise, network: string): Promis
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const blockTime = chainProperties[network].blockTime;
-	const endingPeriod = api.consts.auctions?.endingPeriod as u32;
-	const leasePeriodPerSlot = api.consts.auctions?.leasePeriodsPerSlot as BlockNumber;
-	const auctionInfo = (await api.query.auctions?.auctionInfo()) as Option<ITuple<[LeasePeriodOf, BlockNumber]>>;
+	const endingPeriod = api.consts.auctions?.endingPeriod as unknown as u32;
+	const leasePeriodPerSlot = api.consts.auctions?.leasePeriodsPerSlot as unknown as BlockNumber;
+	const auctionInfo = (await api.query.auctions?.auctionInfo()) as unknown as Option<ITuple<[LeasePeriodOf, BlockNumber]>>;
 
 	if (auctionInfo && auctionInfo.isSome) {
 		const [leasePeriod, endBlock] = auctionInfo.unwrapOr([]);
@@ -79,7 +79,7 @@ export async function fetchCouncilMotions(api: ApiPromise, network: string): Pro
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const blockTime = chainProperties[network].blockTime;
-	const councilMotions: DeriveCollectiveProposal[] = (await api?.derive?.council?.proposals()) ?? [];
+	const councilMotions: DeriveCollectiveProposal[] = ((await api?.derive?.council?.proposals()) ?? []) as any;
 
 	if (councilMotions) {
 		councilMotions.forEach(({ hash, votes }) => {
@@ -147,10 +147,10 @@ export async function fetchReferendums(api: ApiPromise, network: string): Promis
 
 	if (referendums) {
 		referendums.forEach(({ index, status }) => {
-			const endBlock = (status as ReferendumStatus).end?.toJSON() as number;
+			const endBlock = (status as unknown as ReferendumStatus).end?.toJSON() as number;
 
 			const referendumEndTimestamp = +new Date() + blockTime * (endBlock - blockNumber);
-			const enactEndBlock = endBlock + ((status as ReferendumStatus).delay?.toJSON() as number);
+			const enactEndBlock = endBlock + ((status as unknown as ReferendumStatus).delay?.toJSON() as number);
 			const enactEndTimestamp = +new Date() + blockTime * (enactEndBlock - blockNumber);
 			const voteEndBlock = endBlock - 1;
 			const voteEndTimestamp = +new Date() + blockTime * (voteEndBlock - blockNumber);
@@ -248,7 +248,7 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 			let slashDuration: number | undefined;
 
 			try {
-				slashDeferDuration = ((await Promise.resolve(api.consts.staking?.slashDeferDuration)) as u32)?.toJSON() as number;
+				slashDeferDuration = ((await Promise.resolve(api.consts.staking?.slashDeferDuration)) as unknown as unknown as u32)?.toJSON() as number;
 
 				if (slashDeferDuration) {
 					slashDuration = slashDeferDuration * eraLength;
@@ -258,7 +258,7 @@ export async function fetchStakingInfo(api: ApiPromise, network: string): Promis
 			}
 
 			if (slashDuration !== undefined) {
-				const unappliedSlashes = (await api.query.staking?.unappliedSlashes.entries()) as [{ args: [EraIndex] }, UnappliedSlash[]][];
+				const unappliedSlashes = (await api.query.staking?.unappliedSlashes.entries()) as unknown as [{ args: [EraIndex] }, UnappliedSlash[]][];
 				if (unappliedSlashes) {
 					unappliedSlashes.forEach(([{ args }, values]) => {
 						if (values.length) {
@@ -294,7 +294,7 @@ export async function fetchScheduled(api: ApiPromise, network: string): Promise<
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 	const blockTime = chainProperties[network].blockTime;
 
-	const scheduled = (await api.query.scheduler?.agenda.entries()) as [{ args: [BlockNumber] }, Option<Scheduled>[]][];
+	const scheduled = (await api.query.scheduler?.agenda.entries()) as unknown as [{ args: [BlockNumber] }, Option<Scheduled>[]][];
 
 	if (scheduled) {
 		scheduled.forEach(([key, scheduledOptions]) => {
@@ -338,7 +338,7 @@ export async function fetchCouncilElection(api: ApiPromise, network: string): Pr
 		return [];
 	}
 
-	const duration = response.value?.termDuration as u32;
+	const duration = response.value?.termDuration as unknown as u32;
 
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
@@ -365,7 +365,7 @@ export async function fetchDemocracyLaunch(api: ApiPromise, network: string): Pr
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
 
-	const duration = api.consts.democracy?.launchPeriod as u32;
+	const duration = api.consts.democracy?.launchPeriod as unknown as u32;
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -390,7 +390,7 @@ export async function fetchTreasurySpend(api: ApiPromise, network: string): Prom
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const duration = api.consts.treasury?.spendPeriod as u32;
+	const duration = api.consts.treasury?.spendPeriod as unknown as u32;
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -415,7 +415,7 @@ export async function fetchSocietyRotate(api: ApiPromise, network: string): Prom
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const duration = api.consts.society?.rotationPeriod as u32;
+	const duration = api.consts.society?.rotationPeriod as unknown as u32;
 	if (!duration) return [];
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
@@ -441,7 +441,7 @@ export async function fetchSocietyChallenge(api: ApiPromise, network: string): P
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const duration = api.consts.society?.challengePeriod as u32;
+	const duration = api.consts.society?.challengePeriod as unknown as u32;
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {
@@ -466,8 +466,8 @@ export async function fetchParachainLease(api: ApiPromise, network: string): Pro
 	const calendarItems: any[] = [];
 
 	const blockNumber = (await api.rpc.chain.getHeader()).number.toNumber();
-	const duration = api.consts.slots?.leasePeriod as LeasePeriod;
-	const offset = api.consts.slots?.leaseOffset as u32;
+	const duration = api.consts.slots?.leasePeriod as unknown as LeasePeriod;
+	const offset = api.consts.slots?.leaseOffset as unknown as u32;
 	const itemDuration = generateCalendarItemDuration(network, blockNumber, duration?.toJSON() as number, offset?.toJSON() as number);
 
 	if (itemDuration && itemDuration.endBlockNumber) {

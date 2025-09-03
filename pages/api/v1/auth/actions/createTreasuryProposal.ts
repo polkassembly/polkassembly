@@ -76,7 +76,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 			? {
 					id: Number(discussionId),
 					type: ProposalType.DISCUSSIONS
-			  }
+				}
 			: null,
 		proposer_address: proposerAddress,
 		tags: tags,

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { dmSans } from 'pages/_app';
 import Address from './Address';
@@ -46,7 +46,7 @@ export const TippingUnavailableNetworks = [
 interface Props {
 	className?: string;
 	address: string;
-	identity?: DeriveAccountRegistration | null;
+	identity?: IIdentityInfo | null;
 	polkassemblyUsername?: string;
 	username: string;
 	imgUrl?: string;
@@ -245,7 +245,7 @@ const QuickView = ({
 							<div className='flex w-1/2 items-center'>
 								<CustomButton
 									onClick={handleTipping}
-									variant={theme == 'dark' ? 'link' : 'default'}
+									type={theme == 'dark' ? 'link' : 'default'}
 									shape='circle'
 									height={32}
 									className={`w-full rounded-full p-5 dark:border-[#FF4098] dark:text-[#FF4098]  ${!loginUserId || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}

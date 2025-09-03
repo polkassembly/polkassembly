@@ -151,7 +151,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							width={91}
 							className='change-address mr-1 flex w-[70px] items-center justify-center text-[10px] tracking-wide'
 							height={21}
-							variant='primary'
+							type='primary'
 						/>
 					</div>
 				}
@@ -183,7 +183,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							disabled={loading.isLoading}
 							className={classNames('rounded-[4px] text-xs tracking-wide')}
 							text='Cancel'
-							variant='default'
+							type='default'
 							width={140}
 							height={38}
 						/>
@@ -192,7 +192,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							disabled={!(availableBalance && availableBalance.gt(amount)) || loading.isLoading}
 							className={classNames('rounded-[4px] text-xs tracking-wide', !(availableBalance && availableBalance.gt(amount)) || loading.isLoading ? 'opacity-50' : '')}
 							text='Confirm'
-							variant='primary'
+							type='primary'
 							width={140}
 							height={38}
 						/>
@@ -236,7 +236,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 									width={91}
 									className='change-address mr-1 flex items-center justify-center text-[10px]'
 									height={21}
-									variant='primary'
+									type='primary'
 								/>
 							</div>
 						</div>

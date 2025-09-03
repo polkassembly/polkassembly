@@ -61,4 +61,3 @@ export const GET_NEW_OPENGOV_PROPOSALS = `query GetNewOpenGovProposals($index_gt
   }
 }
 `;
-

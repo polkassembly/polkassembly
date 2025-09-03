@@ -193,7 +193,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 														className='-mt-[2px]'
 													/>
 													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalDots}</span>
-													{unit}
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{unit}</span>
 													<Divider
 														type='vertical'
 														className='border-l-1 mx-1 mt-[1px] border-[#90A0B7] dark:border-icon-dark-inactive '
@@ -208,7 +208,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 														className='-mt-[2px] ml-[3px]'
 													/>
 													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdcPrice}</span>
-													USDC
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>USDC</span>
 													<Divider
 														type='vertical'
 														className='border-l-1 mx-1 mt-[2px] border-[#90A0B7] dark:border-icon-dark-inactive max-sm:hidden'
@@ -226,7 +226,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 														className='-mt-[2px] ml-[3px]'
 													/>
 													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{totalUsdtPrice}</span>
-													USDt
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>USDt</span>
 													<Divider
 														type='vertical'
 														className='border-l-1 mx-1 mt-[1px] border-[#90A0B7] dark:border-icon-dark-inactive '

@@ -139,7 +139,7 @@ const LinkViaRemarkModal = ({ dismissModal, open }: Props) => {
 						<CustomButton
 							onClick={dismissModal}
 							text='Cancel'
-							variant='text'
+							type='text'
 							key='cancel'
 							buttonsize='sm'
 							disabled={loading}

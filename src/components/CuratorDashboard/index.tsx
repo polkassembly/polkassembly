@@ -46,7 +46,7 @@ const CuratorDashboard = ({ className }: Props) => {
 					<span className={`text-3xl ${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-bodyBlue dark:text-blue-dark-high`}>Curator Dashboard</span>
 					{!isNaN(id || 0) && !!loginAddress?.length && (
 						<CustomButton
-							variant='primary'
+							type='primary'
 							onClick={handleClick}
 							className='bounty-button flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border-none px-[22px] py-3 md:w-auto md:justify-normal '
 						>
@@ -75,14 +75,14 @@ const CuratorDashboard = ({ className }: Props) => {
 							<p className='p-0 text-center text-bodyBlue dark:text-white'>Discuss, contribute and get regular updates from Polkassembly.</p>
 							<div className='flex flex-col gap-4 pt-3'>
 								<CustomButton
-									variant='primary'
+									type='primary'
 									onClick={() => setLoginOpen(true)}
 									className='w-full cursor-pointer rounded-md px-4 py-3 text-center text-sm text-white lg:w-[480px]'
 								>
 									Log In
 								</CustomButton>
 								<CustomButton
-									variant='default'
+									type='default'
 									onClick={() => setLoginOpen(true)}
 									className='w-full cursor-pointer rounded-md border-[1px] border-solid px-4 py-3 text-center text-sm text-pink_primary lg:w-[480px] lg:border'
 								>

@@ -109,7 +109,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 		const history = data?.history
 			? data?.history.map((item: any) => {
 					return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
-			  })
+				})
 			: [];
 		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
@@ -137,11 +137,11 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 			topic: topic
 				? topic
 				: isTopicIdValid(topic_id)
-				? {
-						id: topic_id,
-						name: getTopicNameFromTopicId(topic_id)
-				  }
-				: getTopicFromType(strProposalType as ProposalType),
+					? {
+							id: topic_id,
+							name: getTopicNameFromTopicId(topic_id)
+						}
+					: getTopicFromType(strProposalType as ProposalType),
 			type: strProposalType === 'discussions' ? 'Discussions' : strProposalType === 'grants' ? 'Grants' : '',
 			user_id: data?.user_id,
 			username: data?.username

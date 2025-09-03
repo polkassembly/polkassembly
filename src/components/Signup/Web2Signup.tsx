@@ -376,7 +376,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 					></Divider>
 					<div className='-mt-1 flex items-center justify-end px-8'>
 						<CustomButton
-							variant='primary'
+							type='primary'
 							buttonsize='sm'
 							disabled={loading}
 							htmlType='submit'
@@ -398,7 +398,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 							key='got-it'
 						>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								text='Got it!'
 								icon={<CheckOutlined />}
 								buttonsize='sm'

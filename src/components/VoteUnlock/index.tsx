@@ -322,7 +322,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 									isReferendaPage
 										? 'border-pink_primary bg-pink_primary text-white dark:text-white'
 										: 'border-pink_primary bg-[#FDEDF7] text-pink_primary dark:bg-pink-dark-primary'
-							  }`
+								}`
 					} w-full rounded-[8px] ${isReferendaPage ? 'h-10 font-semibold' : 'h-8 '}`}
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
@@ -330,8 +330,8 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 							? 'Clear expired referenda locks'
 							: 'Unlock Your Tokens'
 						: handlePrevData(totalLockData).length
-						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
-						: 'No Unlocks Available'}
+							? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
+							: 'No Unlocks Available'}
 				</Button>
 			</div>
 			<Modal
@@ -357,7 +357,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 							displayInline
 						/>
 						<CustomButton
-							variant='primary'
+							type='primary'
 							className='mr-[27px] border-none'
 							height={27}
 							width={70}
@@ -376,7 +376,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex, se
 					{![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network) && (
 						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-[#3B444F] dark:border-separatorDark'>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								icon={<WhiteUnlockIcon className='mr-1' />}
 								className={`{ totalUnlockableBalance.eq(ZERO_BN) &&
                   'opacity-50' } mt-4

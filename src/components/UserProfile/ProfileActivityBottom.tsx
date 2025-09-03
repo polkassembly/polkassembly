@@ -53,7 +53,7 @@ const ActivityBottomContent = ({ activity, className }: { activity: IUserActivit
 				<CustomButton
 					width={120}
 					height={28}
-					variant='default'
+					type='default'
 					className='text-xs font-semibold'
 					onClick={() => window.open(`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}#${activity?.commentId}`, '_blank')}
 					text={EUserActivityIn.COMMENT === activity.activityIn ? 'View Comment' : 'View Reply'}

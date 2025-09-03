@@ -43,8 +43,8 @@ const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addT
 	const buttonClass = buttonClassName
 		? buttonClassName
 		: isUsedInProfileTab
-		? 'rounded-md border-none px-3 py-0 text-xs text-white'
-		: 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
+			? 'rounded-md border-none px-3 py-0 text-xs text-white'
+			: 'rounded-full border-none px-4 py-2.5 text-white max-md:p-3';
 	const buttonHeight = isUsedInProfileTab ? 28 : undefined;
 	const buttonText = isUserFollowing ? 'Unfollow' : isUsedInProfileTab ? 'Follow Back' : 'Follow';
 
@@ -53,7 +53,7 @@ const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addT
 			{!isUsedInProfileHeaders ? (
 				<CustomButton
 					shape='circle'
-					variant='primary'
+					type='primary'
 					className={`${buttonClass} ${!id || (!userId && 'opacity-50')}`}
 					onClick={handleFollowClick}
 					disabled={!id || loading}
@@ -71,7 +71,7 @@ const FollowButton = ({ userId, isUsedInProfileTab, isUsedInProfileHeaders, addT
 			) : (
 				<CustomButton
 					shape='circle'
-					variant='link'
+					type='link'
 					className={`w-min px-2 text-xs font-normal ${!id || (!userId && 'opacity-50')}`}
 					onClick={handleFollowClick}
 					disabled={!id || loading}

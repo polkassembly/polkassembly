@@ -58,7 +58,7 @@ const ChildBountySuccessModal = ({ open, setOpen, setStep, multisigData }: Props
 						<CustomButton
 							height={40}
 							className='w-full'
-							variant='primary'
+							type='primary'
 							text='View Child Bounty'
 						/>
 					</Link>

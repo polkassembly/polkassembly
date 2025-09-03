@@ -57,11 +57,11 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 		return topic
 			? topic
 			: isTopicIdValid(topic_id)
-			? {
-					id: topic_id,
-					name: getTopicNameFromTopicId(topic_id)
-			  }
-			: getTopicFromType(proposalType);
+				? {
+						id: topic_id,
+						name: getTopicNameFromTopicId(topic_id)
+					}
+				: getTopicFromType(proposalType);
 	}
 	return null;
 };
@@ -218,7 +218,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 										user_id: data.user_id,
 										username: data.username,
 										votes: [] as any[]
-								  }
+									}
 								: {
 										comment_source: data.comment_source || 'polkassembly',
 										content: data.content,
@@ -235,7 +235,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 										user_id: data.user_id,
 										username: data.username,
 										votes: [] as any[]
-								  };
+									};
 
 							comments.push(comment);
 						}

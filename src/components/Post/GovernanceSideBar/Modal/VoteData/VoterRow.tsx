@@ -313,130 +313,137 @@ const VoterRow: FC<IVoterRow> = ({
 			onChange={() => setActiveKey?.(currentKey === index ? null : index)}
 			theme={theme as any}
 			// isSmallScreen={isSmallScreen}
-		>
-			<StyledCollapse.Panel
-				className={`rounded-none p-0 ${
-					active && !isSmallScreen ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''
-				} gap-[0px] text-bodyBlue dark:text-blue-dark-high dark:[&>.ant-collapse-content]:bg-section-dark-overlay`}
-				key={1}
-				header={<Title />}
-			>
-				{!isSmallScreen && (
-					<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
-						<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-section-light-container py-4 dark:border-[#3B444F] dark:border-separatorDark'>
-							<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-								<CalenderIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
-							</span>
-							{voteData?.decision !== 'abstain' && isReferendum2 && (
-								<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
-									<PowerIcon className='text-blue-light-mediume dark:text-blue-dark-medium' />
-									Voting Power:{' '}
-									<span className='text-bodyBlue dark:text-blue-dark-high'>
-										{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
-									</span>
-								</span>
-							)}
-						</div>
-						<div>
-							<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
-							<div className='flex justify-between'>
-								<div className='flex w-[200px] flex-col gap-1'>
-									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
-									<div className='flex justify-between'>
-										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
+			items={[
+				{
+					children: (
+						<>
+							{!isSmallScreen && (
+								<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
+									<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-section-light-container py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+										<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+											<CalenderIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 										</span>
-										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
+										{voteData?.decision !== 'abstain' && isReferendum2 && (
+											<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
+												<PowerIcon className='text-blue-light-mediume dark:text-blue-dark-medium' />
+												Voting Power:{' '}
+												<span className='text-bodyBlue dark:text-blue-dark-high'>
+													{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}
+													%
+												</span>
+											</span>
+										)}
 									</div>
-									<div className='flex justify-between'>
-										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<ConvictionIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Conviction
-										</span>
-										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-											{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
-										</span>
-									</div>
-									<div className='flex justify-between'>
-										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
-										</span>
-										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-											{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
-										</span>
-									</div>
-								</div>
-								{voteData?.delegatedVotes?.length > 0 && (
-									<>
-										<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'></div>
-										<div className='mr-3 flex w-[200px] flex-col gap-1'>
-											<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
-											<div className='flex justify-between'>
-												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
-												</span>
-												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
+									<div>
+										<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
+										<div className='flex justify-between'>
+											<div className='flex w-[200px] flex-col gap-1'>
+												<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+												<div className='flex justify-between'>
+													<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
+														<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
+													</span>
+													<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
+												</div>
+												<div className='flex justify-between'>
+													<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
+														<ConvictionIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Conviction
+													</span>
+													<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+														{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
+													</span>
+												</div>
+												<div className='flex justify-between'>
+													<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
+														<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
+													</span>
+													<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+														{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
+													</span>
+												</div>
 											</div>
-											<div className='flex justify-between'>
-												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<EmailIconNew className='text-blue-light-medium dark:text-blue-dark-medium' /> Delegators
-												</span>
-												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
-											</div>
-											<div className='flex justify-between'>
-												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
-												</span>
-												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-													{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
-												</span>
-											</div>
+											{voteData?.delegatedVotes?.length > 0 && (
+												<>
+													<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'></div>
+													<div className='mr-3 flex w-[200px] flex-col gap-1'>
+														<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+														<div className='flex justify-between'>
+															<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
+																<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
+															</span>
+															<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+																{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}
+															</span>
+														</div>
+														<div className='flex justify-between'>
+															<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
+																<EmailIconNew className='text-blue-light-medium dark:text-blue-dark-medium' /> Delegators
+															</span>
+															<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
+														</div>
+														<div className='flex justify-between'>
+															<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
+																<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
+															</span>
+															<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+																{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
+															</span>
+														</div>
+													</div>
+												</>
+											)}
 										</div>
-									</>
-								)}
-							</div>
-						</div>
-						{voteData?.delegatedVotes?.length > 0 && (
-							<>
-								<Divider
-									dashed
-									className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
-								/>
-								<div>
-									<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
-									<div className='mb-2 flex items-center text-xs font-semibold'>
-										<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
-										<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
-										{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
-										<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
 									</div>
-									<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
-										{voteData?.delegatedVotes.map((data: any, i: number) => (
-											<DelegationListRow
-												key={i}
-												voteType={voteType}
-												voteData={data}
+									{voteData?.delegatedVotes?.length > 0 && (
+										<>
+											<Divider
+												dashed
+												className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 											/>
-										))}
-									</div>
-									{delegatorLoading ? (
-										<SkeletonButton active />
-									) : (
-										delegatedData?.delegator > 10 && (
-											<p
-												className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
-												onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData.voter })}
-											>
-												Show More
-											</p>
-										)
+											<div>
+												<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+												<div className='mb-2 flex items-center text-xs font-semibold'>
+													<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
+													<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
+													{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
+													<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
+												</div>
+												<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
+													{voteData?.delegatedVotes.map((data: any, i: number) => (
+														<DelegationListRow
+															key={i}
+															voteType={voteType}
+															voteData={data}
+														/>
+													))}
+												</div>
+												{delegatorLoading ? (
+													<SkeletonButton active />
+												) : (
+													delegatedData?.delegator > 10 && (
+														<p
+															className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
+															onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData.voter })}
+														>
+															Show More
+														</p>
+													)
+												)}
+											</div>
+										</>
 									)}
 								</div>
-							</>
-						)}
-					</div>
-				)}
-			</StyledCollapse.Panel>
-		</StyledCollapse>
+							)}
+						</>
+					),
+					className: `rounded-none p-0 ${
+						active && !isSmallScreen ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''
+					} gap-[0px] text-bodyBlue dark:text-blue-dark-high dark:[&>.ant-collapse-content]:bg-section-dark-overlay`,
+					key: 1,
+					label: <Title />
+				}
+			]}
+		/>
 	) : (
 		<div
 			className={`w-full border-x-0 border-y-0 border-t border-solid border-section-light-container px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:w-[550px] ${

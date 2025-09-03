@@ -59,7 +59,7 @@ const AddNetworkModal = ({
 				: {
 						...net,
 						selected: checked
-				  }
+					}
 		);
 		setAllNetworks({ ...allNetworks, [chain]: payload });
 	};
@@ -93,13 +93,13 @@ const AddNetworkModal = ({
 								}
 								onCancel();
 							}}
-							variant='default'
+							type='default'
 							text='Cancel'
 						/>
 						<CustomButton
 							onClick={handleConfirm}
 							key='2'
-							variant='primary'
+							type='primary'
 							text='Confirm'
 						/>
 					</div>

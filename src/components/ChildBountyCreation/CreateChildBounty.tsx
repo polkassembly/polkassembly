@@ -389,7 +389,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 				<div className='-mx-6 mt-6 flex justify-end gap-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
 						text='Back'
-						variant='default'
+						type='default'
 						height={40}
 						width={155}
 						onClick={() => setStep(EChildBountySteps.WRITE_CHILDBOUNTY)}
@@ -397,7 +397,7 @@ const CreateChildBounty = ({ setStep, setCloseModal, setOpenSuccessModal, multis
 					<CustomButton
 						htmlType='submit'
 						text='Submit'
-						variant='primary'
+						type='primary'
 						height={40}
 						width={155}
 						className={classNames(new BN(reqAmount || '0').eq(ZERO_BN) || !isValidBounty ? 'opacity-50' : '')}

@@ -203,7 +203,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		if (postData.post_link) {
 			footer.push(
 				<CustomButton
-					variant='default'
+					type='default'
 					icon={<DeleteOutlined />}
 					htmlType='reset'
 					key='reset'
@@ -217,7 +217,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		} else if (data) {
 			footer.push(
 				<CustomButton
-					variant='primary'
+					type='primary'
 					icon={<CheckOutlined />}
 					htmlType='submit'
 					key='submit'
@@ -231,7 +231,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 		} else {
 			footer.push(
 				<CustomButton
-					variant='primary'
+					type='primary'
 					icon={<LinkOutlined />}
 					htmlType='submit'
 					key='submit'
@@ -261,7 +261,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 	return (
 		<>
 			<CustomButton
-				variant='primary'
+				type='primary'
 				htmlType='button'
 				className={className}
 				onClick={() => {

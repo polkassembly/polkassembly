@@ -63,8 +63,8 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 		}
 	}, [delegationData, isMobile]);
 
-	const onChange = (value: [number, number]) => {
-		setSelectedRange(value);
+	const onChange = (value: number[]) => {
+		setSelectedRange(value as [number, number]);
 	};
 
 	// Use full data if not mobile, otherwise use selected range

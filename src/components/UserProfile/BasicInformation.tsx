@@ -255,7 +255,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							}}
 						/>
 						<CustomButton
-							variant='default'
+							type='default'
 							onClick={() => addNewBadge()}
 							className='font-medium'
 							icon={<PlusOutlined />}

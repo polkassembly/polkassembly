@@ -496,13 +496,13 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					),
 					value: 'abstain'
 				}
-		  ]
+			]
 		: ayeNayVotesArr;
 
 	return (
 		<div className={className}>
 			<CustomButton
-				variant='primary'
+				type='primary'
 				fontSize='lg'
 				className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
 				onClick={openModal}

@@ -4,7 +4,7 @@
 import { Button, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { EditIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
@@ -40,7 +40,7 @@ interface Props {
 	setIsModalOpen: (pre: boolean) => void;
 	userBio: string;
 	setUserBio: (pre: string) => void;
-	identity: DeriveAccountRegistration | null;
+	identity: IIdentityInfo | null;
 }
 
 const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
@@ -92,7 +92,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 											onClick={() => setIsEditModalOpen(true)}
 											height={40}
 											width={40}
-											variant='default'
+											type='default'
 											className='sm:hidden'
 										>
 											<Image
@@ -170,7 +170,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 										onClick={() => setIsEditModalOpen(true)}
 										height={40}
 										width={87}
-										variant='default'
+										type='default'
 										className='max-lg:w-auto'
 									>
 										<EditIcon className='mt-1 text-base text-pink_primary ' />

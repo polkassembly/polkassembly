@@ -251,7 +251,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 					{userProfile?.user_id !== loginId && !!(username || '')?.length && (
 						<CustomButton
 							className='delegation-buttons border-none shadow-none'
-							variant='default'
+							type='default'
 							buttonsize='xs'
 							onClick={() => setOpenDelegateModal(true)}
 						>
@@ -280,7 +280,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 					{userProfile?.user_id === loginId && !!(username || '')?.length && !delegationMandate?.length && (
 						<CustomButton
 							className='delegation-buttons border-none shadow-none'
-							variant='default'
+							type='default'
 							buttonsize='xs'
 							size='large'
 							onClick={() => setOpenBecomeDelegateModal(true)}
@@ -453,7 +453,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																						2,
 																						true,
 																						network
-																				  )}`
+																					)}`
 																				: 'Multiple'}
 																		</span>
 																	</div>
@@ -489,19 +489,17 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																					key={delegate?.track}
 																					className='flex items-center'
 																				>
-																					{getTrackNameFromId(network, delegate?.track)
-																						.split('_')
-																						.join(' ')}{' '}
+																					{getTrackNameFromId(network, delegate?.track).split('_').join(' ')}{' '}
 																					{value?.delegations?.length !== 1 && !getIsSingleDelegation(value?.delegations)
 																						? `(VP: ${parseBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), 2, true, network)}, Ca: ${parseBalance(
 																								String(delegate?.balance),
 																								2,
 																								true,
 																								network
-																						  )}, Co: ${delegate?.lockPeriod || 0.1}x)`
+																							)}, Co: ${delegate?.lockPeriod || 0.1}x)`
 																						: trackIndex !== value?.delegations?.length - 1
-																						? ', '
-																						: ''}
+																							? ', '
+																							: ''}
 																				</span>
 																			))}
 																		</div>

@@ -80,7 +80,7 @@ const RateModal: FC<IRateModal> = (props) => {
 				footer={
 					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
-							variant='default'
+							type='default'
 							text='Cancel'
 							buttonsize='sm'
 							disabled={loading}
@@ -89,7 +89,7 @@ const RateModal: FC<IRateModal> = (props) => {
 							}}
 						/>
 						<CustomButton
-							variant='primary'
+							type='primary'
 							loading={loading}
 							className={`${loading ? 'opacity-60' : ''}`}
 							text='Rate'

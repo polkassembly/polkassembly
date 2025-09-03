@@ -118,7 +118,7 @@ const RequestResetPassword: FC<Props> = (props) => {
 								htmlType='submit'
 								width={224}
 								height={40}
-								variant='primary'
+								type='primary'
 							/>
 						</div>
 						{error && <FilteredError text={error} />}

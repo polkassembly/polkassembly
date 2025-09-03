@@ -292,7 +292,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 								form.submit();
 							}}
 							loading={loading}
-							variant='primary'
+							type='primary'
 							height={40}
 						>
 							{linkStarted ? 'Sign' : 'Link'}
@@ -300,7 +300,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<CustomButton
 							key='cancel'
 							onClick={dismissModal}
-							variant='default'
+							type='default'
 							height={40}
 							text='Cancel'
 						/>
@@ -360,7 +360,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<div className='flex items-center justify-between'>
 							<CustomButton
 								onClick={handleDetect}
-								variant='default'
+								type='default'
 								height={40}
 								className='m-0 border-none p-0'
 							>
@@ -369,7 +369,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							</CustomButton>
 							<CustomButton
 								onClick={() => handleAddSignatories(true, '')}
-								variant='default'
+								type='default'
 								height={40}
 								className='m-0 border-none p-0'
 							>

@@ -199,7 +199,11 @@ export async function fetchTreasuryStats(): Promise<ITreasuryStats | null> {
 		});
 		await hydrationApi.isReady;
 
-		const hydrationAddresses = ['7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV', '7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY', '7KATdGaecnKi4zDAMWQxpB2s59N2RE1JgLuugCjTsRZHgP24'];
+		const hydrationAddresses = [
+			'7KCp4eenFS4CowF9SpQE5BBCj5MtoBA3K811tNyRmhLfH1aV',
+			'7LcF8b5GSvajXkSChhoMFcGDxF9Yn9unRDceZj1Q6NYox8HY',
+			'7KATdGaecnKi4zDAMWQxpB2s59N2RE1JgLuugCjTsRZHgP24'
+		];
 
 		const HYDRATION_DOT_ASSET_ID = 5;
 		const HYDRATION_USDC_ASSET_ID = 22;

@@ -101,7 +101,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 					onClick={handleClick}
 					height={44}
 					width={194}
-					variant='primary'
+					type='primary'
 					fontSize='lg'
 				/>
 			</div>

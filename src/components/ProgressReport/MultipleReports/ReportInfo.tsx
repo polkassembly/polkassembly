@@ -134,7 +134,7 @@ const ReportInfo: FC<IReportInfo> = (props) => {
 						value={report?.progress_summary || ''}
 					/>
 					<CustomButton
-						variant='primary'
+						type='primary'
 						text='Save'
 						disabled={summary_content === report.progress_summary}
 						loading={loading}

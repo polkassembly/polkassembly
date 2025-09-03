@@ -177,7 +177,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 									shape='default'
 									className={`ml-1 shrink-0 gap-[2px] self-end max-sm:mt-[6px] sm:hidden ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
 									disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
-									variant='default'
+									type='default'
 								>
 									<Image
 										src={'/assets/icons/vote.svg'}

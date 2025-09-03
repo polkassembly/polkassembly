@@ -9,11 +9,10 @@ import EventsJson from './lottie-files/events.json';
 import Slash from './Slash.svg';
 
 interface Props {
-	width?: number
+	width?: number;
 }
 
 function EventsEmptyState({ width = 80 }: Props): ReactElement {
-
 	const [playing, setPlaying] = useState(false);
 
 	return (

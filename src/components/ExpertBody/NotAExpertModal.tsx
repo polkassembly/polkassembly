@@ -17,7 +17,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import dynamic from 'next/dynamic';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import classNames from 'classnames';
@@ -39,7 +39,7 @@ const NotAExpertModal = ({ isModalVisible, handleCancel }: { isModalVisible: boo
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const [identity, setIdentity] = useState<IIdentityInfo | null>(null);
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isVerified = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable']?.includes(judgement));
 	const [successSubmission, setSuccessSubmission] = useState(false);

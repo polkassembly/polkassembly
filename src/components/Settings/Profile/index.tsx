@@ -312,7 +312,7 @@ const Profile = () => {
 									setPasswords(initialPasswordsState);
 								}}
 								className='m-0 border-none p-0'
-								variant='default'
+								type='default'
 								text='Cancel Change'
 							/>
 						</article>
@@ -345,7 +345,7 @@ const Profile = () => {
 									setCurrentPassword('');
 								}}
 								className='m-0 border-none p-0'
-								variant='default'
+								type='default'
 								text='Change'
 							/>
 						</article>
@@ -357,7 +357,7 @@ const Profile = () => {
 					htmlType='submit'
 					fontSize='lg'
 					className={`${!isSubmitDisabled ? 'bg-pink_primary' : 'bg-icon_grey'} mt-05 border-none px-14 py-3 font-semibold`}
-					variant='default'
+					type='default'
 					text='Save'
 				/>
 			</Form>

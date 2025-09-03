@@ -14,7 +14,7 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
@@ -179,7 +179,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						? {
 								name: values[0],
 								trackId: values[1].trackId
-						  }
+							}
 						: null;
 				});
 				setTrackArr(tracks);
@@ -328,7 +328,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 				<div>
 					<CustomButton
 						className='delegation-buttons'
-						variant='default'
+						type='default'
 						buttonsize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
@@ -359,13 +359,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						<CustomButton
 							text='Cancel'
 							className='rounded-[4px] text-sm sm:text-base'
-							variant='default'
+							type='default'
 							buttonsize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
 							text='Delegate'
-							variant='primary'
+							type='primary'
 							className={`rounded-[4px] text-sm sm:text-base ${delegateButtonDisable && 'opacity-50'}`}
 							disabled={delegateButtonDisable}
 							onClick={async () => {
@@ -440,7 +440,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 											<span className='text-sm text-[#ff4d4f]'>
 												{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address'}
 											</span>
-									  )
+										)
 									: null}
 
 								{addressAlert && (

@@ -75,7 +75,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 							<CustomButton
 								loading={loading}
 								onClick={handleGenerateToken}
-								variant='primary'
+								type='primary'
 								text='Generate Token'
 							/>
 						</div>

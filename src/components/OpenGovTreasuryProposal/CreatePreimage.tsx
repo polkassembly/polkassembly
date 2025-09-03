@@ -520,10 +520,10 @@ const CreatePreimage = ({
 				typeof beneficiaryAddresses?.[beneficiary]?.address === 'string'
 					? beneficiaryAddresses?.[beneficiary]?.address
 					: (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.length
-					? (beneficiaryAddresses?.[beneficiary]?.address as any)?.value
-					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) ||
-					  (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value[0]?.id ||
-					  '';
+						? (beneficiaryAddresses?.[beneficiary]?.address as any)?.value
+						: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) ||
+							(beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value[0]?.id ||
+							'';
 			if (
 				!beneficiaryAddresses[beneficiary].address ||
 				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||
@@ -683,8 +683,8 @@ const CreatePreimage = ({
 							typeof args?.beneficiary === 'string'
 								? args?.beneficiary
 								: (args?.beneficiary as any)?.value?.length
-								? (args?.beneficiary as any)?.value
-								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '',
+									? (args?.beneficiary as any)?.value
+									: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '',
 							network
 						);
 
@@ -1100,7 +1100,7 @@ const CreatePreimage = ({
 											{beneficiary.address
 												? !(getEncodedAddress(beneficiary.address, network) || isAddress(beneficiary.address)) && (
 														<span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>
-												  )
+													)
 												: null}
 										</div>
 										<div className='-mb-[69px]'>
@@ -1421,7 +1421,7 @@ const CreatePreimage = ({
 											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
-									  )
+										)
 									: preimageHash?.length === 0 || invalidPreimageHash()) && 'opacity-50'
 							}`}
 							disabled={
@@ -1434,7 +1434,7 @@ const CreatePreimage = ({
 											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
-									  )
+										)
 									: preimageHash?.length === 0 || invalidPreimageHash()
 							}
 						>

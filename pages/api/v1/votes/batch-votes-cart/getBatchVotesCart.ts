@@ -65,11 +65,11 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 		return topic
 			? topic
 			: isTopicIdValid(topic_id)
-			? {
-					id: topic_id,
-					name: getTopicNameFromTopicId(topic_id)
-			  }
-			: getTopicFromType(proposalType);
+				? {
+						id: topic_id,
+						name: getTopicNameFromTopicId(topic_id)
+					}
+				: getTopicFromType(proposalType);
 	}
 	return null;
 };

@@ -66,8 +66,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						edit_vote_details?.voteOption === 'aye'
 							? edit_vote_details.ayeVoteBalance
 							: edit_vote_details?.voteOption === 'abstain'
-							? edit_vote_details.abstainAyeVoteBalance
-							: '0',
+								? edit_vote_details.abstainAyeVoteBalance
+								: '0',
 					conviction: edit_vote_details.conviction,
 					decision: edit_vote_details.voteOption,
 					nayBalance:
@@ -158,8 +158,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 							voteInfo?.decision === 'aye'
 								? 'text-aye_green dark:text-aye_green_Dark'
 								: voteInfo?.decision === 'nay'
-								? 'text-nay_red dark:text-nay_red_Dark'
-								: 'text-bodyBlue dark:text-blue-dark-medium'
+									? 'text-nay_red dark:text-nay_red_Dark'
+									: 'text-bodyBlue dark:text-blue-dark-medium'
 						} m-0 p-0 text-xs capitalize`}
 					>
 						{voteInfo?.decision}
@@ -204,7 +204,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					footer={
 						<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 							<CustomButton
-								variant='default'
+								type='default'
 								text='Cancel'
 								buttonsize='sm'
 								onClick={() => {
@@ -226,7 +226,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								}}
 							/>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								text='Save'
 								buttonsize='sm'
 								className={`${!is_field_edited ? 'opacity-50' : ''}`}
@@ -245,12 +245,12 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 														? edit_vote_details?.ayeVoteBalance
 														: '0'
 													: edit_vote_details?.voteOption === 'nay'
-													? edit_vote_details?.nyeVoteBalance
 														? edit_vote_details?.nyeVoteBalance
-														: '0'
-													: edit_vote_details?.abstainVoteBalance
-													? edit_vote_details?.abstainVoteBalance
-													: '0',
+															? edit_vote_details?.nyeVoteBalance
+															: '0'
+														: edit_vote_details?.abstainVoteBalance
+															? edit_vote_details?.abstainVoteBalance
+															: '0',
 											voteConviction: edit_vote_details?.conviction || 0.1
 										})
 									);
@@ -293,7 +293,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					footer={
 						<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 							<CustomButton
-								variant='default'
+								type='default'
 								text='View Details'
 								className='w-full'
 								buttonsize='sm'
@@ -322,7 +322,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					footer={
 						<div className='-mx-6 mt-4 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 							<CustomButton
-								variant='default'
+								type='default'
 								text='No, Cancel'
 								buttonsize='sm'
 								onClick={() => {
@@ -330,7 +330,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								}}
 							/>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								text='Yes, Remove'
 								buttonsize='sm'
 								onClick={() => {

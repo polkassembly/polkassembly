@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
@@ -63,7 +63,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const aboutTitle = profileDetails?.title;
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const [identity, setIdentity] = useState<IIdentityInfo | null>(null);
 	const [title, setTitle] = useState(aboutTitle || '');
 	const [description, setDescription] = useState(aboutDescription || '');
 	const [canEdit, setCanEdit] = useState(false);
@@ -259,7 +259,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 						<CustomButton
 							onClick={handleSend}
 							disabled={loading}
-							variant='primary'
+							type='primary'
 							htmlType='submit'
 						>
 							{loading ? <>Creating</> : 'Update'}
@@ -276,7 +276,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 									onClick={handleEdit}
 									disabled={loading}
 									htmlType='submit'
-									variant='primary'
+									type='primary'
 								>
 									{loading ? <>Creating</> : 'Update'}
 								</CustomButton>
@@ -318,10 +318,10 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 										<div className='text-navBlue dark:text-white'>{identity.legal}</div>
 									</Col>
 								)}
-								{identity?.riot && (
+								{identity?.matrix && (
 									<Col span={8}>
-										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Riot</div>
-										<div className='text-navBlue dark:text-white'>{identity.riot}</div>
+										<div className='mb-1 text-[12px] font-medium text-sidebarBlue dark:text-icon-dark-inactive'>Matrix</div>
+										<div className='text-navBlue dark:text-white'>{identity.matrix}</div>
 									</Col>
 								)}
 								{identity?.judgements?.length > 0 && (

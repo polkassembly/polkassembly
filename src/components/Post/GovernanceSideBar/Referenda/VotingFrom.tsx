@@ -168,7 +168,7 @@ const VotingForm = ({
 					htmlType='submit'
 					disabled={disabled || (showProxyDropdown && !isProxyExistsOnWallet)}
 					text='Confirm'
-					variant='primary'
+					type='primary'
 					buttonsize='xs'
 					className={`mr-6 ${(disabled || (showProxyDropdown && !isProxyExistsOnWallet)) && 'opacity-50'} font-semibold`}
 				/>

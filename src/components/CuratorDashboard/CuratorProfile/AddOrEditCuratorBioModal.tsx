@@ -91,7 +91,7 @@ const AddOrEditCuratorBioModal = ({ className, curatorInitialBio, setOpen, open,
 						<CustomButton
 							onClick={handleSubmit}
 							text='Submit'
-							variant='primary'
+							type='primary'
 							height={36}
 							width={100}
 							className={classNames(curatorBio?.trim() == curatorInitialBio ? 'opacity-50' : '')}

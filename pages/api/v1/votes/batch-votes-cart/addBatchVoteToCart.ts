@@ -43,11 +43,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			return res.status(403).json({ message: messages.INVALID_PARAMS });
 		}
 
-		const ref = firestore_db
-			.collection('users')
-			.doc(String(user?.id))
-			.collection('batch_votes_cart')
-			.doc();
+		const ref = firestore_db.collection('users').doc(String(user?.id)).collection('batch_votes_cart').doc();
 
 		await ref.set({ ...vote, created_at: new Date(), id: ref.id }, { merge: true });
 		return res.status(200).send({ message: messages.SUCCESS });

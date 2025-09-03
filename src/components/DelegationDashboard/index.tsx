@@ -15,7 +15,7 @@ import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
 import DelegationTabs from './DelegationTabs';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { userDetailsActions } from '~src/redux/userDetails';
@@ -44,7 +44,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const isMobile = useIsMobile();
-	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const [identity, setIdentity] = useState<IIdentityInfo | null>(null);
 
 	useEffect(() => {
 		if (!window) return;

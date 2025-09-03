@@ -59,13 +59,13 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 	const createApiPromise = (provider: WsProvider | ScProvider, network?: string): ApiPromise => {
 		switch (network) {
 			case 'genshiro':
-				return new ApiPromise({ provider, typesBundle: typesBundleGenshiro });
+				return new ApiPromise({ provider, typesBundle: typesBundleGenshiro as any });
 			case 'crust':
-				return new ApiPromise({ provider, typesBundle: typesBundleCrust });
+				return new ApiPromise({ provider, typesBundle: typesBundleCrust as any });
 			case 'equilibrium':
-				return new ApiPromise({ provider, typesBundle: typesBundleEquilibrium });
+				return new ApiPromise({ provider, typesBundle: typesBundleEquilibrium as any });
 			case 'kilt':
-				return new ApiPromise({ provider, typesBundle });
+				return new ApiPromise({ provider, typesBundle: typesBundle as any });
 			default:
 				return new ApiPromise({ provider });
 		}
@@ -84,7 +84,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 			if (property) {
 				ApiPromise.create({
 					provider: new WsProvider((property.relayRpcEndpoints || []).map((endpoint) => endpoint.key)),
-					typesBundle
+					typesBundle: typesBundle as any
 				})
 					.then((api) => setRelayApi(api))
 					.catch(console.error);

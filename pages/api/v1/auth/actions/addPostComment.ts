@@ -61,11 +61,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	let expertDocId: null | string;
 
 	if (isExpertComment && !!encodedUserAddress) {
-		const expertReqDocs = await expertReqSnapshot
-			.where('userId', '==', user?.id)
-			.where('address', '==', encodedUserAddress)
-			.limit(1)
-			.get();
+		const expertReqDocs = await expertReqSnapshot.where('userId', '==', user?.id).where('address', '==', encodedUserAddress).limit(1).get();
 
 		if (expertReqDocs.empty) {
 			return res.status(400).json({ message: 'The Address is not a Expert Address.' });

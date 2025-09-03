@@ -105,7 +105,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 	return (
 		<div className={className}>
 			<CustomButton
-				variant='primary'
+				type='primary'
 				text='Second'
 				onClick={openModal}
 				fontSize='lg'
@@ -120,7 +120,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 				footer={[
 					<CustomButton
 						key='second'
-						variant='primary'
+						type='primary'
 						text='Second'
 						loading={loadingStatus.isLoading}
 						disabled={!apiReady}

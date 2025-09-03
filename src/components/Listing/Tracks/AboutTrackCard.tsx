@@ -315,7 +315,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
-								variant='primary'
+								type='primary'
 								width={175}
 								height={40}
 							>
@@ -504,7 +504,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
-								variant='primary'
+								type='primary'
 								width={175}
 								height={40}
 							>

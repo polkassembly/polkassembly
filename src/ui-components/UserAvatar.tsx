@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Avatar } from 'antd';
-import { AvatarSize } from 'antd/lib/avatar/SizeContext';
+type AvatarSize = number | 'large' | 'small' | 'default';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ProfileDetailsResponse } from '~src/auth/types';

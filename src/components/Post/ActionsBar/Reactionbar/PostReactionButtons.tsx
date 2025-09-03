@@ -242,7 +242,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const button = (
 		<span className={className}>
 			<CustomButton
-				variant='default'
+				type='default'
 				onClick={handleReact}
 				className='m-0 mr-6 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}

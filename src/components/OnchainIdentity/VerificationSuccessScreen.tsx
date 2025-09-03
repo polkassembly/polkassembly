@@ -47,7 +47,7 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 					loading={loading}
 					text={isUserCreatedBounty ? 'Done' : 'Continue verification'}
 					className={classNames('mt-6', isUserCreatedBounty ? 'rounded-md px-10' : '')}
-					variant='primary'
+					type='primary'
 					height={isUserCreatedBounty ? 32 : 40}
 				/>
 				<div className='-mb-5 -ml-12 -mr-12 mt-12 h-3 w-[600px] rounded-b-lg bg-[#51D36E] max-sm:w-full ' />

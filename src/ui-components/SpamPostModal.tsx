@@ -40,14 +40,14 @@ const SpamPostModal = ({ open, setOpen, className, proposalType }: { open: boole
 				<div className='flex items-center justify-center gap-6 pb-4 max-sm:gap-2'>
 					<CustomButton
 						text='Go Back'
-						variant='default'
+						type='default'
 						onClick={() => router.push('/discussions')}
 						height={40}
 						width={158}
 					/>
 					<CustomButton
 						text='View Anyways'
-						variant='primary'
+						type='primary'
 						onClick={() => {
 							setOpen(false);
 						}}

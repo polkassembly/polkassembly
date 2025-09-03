@@ -143,9 +143,9 @@ const InitializedMDXEditor = ({ markdown, onChange, readOnly = false, id, classN
 					}
 				];
 
-				algolia_client.search(queries, { strategy: 'none' }).then((hits) => {
-					const usernameHits = hits.results[0]?.hits || [];
-					const addressHits = hits.results[1]?.hits || [];
+				algolia_client.search(queries, { strategy: 'none' }).then((response) => {
+					const usernameHits = (response.results[0] as any)?.hits || [];
+					const addressHits = (response.results[1] as any)?.hits || [];
 
 					const usernameResults = usernameHits.map((user: Record<string, any>) => ({
 						text: `@${user.username}`,

@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { useEffect, useState } from 'react';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import type { MenuProps } from 'antd';
+type ItemType = Required<MenuProps>['items'][number];
 import Address from './Address';
 import { dmSans } from 'pages/_app';
 import DownIcon from '~assets/icons/down-icon.svg';

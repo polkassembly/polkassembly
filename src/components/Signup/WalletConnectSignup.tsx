@@ -299,7 +299,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 						</div>
 						<div className={'mainButtonContainer'}>
 							<CustomButton
-								variant='primary'
+								type='primary'
 								text='Sign-up'
 								buttonsize='sm'
 								disabled={loading}
@@ -313,7 +313,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
 				<CustomButton
-					variant='default'
+					type='default'
 					className='m-0 border-none p-0'
 					text='Sign-up with username'
 					disabled={loading}
@@ -323,7 +323,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 			<Divider plain>Or</Divider>
 			<div className={'mainButtonContainer'}>
 				<CustomButton
-					variant='default'
+					type='default'
 					className='m-0 border-none p-0'
 					text='Sign-up with polkadot.js'
 					disabled={loading}

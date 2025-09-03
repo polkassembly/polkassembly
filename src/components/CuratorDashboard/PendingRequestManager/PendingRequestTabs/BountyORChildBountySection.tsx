@@ -243,7 +243,7 @@ const BountyORChildBountySection = ({ reqType, title, proposalType }: Props) => 
 											!item.accepted ? (
 												<CustomButton
 													onClick={() => handleAcceptCuratorReq(item)}
-													variant='primary'
+													type='primary'
 													loading={item?.loading}
 													text='Accept'
 													height={30}

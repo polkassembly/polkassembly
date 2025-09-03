@@ -15,7 +15,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import { useApiContext } from '~src/context';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
@@ -27,7 +27,7 @@ interface Props {
 	className?: string;
 	theme?: string;
 	isLoggedOut: boolean;
-	identity: DeriveAccountRegistration | null;
+	identity: IIdentityInfo | null;
 }
 
 const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {

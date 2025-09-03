@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { IIdentityInfo } from '~src/types';
 import SingleSignatoryAlertIcon from '~assets/icons/info-alert.svg';
 import NonVerifiedAlertIcon from '~assets/icons/red-info-alert.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -22,7 +22,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
+	const [identity, setIdentity] = useState<IIdentityInfo | null>(null);
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
 	const isBad = judgements?.some(([, judgement]: any[]): boolean => ['Erroneous', 'LowQuality'].includes(judgement));

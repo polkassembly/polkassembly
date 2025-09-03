@@ -10,11 +10,11 @@
     "lint:fix": "next lint --fix",
     "api:bump": "yarn add @polkadot/api @polkadot/api-augment @polkadot/extension-dapp @polkadot/extension-inject @polkadot/react-identicon @polkadot/ui-settings @polkadot/util @polkadot/util-crypto",
     "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore .",
+    "format:fix": "prettier --write --ignore-path .gitignore --ignore-pattern 'cloud-functions/**' '**/*.{ts,tsx}'",
     "test:cypress": "cypress run --spec 'cypress/e2e/test/*.js'"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "dependencies": {
     "@giphy/js-fetch-api": "^5.1.0",

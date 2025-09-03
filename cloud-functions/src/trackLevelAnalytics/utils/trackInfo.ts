@@ -5,11 +5,11 @@
 /* eslint-disable no-tabs */
 /* eslint-disable sort-keys */
 
- interface TrackProps {
-  trackId: number;
-  group?: string;
-  description: string;
-  [index: string]: any;
+interface TrackProps {
+	trackId: number;
+	group?: string;
+	description: string;
+	[index: string]: any;
 }
 
 export const PostOrigin = {
@@ -43,7 +43,7 @@ export const PostOrigin = {
 };
 
 type TrackInfoType = {
-  [index: string]: TrackProps;
+	[index: string]: TrackProps;
 };
 
 interface INetworkTrackInfo {

@@ -435,14 +435,14 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 					text='Cancel'
 					onClick={onCancel}
 					buttonsize='xs'
-					variant='default'
+					type='default'
 				/>
 				<CustomButton
 					text='Proceed'
 					onClick={handleJudgement}
 					disabled={handleProceedDisabled()}
 					buttonsize='xs'
-					variant='primary'
+					type='primary'
 					className={handleProceedDisabled() ? 'opacity-50' : ''}
 				/>
 			</div>

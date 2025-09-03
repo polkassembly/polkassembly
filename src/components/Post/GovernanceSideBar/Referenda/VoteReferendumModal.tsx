@@ -644,7 +644,7 @@ const VoteReferendumModal = ({
 					),
 					value: 'abstain'
 				}
-		  ]
+			]
 		: ayeNayVotesArr;
 
 	return (

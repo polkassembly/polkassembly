@@ -10,7 +10,7 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { Checkbox, Popover } from 'antd';
 import Address from '~src/ui-components/Address';
 import styled from 'styled-components';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ClearIdentityOutlinedIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Proxy from '../Settings/Account/Proxy';

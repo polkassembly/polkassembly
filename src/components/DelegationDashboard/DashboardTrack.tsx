@@ -264,8 +264,8 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 																	item === ETrackDelegationStatus.RECEIVED_DELEGATION
 																		? 'bg-[#E7DCFF] text-[#6C2CF8] dark:bg-[#6C2CF8] dark:text-white'
 																		: item === ETrackDelegationStatus.DELEGATED
-																		? 'bg-[#FFFBD8] text-[#69600B] dark:bg-[#69600B] dark:text-white'
-																		: ''
+																			? 'bg-[#FFFBD8] text-[#69600B] dark:bg-[#69600B] dark:text-white'
+																			: ''
 																}`}
 															>
 																{item === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Received Delegation' : 'Delegated'}
@@ -287,7 +287,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 																	height={24}
 																	width={90}
 																	shape='default'
-																	variant='default'
+																	type='default'
 																	className={classNames(
 																		'gap-[2px]',
 																		handleUndelegationDisable(
@@ -449,7 +449,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 									<CustomButton
 										className='border-none dark:bg-transparent max-sm:mt-1'
 										onClick={() => setOpenDelegateModal(true)}
-										variant='default'
+										type='default'
 									>
 										<DelegatedProfileIcon className='mr-2' />
 										<span className='mt-[1px]'>Delegate</span>

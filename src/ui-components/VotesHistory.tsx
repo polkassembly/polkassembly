@@ -10,7 +10,7 @@ import { Spin, Checkbox, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+type CheckboxValueType = string | number;
 import { noTitle } from '~src/global/noTitle';
 import Link from 'next/link';
 import Address from './Address';

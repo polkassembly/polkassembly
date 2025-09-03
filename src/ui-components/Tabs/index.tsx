@@ -12,6 +12,10 @@ const StyledTabs = styled(AntdTabs)`
 		border-left: ${(props: any) => (props.theme == 'dark' ? 'none' : 'white')} !important;
 		border-right: ${(props: any) => (props.theme == 'dark' ? 'none' : 'white')} !important;
 		border-bottom-color: ${(props: any) => (props.theme == 'dark' ? '#4B4B4B' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '')} !important;
+	}
+	.ant-tabs-tab:not(.ant-tabs-tab-active) .ant-tabs-tab-btn {
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '')} !important;
 	}
 	.ant-tabs-tab {
 		border-bottom-color: ${(props: any) => (props.theme == 'dark' ? 'red' : '')} !important;

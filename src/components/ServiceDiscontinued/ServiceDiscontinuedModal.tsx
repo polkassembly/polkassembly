@@ -7,15 +7,15 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { DISCONTINUED_SERVICE_DATE, DISCONTINUED_SERVICES } from 'src/global/discontinuedServices';
+import { DISCONTINUED_SERVICES } from 'src/global/discontinuedServices';
 import Modal from '~src/ui-components/Modal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import dayjs from 'dayjs';
 
 function ServiceDiscontinuedModal({ network }: { network: string }) {
 	const router = useRouter();
-	const isDiscontinuedService = DISCONTINUED_SERVICES.includes(network);
-	const discontinuedDate = dayjs(DISCONTINUED_SERVICE_DATE);
+	const discontinuedService = DISCONTINUED_SERVICES.find((service) => service.network === network);
+	const discontinuedDate = dayjs(discontinuedService?.date);
 	const isAfterDiscontinuationDate = discontinuedDate.isBefore(dayjs());
 	const [openModal, setOpenModal] = useState(true);
 
@@ -23,7 +23,7 @@ function ServiceDiscontinuedModal({ network }: { network: string }) {
 		router.push('https://polkadot.polkassembly.io/');
 	};
 
-	return isDiscontinuedService && isAfterDiscontinuationDate ? (
+	return discontinuedService && isAfterDiscontinuationDate ? (
 		<Modal
 			open={openModal}
 			onCancel={() => setOpenModal(false)}

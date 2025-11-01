@@ -304,7 +304,7 @@ export const chainProperties: types.ChainPropType = {
 		palletInstance: '50',
 		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',
 		ss58Format: 2,
-		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/kusama-assethub-unified-pa@v1/api/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.KSM,
 		treasuryProposalBondPercent: '5.00%',

@@ -66,7 +66,7 @@ const AnalyticsDelegationTrends = () => {
 			theme={theme as any}
 			className='border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) =>
+			expandIcon={({ isActive }: { isActive?: boolean }) =>
 				isActive ? (
 					<Image
 						src={'/assets/icons/expand.svg'}

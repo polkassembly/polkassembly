@@ -136,7 +136,7 @@ const ProgressReportTab = ({ className }: Props) => {
 				className={'border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 				expandIconPosition='end'
 				defaultActiveKey={['1']}
-				expandIcon={({ isActive }) => {
+				expandIcon={({ isActive }: { isActive?: boolean }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
 			>

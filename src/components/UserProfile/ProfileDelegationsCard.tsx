@@ -334,7 +334,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							size='small'
 							className={'my-custom-collapse border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 							expandIconPosition='end'
-							expandIcon={({ isActive }) => {
+							expandIcon={({ isActive }: { isActive?: boolean }) => {
 								return (
 									<div className='flex h-full items-end justify-end'>
 										{!!Object.keys(item?.data || {})?.length && (

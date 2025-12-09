@@ -286,7 +286,7 @@ const VoterRow: FC<IVoterRow> = ({
 			} w-full gap-[0px]  rounded-none border-0 sm:w-[550px] ${className}`}
 			size='large'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => {
+			expandIcon={({ isActive }: { isActive?: boolean }) => {
 				setActive(isActive);
 				return isSmallScreen ? (
 					<span

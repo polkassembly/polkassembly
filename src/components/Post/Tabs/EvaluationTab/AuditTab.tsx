@@ -35,7 +35,7 @@ const AuditTab = ({ auditData, videoData, className }: Props) => {
 				size='large'
 				className={'border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 				expandIconPosition='end'
-				expandIcon={({ isActive }) => {
+				expandIcon={({ isActive }: { isActive?: boolean }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
 			>

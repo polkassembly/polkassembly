@@ -127,7 +127,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			theme={theme as any}
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => {
+			expandIcon={({ isActive }: { isActive?: boolean }) => {
 				setActive(isActive);
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}

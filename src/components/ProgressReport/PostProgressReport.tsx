@@ -54,7 +54,7 @@ const PostProgressReport = ({ className }: Props) => {
 				size='large'
 				className={'h-full border-section-light-container bg-[#F0EEFE] dark:border-separatorDark dark:bg-transparent'}
 				expandIconPosition='end'
-				expandIcon={({ isActive }) => {
+				expandIcon={({ isActive }: { isActive?: boolean }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
 			>

@@ -66,7 +66,7 @@ export default function ProfileSettings() {
 			className={'border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			expandIconPosition='end'
 			theme={theme as any}
-			expandIcon={({ isActive }) => {
+			expandIcon={({ isActive }: { isActive?: boolean }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
 		>

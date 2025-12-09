@@ -69,10 +69,10 @@ const VotingForm = ({
 		<Form.Item className={className}>
 			<label className='inner-headings dark:text-blue-dark-medium'>Vote lock</label>
 			<Select
-				onChange={(key) => setConviction(Number(key))}
+				onChange={(key: string | string[]) => setConviction(Number(key))}
 				size='large'
 				className='dark:text-blue-dark-medium dark:[&>.ant-select-selector]:bg-section-dark-overlay'
-				defaultValue={conviction}
+				defaultValue={String(conviction)}
 				suffixIcon={<DownIcon />}
 				popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-background'
 			>

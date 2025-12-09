@@ -23,7 +23,7 @@ const ScoringDetails = (props: { scoringData: IScoringSection[] }) => {
 					size='middle'
 					className='border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 					expandIconPosition='end'
-					expandIcon={({ isActive }) => <ArrowDownIcon className={`dark:text-blue-dark-medium ${isActive ? 'rotate-180' : ''}`} />}
+					expandIcon={({ isActive }: { isActive?: boolean }) => <ArrowDownIcon className={`dark:text-blue-dark-medium ${isActive ? 'rotate-180' : ''}`} />}
 					defaultActiveKey={[1]}
 				>
 					<Panel

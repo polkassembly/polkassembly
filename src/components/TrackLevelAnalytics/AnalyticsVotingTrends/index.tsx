@@ -87,10 +87,10 @@ const AnalyticsVotingTrends = ({ trackId, isUsedInAnalytics }: { trackId?: numbe
 			theme={theme as any}
 			className='border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
+			expandIcon={({ isActive }: { isActive?: boolean }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
 			activeKey={activeKey}
 			defaultActiveKey='1'
-			onChange={(key) => {
+			onChange={(key: string | string[]) => {
 				if (typeof key === 'string' || typeof key === 'number') {
 					setActiveKey(key);
 				} else if (Array.isArray(key) && key.length > 0) {

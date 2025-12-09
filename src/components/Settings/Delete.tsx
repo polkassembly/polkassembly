@@ -92,7 +92,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 			size='large'
 			className={`border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay ${className}`}
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => {
+			expandIcon={({ isActive }: { isActive?: boolean }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
 			theme={theme as any}

@@ -27,7 +27,6 @@
 		"header",
 		"promise",
 		"react",
-		"react-hooks",
 		"prettier"
 	],
 	"settings": {

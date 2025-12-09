@@ -3,7 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import styled from 'styled-components';
 import { Collapse as AntDCollapse } from 'antd';
-export const Collapse = styled(AntDCollapse)`
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const Collapse: any = styled(AntDCollapse)`
 	.channel-header {
 		svg {
 			width: 24px;

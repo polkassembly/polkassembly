@@ -72,7 +72,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 			theme={theme as any}
 			size='large'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => {
+			expandIcon={({ isActive }: { isActive?: boolean }) => {
 				setActive(isActive);
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}

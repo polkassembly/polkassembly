@@ -28,7 +28,7 @@ const UserInfoTab = ({ className, isProposerTab }: Props) => {
 				size='large'
 				className={'my-custom-collapse border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 				expandIconPosition='end'
-				expandIcon={({ isActive }) => {
+				expandIcon={({ isActive }: { isActive?: boolean }) => {
 					return isActive ? <ExpandIcon /> : <CollapseIcon />;
 				}}
 			>

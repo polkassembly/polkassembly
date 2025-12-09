@@ -136,7 +136,7 @@ const UploadMultipleReports: FC<IUploadMultipleReports> = (props) => {
 									theme={theme as any}
 									className='ml-1  border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 									expandIconPosition='end'
-									expandIcon={({ isActive }) =>
+									expandIcon={({ isActive }: { isActive?: boolean }) =>
 										isActive ? <ArrowDownIcon className='rotate-180 dark:text-blue-dark-medium' /> : <ArrowDownIcon className='dark:text-blue-dark-medium' />
 									}
 									defaultActiveKey={index === 0 ? ['1'] : []}

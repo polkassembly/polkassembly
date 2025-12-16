@@ -164,7 +164,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	// Get proposer from linked referendum in timeline
 	const getLinkedReferendumProposer = (): string | undefined => {
-		console.log('type', timeline);
 		if (!timeline || !Array.isArray(timeline) || timeline.length === 0) return undefined;
 
 		// Look for a referendum (ReferendumV2 or FellowshipReferendum) in the timeline that has a proposer

@@ -45,7 +45,6 @@ export const getTimeline = (
 					}
 				}
 			}
-			console.log('obj', obj);
 			return {
 				created_at: obj?.createdAt,
 				hash: obj?.hash,

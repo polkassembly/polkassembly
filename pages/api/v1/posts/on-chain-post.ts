@@ -911,6 +911,16 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const status = postData?.status;
 		let proposer = postData?.proposer || preimage?.proposer || postData?.curator;
+
+		// For Gov1 Referendum, use the proposer from the linked DemocracyProposal if available
+		// This ensures the referendum shows the original proposal proposer, not the preimage creator
+		if (postData?.type === 'Referendum' && postData?.group?.proposals) {
+			const democracyProposal = postData.group.proposals.find((p: any) => p.type === 'DemocracyProposal' && p.proposer);
+			if (democracyProposal?.proposer) {
+				proposer = democracyProposal.proposer;
+			}
+		}
+
 		if (!proposer && (postData?.parentBountyIndex || postData?.parentBountyIndex === 0)) {
 			const subsquidRes = await fetchSubsquid({
 				network,

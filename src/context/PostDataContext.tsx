@@ -21,6 +21,7 @@ export interface ITimelineData {
 	type: string;
 	statuses: any[] | any;
 	hash: any;
+	proposer?: string;
 	[index: string]: any;
 }
 

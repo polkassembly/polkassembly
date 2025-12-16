@@ -7,6 +7,7 @@ interface TimelineItemResults {
 	index: number;
 	statuses: { status: string }[];
 	type?: string;
+	proposer?: string;
 }
 
 interface Proposal {
@@ -15,6 +16,10 @@ interface Proposal {
 	createdAt: string;
 	hash: string;
 	index: number;
+	proposer?: string;
+	preimage?: {
+		proposer?: string;
+	};
 }
 
 export const getTimeline = (
@@ -44,6 +49,7 @@ export const getTimeline = (
 				created_at: obj?.createdAt,
 				hash: obj?.hash,
 				index: obj?.index,
+				proposer: obj?.proposer || obj?.preimage?.proposer,
 				statuses,
 				type: obj?.type
 			};

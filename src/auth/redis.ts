@@ -8,7 +8,19 @@ if (!process.env.REDIS_URL) {
 	throw new Error('REDIS_URL is not set');
 }
 
-export const client = new Redis(process.env.REDIS_URL);
+export const client = new Redis(process.env.REDIS_URL, {
+	connectTimeout: 20000, // Increase connection timeout to 20 seconds
+	keepAlive: 8000,
+	maxRetriesPerRequest: 3,
+	reconnectOnError: (err) => err.message.includes('READONLY'),
+	retryStrategy: (times) => {
+		return Math.min(times * 50, 2000);
+	},
+	tls: {
+		checkServerIdentity: () => undefined,
+		rejectUnauthorized: false
+	}
+});
 
 /**
  * get from redis

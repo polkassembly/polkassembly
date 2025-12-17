@@ -6,7 +6,7 @@ import { Divider } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
@@ -162,6 +162,20 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 	const newTitle = title || description || noTitle;
 
+	// Get proposer from linked referendum in timeline
+	const getLinkedReferendumProposer = (): string | undefined => {
+		if (!timeline || !Array.isArray(timeline) || timeline.length === 0) return undefined;
+
+		// Look for a referendum (ReferendumV2 or FellowshipReferendum) in the timeline that has a proposer
+		const referendumItem = timeline.find((item) => item && [ProposalType.DEMOCRACY_PROPOSALS, ProposalType.REFERENDUMS].includes(item.type as ProposalType) && item.proposer);
+
+		return referendumItem?.proposer;
+	};
+
+	// Get the linked referendum proposer if there's no direct proposer or curator
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const linkedReferendumProposer = useMemo(() => (!proposer && !curator ? getLinkedReferendumProposer() : undefined), [proposer, curator]);
+
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;
 
@@ -302,7 +316,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						assetId={assetId}
 						className='md post-user-container  dark:bg-section-dark-overlay'
 						created_at={dayjs(created_at).toDate()}
-						defaultAddress={proposer || curator || polkadotProposer}
+						defaultAddress={proposer || curator || linkedReferendumProposer || polkadotProposer}
 						username={username}
 						topic={topic && topic?.name}
 						cid={cid}

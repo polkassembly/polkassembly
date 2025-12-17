@@ -472,23 +472,26 @@ const Post: FC<IPostProps> = (props) => {
 					),
 					key: 'onChainInfo',
 					label: 'On Chain Info'
-				},
-				isAnalyticsSupportedNetwork(network) &&
-					[ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType) && {
-						children: (
-							<PostStats
-								postId={post?.post_id}
-								postType={proposalType}
-								tally={post?.tally}
-								proposalId={onchainId as number}
-								statusHistory={post?.statusHistory}
-								proposalCreatedAt={post?.created_at || ''}
-							/>
-						),
-						key: 'stats',
-						label: <div className='flex items-center gap-2'>Stats</div>
-					}
+				}
 			);
+
+			// Conditionally add Stats tab only if supported
+			if (isAnalyticsSupportedNetwork(network) && [ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType)) {
+				tabs.push({
+					children: (
+						<PostStats
+							postId={post?.post_id}
+							postType={proposalType}
+							tally={post?.tally}
+							proposalId={onchainId as number}
+							statusHistory={post?.statusHistory}
+							proposalCreatedAt={post?.created_at || ''}
+						/>
+					),
+					key: 'stats',
+					label: <div className='flex items-center gap-2'>Stats</div>
+				});
+			}
 		}
 
 		return tabs;

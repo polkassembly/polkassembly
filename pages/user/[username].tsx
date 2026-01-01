@@ -69,14 +69,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const userProfile = await getUserProfileWithUsername(username.toString());
 	const userPosts = await getUserPosts({
-		addresses: (userProfile?.data?.addresses || []).filter((address) => !!address?.trim()?.length),
+		addresses: (userProfile?.data?.addresses || []).filter(address => Boolean(address?.trim())),
 		network,
 		userId: userProfile?.data?.user_id
 	});
 
 	try {
-		if (userProfile?.data?.username) {
-			await updateUserBadges(userProfile?.data?.username || '', network);
+    const profileUsername = userProfile?.data?.username;
+		if (profileUsername) {
+			await updateUserBadges(profileUsername, network);
 		}
 	} catch (error) {
 		console.error(error);

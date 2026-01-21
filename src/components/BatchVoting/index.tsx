@@ -31,7 +31,7 @@ const BatchVotingWeb = () => {
 	}, [loginAddress]);
 
 	return (
-		<section className='flex flex-col gap-y-6'>
+		<section className='flex flex-col gap-y-5'>
 			<header className='mt-4 flex items-center justify-start gap-x-2'>
 				<ImageIcon
 					src={theme === 'dark' ? '/assets/icons/star-icon-white.svg' : '/assets/icons/star-icon.svg'}

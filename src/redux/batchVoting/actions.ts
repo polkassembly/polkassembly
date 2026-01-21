@@ -31,14 +31,14 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'ayeVoteBalance',
-				value: values?.ayeVoteBalance || ''
+				value: values?.ayeVoteBalance || '0'
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'nyeVoteBalance',
-				value: values?.nyeVoteBalance || ''
+				value: values?.nyeVoteBalance || '0'
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {
@@ -85,14 +85,14 @@ export const editCartPostValueChanged = createAsyncThunk('house/editProfileField
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'ayeVoteBalance',
-				value: values?.ayeVoteBalance || '0.1'
+				value: values?.ayeVoteBalance || '0'
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'nyeVoteBalance',
-				value: values?.nyeVoteBalance || '0.1'
+				value: values?.nyeVoteBalance || '0'
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {

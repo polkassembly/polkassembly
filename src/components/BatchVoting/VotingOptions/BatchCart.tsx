@@ -26,6 +26,7 @@ import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import styled from 'styled-components';
 import userProfileBalances from '~src/util/userProfileBalances';
+import formatBnBalance from '~src/util/formatBnBalance';
 
 interface IBatchCartProps {
 	className?: string;
@@ -45,33 +46,36 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const { vote_cart_data } = useBatchVotesSelector();
 	const [isLoading, setIsLoading] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
 	const [totalVotingAmount, setTotalVotingAmount] = useState<BN>(ZERO_BN);
 	const [hasInsufficientBalance, setHasInsufficientBalance] = useState(false);
 
 	useEffect(() => {
-		let totalAmount = ZERO_BN;
+		const maxVoteAmounts: BN[] = [];
+		let highestVoteAmount = ZERO_BN;
 
 		if (!Array.isArray(vote_cart_data) || vote_cart_data.length === 0) {
-			setTotalVotingAmount(totalAmount);
+			setTotalVotingAmount(highestVoteAmount);
 			setHasInsufficientBalance(false);
 			return;
 		}
 
 		vote_cart_data.forEach((vote) => {
-			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
-				totalAmount = totalAmount.add(new BN(vote?.ayeBalance || '0')).add(new BN(vote?.nayBalance || '0'));
-			} else if (vote?.decision === EVoteDecisionType.ABSTAIN) {
-				totalAmount = totalAmount
-					.add(new BN(vote?.ayeBalance || '0'))
-					.add(new BN(vote?.nayBalance || '0'))
-					.add(new BN(vote?.abstainBalance || '0'));
-			}
+			const ayeBalance = new BN(isNaN(Number(vote?.ayeBalance)) ? '0' : vote?.ayeBalance);
+			const nayBalance = new BN(isNaN(Number(vote?.nayBalance)) ? '0' : vote?.nayBalance);
+			const abstainBalance = new BN(isNaN(Number(vote?.abstainBalance)) ? '0' : vote?.abstainBalance);
+
+			const maxBalance = BN.max(BN.max(ayeBalance, nayBalance), abstainBalance);
+			maxVoteAmounts.push(maxBalance);
+
+			highestVoteAmount = BN.max(highestVoteAmount, maxBalance);
 		});
 
-		setTotalVotingAmount(totalAmount);
-		setHasInsufficientBalance(availableBalance?.lte(totalAmount));
-	}, [vote_cart_data, availableBalance]);
+		setTotalVotingAmount(highestVoteAmount);
+
+		const insufficientBalance = freeBalance.lt(highestVoteAmount);
+		setHasInsufficientBalance(insufficientBalance);
+	}, [vote_cart_data, freeBalance]);
 
 	const getVoteCartData = async () => {
 		setIsLoading(true);
@@ -129,7 +133,7 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 	const voteProposals = async () => {
 		if (!api || !apiReady) return;
 
-		if (availableBalance.lte(totalVotingAmount)) {
+		if (freeBalance.lte(totalVotingAmount) || hasInsufficientBalance) {
 			queueNotification({
 				header: 'Error!',
 				message: 'Insufficient balance to vote',
@@ -142,8 +146,9 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
 				const balance = vote?.decision === 'aye' ? vote?.ayeBalance : vote?.nayBalance;
+				const parsedBalance = new BN(balance?.toString() || '0');
 				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
-					Standard: { balance: balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
+					Standard: { balance: parsedBalance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
 				});
 			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.ayeBalance && vote?.nayBalance) {
 				try {
@@ -184,8 +189,18 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					console.log(e);
 				}
 			}
-			batchCall.push(voteTx);
+			if (voteTx) {
+				batchCall.push(voteTx);
+			}
 		});
+		if (batchCall.length === 0) {
+			queueNotification({
+				header: 'Error!',
+				message: 'No valid transactions to send.',
+				status: NotificationStatus.ERROR
+			});
+			return;
+		}
 
 		setTotalVotingAmount(amount || ZERO_BN);
 		api?.tx?.utility
@@ -209,16 +224,15 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 		if (!api || !apiReady || !batch_voting_address) return;
 
 		(async () => {
-			const { totalBalance } = await userProfileBalances({
+			const { freeBalance } = await userProfileBalances({
 				address: batch_voting_address || '',
 				api: api,
 				apiReady: apiReady,
 				network
 			});
 
-			setAvailableBalance?.(totalBalance);
+			setFreeBalance(freeBalance);
 		})();
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [batch_voting_address, api, apiReady]);
 
@@ -271,31 +285,30 @@ const BatchCart: React.FC = ({ className }: IBatchCartProps) => {
 					</Spin>
 				</div>
 			</article>
-			{hasInsufficientBalance && (
-				<Alert
-					message='Insufficient Balance'
-					description={<div className='text-sm dark:text-white'>You do not have enough balance to vote.</div>}
-					type='error'
-					showIcon
-					className='my-2'
-				/>
-			)}
 
 			{vote_cart_data.length > 0 && (
 				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>
-					<div className='flex flex-col gap-y-2'>
+					<div className='flex flex-col '>
+						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Free Balance</p>
+							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>
+								{formatBnBalance(String(freeBalance), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: true }, network)}
+							</p>
+						</div>
 						<div className='flex h-10 items-center justify-between rounded-sm bg-transparent p-2'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
 						</div>
+
 						<div className='flex h-10 items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
 							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
 								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 							</p>
 						</div>
+
 						<Button
-							className='flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white'
+							className={` ${isDisable ? 'opacity-60' : ''} flex h-10 items-center justify-center rounded-lg border-none bg-pink_primary text-base font-semibold text-white`}
 							onClick={voteProposals}
 							disabled={isDisable}
 						>

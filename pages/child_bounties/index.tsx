@@ -84,8 +84,8 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 				title='Child Bounties'
 				network={network}
 			/>
-			<div className='mt-3 flex sm:items-center'>
-				<RoundedDollarIcon className='px-1 text-2xl text-lightBlue dark:text-white xs:mt-1 sm:-mt-3.5 sm:p-0' />
+			<div className='mt-3 flex items-start sm:items-center'>
+				<RoundedDollarIcon className='px-1 text-2xl text-lightBlue dark:text-white xs:mt-1.5 sm:-mt-3.5 sm:p-0' />
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Child Bounties ({count})</h1>
 			</div>
 

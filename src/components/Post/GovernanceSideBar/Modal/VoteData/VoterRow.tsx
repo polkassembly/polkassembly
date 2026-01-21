@@ -261,6 +261,9 @@ const VoterRow: FC<IVoterRow> = ({
 						className={`${
 							isUsedInVotedModal && voteData?.decision === 'abstain' ? 'sm:ml-[72px]' : ''
 						} mr-4 w-full overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:mr-0 sm:w-[90px]`}
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
 					>
 						{parseBalance(
 							voteData?.decision !== 'abstain'
@@ -292,6 +295,7 @@ const VoterRow: FC<IVoterRow> = ({
 					<span
 						onClick={(e) => {
 							e.preventDefault();
+							e.stopPropagation();
 							dispatch(setSetDelegatedData(delegatedData));
 							dispatch(setIsReferendum2(isReferendum2));
 							dispatch(setSetDelegationVoteModal(setDelegationVoteModal));

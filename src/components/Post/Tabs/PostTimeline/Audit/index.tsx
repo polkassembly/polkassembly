@@ -7,7 +7,7 @@ import { Radio } from 'antd';
 import CautionSVG from '~assets/icons/caution.svg';
 // import YouTubeIcon from '~assets/icons/video.svg';
 // import PdfIcon from '~assets/icons/pdfs.svg';
-import PdfViewer from './PdfViewer';
+import { FilePdfOutlined } from '@ant-design/icons';
 import VideoViewer from './VideoViewer';
 import NoAuditReport from './NoAuditReport';
 import ImageViewer from './ImageViewer';
@@ -151,7 +151,19 @@ const PostAudit = ({ auditData, videoData }: Props) => {
 													</>
 												)}
 											</p>
-											{item.name.endsWith('.pdf') ? <PdfViewer item={item} /> : item.name.endsWith('.png') ? <ImageViewer item={item} /> : null}
+											{item.name.endsWith('.pdf') ? (
+											<a
+												href={item.download_url}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='flex items-center gap-x-2 rounded-md border border-solid border-section-light-container px-4 py-3 text-pink_primary hover:text-pink_secondary dark:border-[#3B444F]'
+											>
+												<FilePdfOutlined />
+												<span>{item.name}</span>
+											</a>
+										) : item.name.endsWith('.png') ? (
+											<ImageViewer item={item} />
+										) : null}
 										</article>
 									);
 								})}

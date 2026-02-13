@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// import { dmSans, Roboto_Mono, Work_Sans, Space_Grotesk, DM_Sans } from 'next/font/google';
-import { Roboto_Mono, Work_Sans, Space_Grotesk, DM_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Image from 'next/image';
@@ -30,31 +29,32 @@ import { useTheme } from 'next-themes';
 import { createGlobalStyle } from 'styled-components';
 import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
 
-export const dmSans = DM_Sans({
-	adjustFontFallback: false,
+export const dmSans = localFont({
+	src: [
+		{ path: '../public/fonts/dm-sans-latin-normal.woff2', style: 'normal' },
+		{ path: '../public/fonts/dm-sans-latin-italic.woff2', style: 'italic' }
+	],
 	display: 'swap',
-	style: ['italic', 'normal'],
-	subsets: ['latin'],
 	variable: '--font-dmSans',
-	weight: ['400', '500', '700']
+	weight: '400 700',
+	adjustFontFallback: false
 });
-const robotoMono = Roboto_Mono({
+const robotoMono = localFont({
+	src: [{ path: '../public/fonts/roboto-mono-latin.woff2', style: 'normal' }],
 	display: 'swap',
-	style: 'normal',
-	subsets: ['latin'],
-	weight: ['400', '500']
+	weight: '400 500'
 });
-const workSans = Work_Sans({
+const workSans = localFont({
+	src: [{ path: '../public/fonts/work-sans-latin.woff2', style: 'normal' }],
 	display: 'swap',
-	subsets: ['latin']
+	weight: '100 900'
 });
-export const spaceGrotesk = Space_Grotesk({
-	adjustFontFallback: false,
+export const spaceGrotesk = localFont({
+	src: [{ path: '../public/fonts/space-grotesk-latin.woff2', style: 'normal' }],
 	display: 'swap',
-	style: ['normal'],
-	subsets: ['latin'],
 	variable: '--font-space_grotesk',
-	weight: ['300', '400', '500', '600', '700']
+	weight: '300 700',
+	adjustFontFallback: false
 });
 
 const GlobalStyle = createGlobalStyle`

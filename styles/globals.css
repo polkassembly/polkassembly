@@ -2,7 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../public/fonts/pixelify-sans-latin.woff2') format('woff2');
+}
 
 @font-face {
   font-family: 'Pixeboy';

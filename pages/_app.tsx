@@ -30,31 +30,31 @@ import { createGlobalStyle } from 'styled-components';
 import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
 
 export const dmSans = localFont({
+	adjustFontFallback: false,
+	display: 'swap',
 	src: [
 		{ path: '../public/fonts/dm-sans-latin-normal.woff2', style: 'normal' },
 		{ path: '../public/fonts/dm-sans-latin-italic.woff2', style: 'italic' }
 	],
-	display: 'swap',
 	variable: '--font-dmSans',
-	weight: '400 700',
-	adjustFontFallback: false
+	weight: '400 700'
 });
 const robotoMono = localFont({
-	src: [{ path: '../public/fonts/roboto-mono-latin.woff2', style: 'normal' }],
 	display: 'swap',
+	src: [{ path: '../public/fonts/roboto-mono-latin.woff2', style: 'normal' }],
 	weight: '400 500'
 });
 const workSans = localFont({
-	src: [{ path: '../public/fonts/work-sans-latin.woff2', style: 'normal' }],
 	display: 'swap',
+	src: [{ path: '../public/fonts/work-sans-latin.woff2', style: 'normal' }],
 	weight: '100 900'
 });
 export const spaceGrotesk = localFont({
-	src: [{ path: '../public/fonts/space-grotesk-latin.woff2', style: 'normal' }],
+	adjustFontFallback: false,
 	display: 'swap',
+	src: [{ path: '../public/fonts/space-grotesk-latin.woff2', style: 'normal' }],
 	variable: '--font-space_grotesk',
-	weight: '300 700',
-	adjustFontFallback: false
+	weight: '300 700'
 });
 
 const GlobalStyle = createGlobalStyle`

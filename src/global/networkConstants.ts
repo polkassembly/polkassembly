@@ -1469,7 +1469,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: pendulumLogo,
 		rpcEndpoint: 'wss://rpc-pendulum.prd.pendulumchain.tech:443',
 		ss58Format: 56,
-		subsquidUrl: 'https://squid.subsquid.io/pendulum-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/pendulum-polkassembly@v1/api/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.PEN,
 		treasuryProposalBondPercent: null,

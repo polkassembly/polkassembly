@@ -38,7 +38,7 @@
     "@react-spring/web": "^10.0.3",
     "@reduxjs/toolkit": "^1.9.7",
     "@sendgrid/mail": "^7.7.0",
-    "@sentry/nextjs": "^8",
+
     "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "18.11.17",

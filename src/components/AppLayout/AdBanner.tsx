@@ -15,14 +15,7 @@ const AdBanner = () => {
 		if (scriptLoaded.current) return;
 		scriptLoaded.current = true;
 
-		const loadAdScript = (
-			doc: Document,
-			tagName: string,
-			adId: string,
-			hosts: string[],
-			hostIndex: number,
-			cacheBuster?: number
-		) => {
+		const loadAdScript = (doc: Document, tagName: string, adId: string, hosts: string[], hostIndex: number, cacheBuster?: number) => {
 			const firstScript = doc.getElementsByTagName(tagName)[0];
 			const newScript = doc.createElement(tagName) as HTMLScriptElement;
 			newScript.async = true;
@@ -47,7 +40,7 @@ const AdBanner = () => {
 		>
 			<ins
 				className={AD_SCRIPT_ID}
-				style={{ display: 'inline-block', width: '728px', height: '90px' }}
+				style={{ display: 'inline-block', height: '90px', width: '728px' }}
 			/>
 		</div>
 	);

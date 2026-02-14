@@ -7,7 +7,12 @@ import { Head, Html, Main, NextScript } from 'next/document';
 export default function Document() {
 	return (
 		<Html lang='en'>
-			<Head />
+			<Head>
+				<meta
+					name='bitmedia-site-verification'
+					content='37ce88c6f03be02eeadeb47721975b01'
+				/>
+			</Head>
 			<body>
 				<Main />
 				<NextScript />

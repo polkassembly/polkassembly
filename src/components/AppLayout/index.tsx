@@ -30,7 +30,6 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import { GlobalActions } from '~src/redux/global';
 import ServiceDiscontinuedBanner from '../ServiceDiscontinued/ServiceDiscontinuedBanner';
 import ServiceDiscontinuedModal from '../ServiceDiscontinued/ServiceDiscontinuedModal';
-import AdBanner from './AdBanner';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -286,7 +285,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															!is_sidebar_collapsed && '3xl:pl-0 pl-28'
 														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
-														<AdBanner />
 														<Component {...pageProps} />
 													</Content>
 												</div>
@@ -302,7 +300,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												<div>
 													<div className='my-6 px-3'>
 														<Content>
-															<AdBanner />
 															<Component {...pageProps} />
 														</Content>
 													</div>
@@ -334,7 +331,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 															!is_sidebar_collapsed && '3xl:pl-0 pl-28'
 														} mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6`}
 													>
-														<AdBanner />
 														<Component {...pageProps} />
 													</Content>
 												</div>
@@ -356,7 +352,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												<div>
 													<div className='my-6 px-3'>
 														<Content>
-															<AdBanner />
 															<Component {...pageProps} />
 														</Content>
 													</div>

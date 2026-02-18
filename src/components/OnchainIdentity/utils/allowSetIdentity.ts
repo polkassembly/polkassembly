@@ -5,15 +5,31 @@
 import { IAllowSetIdentity } from '../types';
 
 const allowSetIdentity = ({ identityInfo, displayName, email, legalName, twitter, matrix }: IAllowSetIdentity) => {
-	let condition = displayName === identityInfo?.displayName && email?.value.toLowerCase() === identityInfo?.email.toLowerCase() && legalName === identityInfo?.legalName;
+	// Base condition checking display name and legal name
+	let isUnchanged = displayName === identityInfo?.displayName && legalName === identityInfo?.legalName;
 
-	if (identityInfo.twitter?.length || twitter.value?.length) {
-		condition = twitter.value.toLowerCase() === identityInfo?.twitter.toLowerCase() && condition;
+	// Helper function to compare social fields case-insensitively
+	const compareField = (newValue?: string, existingValue?: string): boolean => {
+		if (!newValue?.length && !existingValue?.length) return true;
+		return (newValue || '').toLowerCase() === (existingValue || '').toLowerCase();
+	};
+
+	// Check if email is unchanged
+	if (email?.value?.length || identityInfo?.email?.length) {
+		isUnchanged = isUnchanged && compareField(email?.value, identityInfo?.email);
 	}
 
-	if (identityInfo?.matrix?.length || matrix?.value.length) {
-		condition = matrix.value.toLowerCase() === identityInfo?.matrix.toLowerCase() && condition;
+	// Check if twitter handle is unchanged
+	if (twitter?.value?.length || identityInfo?.twitter?.length) {
+		isUnchanged = isUnchanged && compareField(twitter?.value, identityInfo?.twitter);
 	}
-	return condition;
+
+	// Check if matrix handle is unchanged
+	if (matrix?.value?.length || identityInfo?.matrix?.length) {
+		isUnchanged = isUnchanged && compareField(matrix?.value, identityInfo?.matrix);
+	}
+
+	return isUnchanged;
 };
+
 export default allowSetIdentity;

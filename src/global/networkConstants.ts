@@ -1337,7 +1337,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: moonbeamLogo,
 		rpcEndpoint: 'wss://wss.api.moonbeam.network',
 		ss58Format: 1284,
-		subsquidUrl: 'https://squid.subsquid.io/moonbeam-polkassembly/graphql',
+		subsquidUrl: 'http://34.32.0.95:4000/graphql',
 		tokenDecimals: 18,
 		tokenSymbol: tokenSymbol.GLMR,
 		treasuryProposalBondPercent: '5%',

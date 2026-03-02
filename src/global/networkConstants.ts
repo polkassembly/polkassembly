@@ -913,7 +913,7 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 90,
 		tokenDecimals: 8,
 		tokenSymbol: tokenSymbol.FRQCY,
-		subsquidUrl: 'https://squid.subsquid.io/frequency-polkassembly/graphql',
+		subsquidUrl: 'http://34.32.0.95:4353/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,

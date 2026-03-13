@@ -271,7 +271,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				<VotingFormCard
 					form={ayeNayForm}
 					showConvictionBar={true}
-					formName={EFormType.AYE_NAY_FORM}
+					formName={EFormType.AYE_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
 							dispatch(
@@ -300,7 +300,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				<VotingFormCard
 					form={ayeNayForm}
 					showConvictionBar={true}
-					formName={EFormType.AYE_NAY_FORM}
+					formName={EFormType.NAYE_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
 							dispatch(

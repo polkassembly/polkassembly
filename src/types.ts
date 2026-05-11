@@ -406,6 +406,7 @@ export interface Post {
 	link?: string;
 	updated_at?: Date;
 	isSpamDetected?: boolean;
+	treasury_categories?: string[];
 }
 
 export interface IPostTag {

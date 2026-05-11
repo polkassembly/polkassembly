@@ -638,7 +638,7 @@ const Post: FC<IPostProps> = (props) => {
 															key={category}
 															className='m-0 border-cyan-400 bg-cyan-50 text-cyan-600 dark:border-cyan-800 dark:bg-cyan-950 dark:text-cyan-400'
 														>
-															{category.replace('_', ' ')}
+															{category}
 														</Tag>
 													))}
 												</div>

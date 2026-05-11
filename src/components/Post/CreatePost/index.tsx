@@ -205,6 +205,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		setGovType(cacheObj.govType || 'gov_1');
 		setTopicId(Number(cacheObj.topicId) || 2);
 		setTags(JSON.parse(cacheObj.tags || '[]'));
+		setSelectedCategories(JSON.parse(cacheObj.selectedCategories || '[]'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -311,7 +312,10 @@ const CreatePost = ({ className, proposalType }: Props) => {
 								mode='multiple'
 								allowClear
 								placeholder='Select treasury categories'
-								onChange={(value) => setSelectedCategories(value)}
+								onChange={(value) => {
+									setSelectedCategories(value);
+									savePostFormCacheValue('selectedCategories', JSON.stringify(value));
+								}}
 								value={selectedCategories}
 								className='dark:bg-transparent'
 							>

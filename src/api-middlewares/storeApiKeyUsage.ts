@@ -15,7 +15,13 @@ import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
  */
 export default async function storeApiKeyUsage(req: NextApiRequest) {
 	try {
-		const apiKey = (req.headers['x-api-key'] || 'unknown') as string;
+		const apiKey = req.headers['x-api-key'] as string | undefined;
+
+		// Only track requests that actually carry an API key. Writing a Firestore
+		// doc for anonymous traffic added a (often slow/timing-out) write on every
+		// API request and kept functions alive for no benefit.
+		if (!apiKey) return;
+
 		const apiRoute = req.url?.split('?')[0] || 'unknown';
 
 		const apiUsageUpdate = {

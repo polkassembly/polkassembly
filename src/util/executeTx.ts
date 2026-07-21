@@ -76,7 +76,6 @@ const executeTx = async ({
 						setStatus?.('Transaction failed');
 						const dispatchError = (event.data as any)?.dispatchError;
 						isSuccess = false;
-
 						if (dispatchError?.isModule) {
 							const errorModule = (event.data as any)?.dispatchError?.asModule;
 							const { method, section, docs } = api.registry.findMetaError(errorModule);
@@ -87,7 +86,8 @@ const executeTx = async ({
 							console.log(`${dispatchError.type}.${dispatchError.asToken.type}`);
 							await onFailed(`${dispatchError.type}.${dispatchError.asToken.type}`);
 						} else {
-							await onFailed(`${dispatchError.type}` || errorMessageFallback);
+							console.log(`${dispatchError.type}` || errorMessageFallback);
+							await onFailed(`${dispatchError?.type || ''}.${errorMessageFallback || ''}`);
 						}
 					}
 				}

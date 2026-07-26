@@ -34,9 +34,9 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const dispatch = useAppDispatch();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
-	const [ayeNayForm] = Form.useForm();
+	const [ayeForm] = Form.useForm();
+	const [nayeForm] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
@@ -60,15 +60,6 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		100: '6x'
 	};
 
-	const handleModalReset = () => {
-		ayeNayForm.setFieldValue('balance', '');
-		splitForm.setFieldValue('ayeVote', '');
-		splitForm.setFieldValue('nayVote', '');
-		abstainFrom.setFieldValue('ayeVote', '');
-		abstainFrom.setFieldValue('nayVote', '');
-		abstainFrom.setFieldValue('abstainVote', '');
-	};
-
 	const calculateLockingPeriod = (convictionValue: number) => {
 		const lockPeriod = calculateLock(convictionValue);
 
@@ -77,7 +68,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 		}
 
 		const res = api?.consts?.convictionVoting?.voteLockingPeriod;
-		const num = res?.toJSON();
+		const num = res?.toJSON() ?? 0;
 		const days = blockToDays(num, network);
 
 		if (days && !isNaN(Number(days)) && lockPeriod) {
@@ -111,7 +102,81 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				})
 			);
 		}
-		handleModalReset();
+	};
+
+	const handleBalanceChange = (balance: BN, fieldType: 'ayeVoteBalance' | 'nyeVoteBalance' | 'abstainVoteBalance') => {
+		const balanceStr = balance ? balance.toString() : '0';
+
+		const currentAye = ayeForm.getFieldValue('balance');
+		const currentNye = nayeForm.getFieldValue('balance');
+		const currentAbstain = abstainFrom.getFieldValue('abstainVote');
+		const isEmptyForm = currentAye == null || currentNye == null || currentAbstain == null;
+
+		if (isEmptyForm) {
+			if (currentAye !== null && currentAye !== undefined) {
+				nayeForm.setFieldsValue({ balance: currentAye });
+				abstainFrom.setFieldsValue({ abstainVote: currentAye });
+			}
+			if (currentNye !== null && currentNye !== undefined) {
+				ayeForm.setFieldsValue({ balance: currentNye });
+				abstainFrom.setFieldsValue({ abstainVote: currentNye });
+			}
+			if (currentAbstain !== null && currentAbstain !== undefined) {
+				ayeForm.setFieldsValue({ balance: currentAbstain });
+				nayeForm.setFieldsValue({ balance: currentAbstain });
+			}
+
+			dispatch(
+				editBatchValueChanged({
+					values: {
+						ayeVoteBalance: balanceStr
+					}
+				})
+			);
+			dispatch(
+				editBatchValueChanged({
+					values: {
+						nyeVoteBalance: balanceStr
+					}
+				})
+			);
+			dispatch(
+				editBatchValueChanged({
+					values: {
+						abstainVoteBalance: balanceStr
+					}
+				})
+			);
+		} else {
+			if (fieldType === 'ayeVoteBalance') {
+				ayeForm.setFieldsValue({ balance: currentAye });
+				dispatch(
+					editBatchValueChanged({
+						values: {
+							ayeVoteBalance: balanceStr
+						}
+					})
+				);
+			} else if (fieldType === 'nyeVoteBalance') {
+				nayeForm.setFieldsValue({ balance: currentNye });
+				dispatch(
+					editBatchValueChanged({
+						values: {
+							nyeVoteBalance: balanceStr
+						}
+					})
+				);
+			} else if (fieldType === 'abstainVoteBalance') {
+				abstainFrom.setFieldsValue({ abstainVote: currentAbstain });
+				dispatch(
+					editBatchValueChanged({
+						values: {
+							abstainVoteBalance: balanceStr
+						}
+					})
+				);
+			}
+		}
 	};
 
 	const getMarkValue = (value: number): string => {
@@ -210,32 +275,14 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						handleOnVoteChange(value);
 					}}
 					options={decisionOptions}
-					disabled={!api || !apiReady}
+					// disabled={!api || !apiReady}
 				/>
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 					<VotingFormCard
-						form={ayeNayForm}
+						form={ayeForm}
 						className='-mt-5 w-[48%]'
-						formName={EFormType.AYE_NAY_FORM}
-						onBalanceChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											ayeVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											ayeVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						formName={EFormType.AYE_FORM}
+						onBalanceChange={(balance) => handleBalanceChange(balance, 'ayeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
@@ -243,28 +290,10 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				)}
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
 					<VotingFormCard
-						form={ayeNayForm}
+						form={nayeForm}
 						className='-mt-5 w-[48%]'
-						formName={EFormType.AYE_NAY_FORM}
-						onBalanceChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											nyeVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											nyeVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						formName={EFormType.NAYE_FORM}
+						onBalanceChange={(balance) => handleBalanceChange(balance, 'nyeVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}
@@ -277,25 +306,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 						isUsedInTinderWebView={true}
 						className='-mt-5 w-[48%]'
 						formName={EFormType.ABSTAIN_FORM}
-						onBalanceChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											abstainVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											abstainVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						onBalanceChange={(balance) => handleBalanceChange(balance, 'abstainVoteBalance')}
 						onAyeValueChange={(balance: BN) => {
 							if (!forSpecificPost) {
 								dispatch(
@@ -334,25 +345,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 								);
 							}
 						}}
-						onAbstainValueChange={(balance: BN) => {
-							if (!forSpecificPost) {
-								dispatch(
-									editBatchValueChanged({
-										values: {
-											abstainVoteBalance: balance?.toString()
-										}
-									})
-								);
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											abstainVoteBalance: balance?.toString() || '0'
-										}
-									})
-								);
-							}
-						}}
+						onAbstainValueChange={(balance) => handleBalanceChange(balance, 'abstainVoteBalance')}
 						handleSubmit={handleSubmit}
 						forSpecificPost={forSpecificPost}
 						showConvictionBar={false}

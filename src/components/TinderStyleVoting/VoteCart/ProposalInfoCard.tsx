@@ -113,7 +113,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 		}
 	};
 
-	const voteBalance = voteInfo?.decision === 'aye' ? voteInfo.ayeBalance : voteInfo?.decision === 'nay' ? voteInfo?.nayBalance : '0';
+	const voteBalance =
+		voteInfo?.decision === 'aye' ? voteInfo.ayeBalance : voteInfo?.decision === 'nay' ? voteInfo?.nayBalance : voteInfo?.decision === 'abstain' ? voteInfo?.abstainBalance : '0';
 
 	return (
 		<section
@@ -166,7 +167,9 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					</p>
 				</div>
 				<div className='flex items-center justify-center gap-x-2'>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{formatedBalance(voteBalance, unit, 0)} DOT</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>
+						{formatedBalance(voteBalance, unit)} {unit}
+					</p>
 					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.lockedPeriod || '0'}x</p>
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>

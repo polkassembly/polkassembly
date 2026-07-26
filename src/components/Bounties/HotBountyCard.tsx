@@ -109,12 +109,12 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	}, [post_id, user_id, network, proposer]);
 
 	return (
-		<section className='mx-3 flex w-full items-center justify-between md:w-[383px]'>
+		<section className='mx-3 flex w-full items-center justify-between'>
 			{loading ? (
 				<Skeleton active />
 			) : (
 				<>
-					<div className='w-full sm:w-[340px] xl:w-[383px]'>
+					<div className='w-full sm:w-[340px] xl:w-full'>
 						<Link
 							key={post_id}
 							href={`/bounty/${post_id}`}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form, Switch } from 'antd';
+import { Form, Switch, Select } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { PostCategory } from 'src/global/post_categories';
@@ -12,6 +12,7 @@ import BackToListingView from 'src/ui-components/BackToListingView';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
+import { TREASURY_CATEGORIES } from '~src/global/treasuryCategories';
 
 import { ChangeResponseType, CreatePostResponseType } from '~src/auth/types';
 import POLL_TYPE from '~src/global/pollTypes';
@@ -41,6 +42,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
+	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
 	const [form] = Form.useForm();
 	const pollEndBlock = usePollEndBlock();
@@ -141,6 +143,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 				tags,
 				title,
 				topicId,
+				treasury_categories: selectedCategories,
 				userId: currentUser.id
 			});
 
@@ -202,6 +205,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 		setGovType(cacheObj.govType || 'gov_1');
 		setTopicId(Number(cacheObj.topicId) || 2);
 		setTags(JSON.parse(cacheObj.tags || '[]'));
+		setSelectedCategories(JSON.parse(cacheObj.selectedCategories || '[]'));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -301,6 +305,32 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						setTags={setTags}
 						onChange={(arr) => savePostFormCacheValue('tags', JSON.stringify(arr))}
 					/>
+
+					<div className='mt-6'>
+						<Form.Item label={<span className='text-sm font-normal tracking-wide text-sidebarBlue dark:text-white'>Treasury Category (Optional)</span>}>
+							<Select
+								mode='multiple'
+								allowClear
+								placeholder='Select treasury categories'
+								onChange={(value) => {
+									setSelectedCategories(value);
+									savePostFormCacheValue('selectedCategories', JSON.stringify(value));
+								}}
+								value={selectedCategories}
+								className='dark:bg-transparent'
+							>
+								{TREASURY_CATEGORIES.map((category) => (
+									<Select.Option
+										key={category}
+										value={category}
+									>
+										{category}
+									</Select.Option>
+								))}
+							</Select>
+						</Form.Item>
+					</div>
+
 					{/* who can comment */}
 					<AllowedCommentorsRadioButtons
 						className='mt-8 gap-2'

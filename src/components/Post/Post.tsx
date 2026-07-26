@@ -24,6 +24,7 @@ import getNetwork from '~src/util/getNetwork';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVerified } from '~src/auth/types';
 import Link from 'next/link';
+import { Tag } from 'antd';
 import LinkCard from './LinkCard';
 import { IDataType, IDataVideoType } from './Tabs/PostTimeline/Audit';
 import styled from 'styled-components';
@@ -568,6 +569,7 @@ const Post: FC<IPostProps> = (props) => {
 					topic: post?.topic || '',
 					track_name: trackName,
 					track_number: post?.track_number,
+					treasury_categories: post?.treasury_categories || [],
 					userId: post?.user_id,
 					username: post?.username
 				}}
@@ -628,6 +630,19 @@ const Post: FC<IPostProps> = (props) => {
 												postArguments={post?.proposed_call?.args}
 												className='mb-5'
 											/>
+											{post?.treasury_categories && post.treasury_categories.length > 0 && (
+												<div className='mb-6 flex flex-wrap gap-2'>
+													{post.treasury_categories.map((category: string) => (
+														<Tag
+															color='cyan'
+															key={category}
+															className='m-0 border-cyan-400 bg-cyan-50 text-cyan-600 dark:border-cyan-800 dark:bg-cyan-950 dark:text-cyan-400'
+														>
+															{category}
+														</Tag>
+													))}
+												</div>
+											)}
 											<Tabs
 												theme={theme}
 												type='card'

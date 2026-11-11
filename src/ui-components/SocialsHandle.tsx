@@ -30,6 +30,7 @@ interface Props {
 }
 const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize = 24, iconSize = 14 }: Props) => {
 	const { network } = useNetworkSelector();
+	const accountExplorerUrl = network === 'vara' ? `https://explorer.vara.network/account/${address}` : `https://www.subscan.io/account/${address}`;
 	const { api, apiReady } = useApiContext();
 	const isGood = onchainIdentity?.isGood;
 	const [isKiltNameExists, setIsKiltNameExists] = useState<boolean>(false);
@@ -235,10 +236,10 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
-						window.open(`https://www.subscan.io/account/${address}`, '_blank');
+						window.open(accountExplorerUrl, '_blank');
 					}}
-					title={`https://www.subscan.io/account/${address}`}
-					href={`https://www.subscan.io/account/${address}`}
+					title={accountExplorerUrl}
+					href={accountExplorerUrl}
 					className='flex cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-[13px] text-[#96A4B6] hover:text-[#96A4B6]'
 				>
 					<Image

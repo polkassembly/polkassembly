@@ -110,7 +110,7 @@ const AddressComponent = ({ address, proxyType, isPureProxy, isMultisigAddress =
 											<CopyIcon className='-ml-1 text-xl text-lightBlue dark:text-icon-dark-inactive md:mt-0' />
 										</div>
 										<Link
-											href={`https://${network}.subscan.io/address/${address}`}
+											href={network === 'vara' ? `https://explorer.vara.network/account/${address}` : `https://${network}.subscan.io/address/${address}`}
 											passHref
 											target='_blank'
 										>
